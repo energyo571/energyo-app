@@ -136,9 +136,9 @@ h1 {
 }
 
 .energyo-subtitle {
-  color: #1b7eea !important;
-  font-weight: 600;
-  font-size: 1.1rem;
+  color: #1f2a44 !important;
+  font-weight: 800;
+  font-size: 1.35rem;
 }
 
 .stats-grid {
@@ -401,6 +401,13 @@ button {
   display: flex;
   gap: 0.5rem;
   margin-left: 1rem;
+}
+
+.lead-expand-icon {
+  margin-left: auto;
+  color: #1f2a44;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .lead-item .lead-umsatz,
