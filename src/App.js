@@ -102,7 +102,6 @@ function App() {
   const [leads, setLeads] = useState([]);
   const [form, setForm] = useState(initialForm);
   const [commentText, setCommentText] = useState({});
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPriority, setFilterPriority] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -162,14 +161,6 @@ function App() {
 
     return unsubscribe;
   }, [user, teamId]);
-
-  // Update time every minute
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
