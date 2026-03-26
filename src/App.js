@@ -430,7 +430,8 @@ function App() {
       openCancellation,
       totalUmsatzPotential,
     };
-  }, [leads, currentTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leads]);
 
   if (!user) {
     return <LoginPage onLogin={setUser} user={user} />;
