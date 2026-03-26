@@ -14,14 +14,14 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
-import energyoLogo from "./energyolanglogo.png";
+import logo from "./logo.png";
 import "./App.css";
 // Lade-Overlay-Komponente
 function LeadLoadingOverlay() {
   return (
     <div className="lead-loading-overlay">
       <div className="lead-loading-content">
-        <img src={energyoLogo} alt="ENERGYO Logo" className="lead-loading-logo" />
+        <img src={logo} alt="ENERGYO Logo" className="lead-loading-logo" />
         <div className="lead-loading-bar-container">
           <div className="lead-loading-bar" />
         </div>
@@ -452,7 +452,7 @@ function App() {
       {loading && <LeadLoadingOverlay />}
       <header className="hero">
         <div className="hero-content" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <img src={energyoLogo} alt="ENERGYO Logo" style={{width: 180, height: 'auto', marginBottom: 8}} />
+          <img src={logo} alt="ENERGYO Logo" style={{width: 180, height: 'auto', marginBottom: 8}} />
           <p className="subtitle energyo-subtitle">
             Leads erfassen, Nachfassen steuern, Abschlüsse im Blick behalten.
           </p>
