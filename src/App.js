@@ -114,6 +114,7 @@ const isOverdue = (followUpDate) => {
 function App() {
   const [user, setUser] = useState(null);
   const [teamId, setTeamId] = useState(null);
+  const [teamLoading, setTeamLoading] = useState(true);
   const [leads, setLeads] = useState([]);
   const [form, setForm] = useState(initialForm);
   const [commentText, setCommentText] = useState({});
@@ -126,36 +127,44 @@ function App() {
   // Auth State & Team Management
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      
-      if (currentUser) {
-        // Hole oder erstelle Team für User
-        const userRef = doc(db, "users", currentUser.uid);
-        try {
-          const userDoc = await getDoc(userRef);
-          if (userDoc.exists() && userDoc.data().teamId) {
-            setTeamId(userDoc.data().teamId);
-          } else {
-            // Neuer User: Erstelle Team
-            const newTeamId = `team-${currentUser.uid}`;
-            await setDoc(userRef, {
+    setUser(currentUser);
+    setTeamLoading(true);
+
+    if (currentUser) {
+      const userRef = doc(db, "users", currentUser.uid);
+
+      try {
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists() && userDoc.data().teamId) {
+          setTeamId(userDoc.data().teamId);
+        } else {
+          const newTeamId = "team-energyo";
+
+          await setDoc(
+            userRef,
+            {
               email: currentUser.email,
               teamId: newTeamId,
               createdAt: new Date().toISOString(),
-            }, { merge: true });
-            setTeamId(newTeamId);
-          }
-        } catch (error) {
-          console.error("Fehler beim Team-Setup:", error);
-          // Fallback: Erstelle Team direkt
-          const newTeamId = `team-${currentUser.uid}`;
+            },
+            { merge: true }
+          );
+
           setTeamId(newTeamId);
         }
-      } else {
+      } catch (error) {
+        console.error("Fehler beim Team-Setup:", error);
         setTeamId(null);
       }
-    });
-    return unsubscribe;
+    } else {
+      setTeamId(null);
+    }
+
+    setTeamLoading(false);
+  });
+
+  return unsubscribe;
   }, []);
 
   // Real-time Firestore Listener - Team-based
@@ -166,12 +175,17 @@ function App() {
     }
 
     const q = query(collection(db, "leads"), where("teamId", "==", teamId));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const leadsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setLeads(leadsData);
+    const unsubscribe = onSnapshot(
+  q,
+  (snapshot) => {
+    const leadsData = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setLeads(leadsData);
+  },
+  (error) => {
+    console.error("Firestore Fehler beim Laden der Leads:", error);
     });
 
     return unsubscribe;
@@ -187,6 +201,11 @@ function App() {
 
   const addLead = async (e) => {
     e.preventDefault();
+
+    if (!user || !teamId) {
+    alert("Team wird noch geladen. Bitte 2 Sekunden warten und erneut versuchen.");
+    return;
+  }
 
     if (!form.person.trim()) {
       alert("Bitte mindestens Ansprechpartner eintragen.");
@@ -446,7 +465,15 @@ function App() {
   if (!user) {
     return <LoginPage onLogin={setUser} user={user} />;
   }
-
+if (teamLoading) {
+  return (
+    <div className="app">
+      <p style={{ textAlign: "center", marginTop: "80px" }}>
+        Team wird geladen...
+      </p>
+    </div>
+  );
+}
   return (
     <div className="app">
       {loading && <LeadLoadingOverlay />}
