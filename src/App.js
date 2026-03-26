@@ -14,7 +14,22 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
+import energyoLogo from "./energyolanglogo.png";
 import "./App.css";
+// Lade-Overlay-Komponente
+function LeadLoadingOverlay() {
+  return (
+    <div className="lead-loading-overlay">
+      <div className="lead-loading-content">
+        <img src={energyoLogo} alt="ENERGYO Logo" className="lead-loading-logo" />
+        <div className="lead-loading-bar-container">
+          <div className="lead-loading-bar" />
+        </div>
+        <div className="lead-loading-text">Tarifoptimierung gestartet ...</div>
+      </div>
+    </div>
+  );
+}
 
 const initialForm = {
   company: "",
@@ -202,13 +217,16 @@ function App() {
         createdAt: new Date().toISOString(),
         comments: [],
       });
-      setForm(initialForm);
+      // Lade-Overlay mindestens 1 Sekunde anzeigen
+      setTimeout(() => {
+        setForm(initialForm);
+        setLoading(false);
+      }, 1000);
     } catch (error) {
       console.error("Fehler beim Speichern:", error);
       alert("Fehler beim Speichern des Leads");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const updateLeadStatus = async (id, newStatus) => {
@@ -424,16 +442,18 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leads]);
 
+
   if (!user) {
     return <LoginPage onLogin={setUser} user={user} />;
   }
 
   return (
     <div className="app">
+      {loading && <LeadLoadingOverlay />}
       <header className="hero">
-        <div className="hero-content">
-          <h1>ENERGYO - Sales Engine</h1>
-          <p className="subtitle">
+        <div className="hero-content" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <img src={energyoLogo} alt="ENERGYO Logo" style={{width: 180, height: 'auto', marginBottom: 8}} />
+          <p className="subtitle energyo-subtitle">
             Leads erfassen, Nachfassen steuern, Abschlüsse im Blick behalten.
           </p>
         </div>
@@ -917,4 +937,46 @@ function App() {
   );
 }
 
-export default App;
+    e.preventDefault();
+
+    if (!form.person.trim()) {
+      alert("Bitte mindestens Ansprechpartner eintragen.");
+      return;
+    }
+
+    if (!form.phone.trim() || !form.email.trim() || !form.postalCode.trim()) {
+      alert("Bitte Telefon, E-Mail und PLZ ausfüllen.");
+      return;
+    }
+
+    if (form.contractEnd !== "unknown" && isContractEndUnrealistic(form.contractEnd)) {
+      const proceed = window.confirm("Das Vertragsende liegt in der Vergangenheit. Fortfahren?");
+      if (!proceed) return;
+    }
+
+    if (!teamId) {
+      alert("Team-ID ist noch nicht geladen. Bitte warte einen Moment und versuche es erneut.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await addDoc(collection(db, "leads"), {
+        ...form,
+        teamId: teamId,
+        createdBy: {
+          email: user.email,
+          timestamp: new Date().toISOString(),
+        },
+        status: "Neu",
+        createdAt: new Date().toISOString(),
+        comments: [],
+      });
+      setForm(initialForm);
+    } catch (error) {
+      console.error("Fehler beim Speichern:", error);
+      alert("Fehler beim Speichern des Leads");
+    }
+    setLoading(false);
+  };

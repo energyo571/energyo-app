@@ -1,3 +1,66 @@
+/* Lead Loading Overlay */
+.lead-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lead-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px rgba(27,126,234,0.10);
+  padding: 48px 36px 36px 36px;
+}
+
+.lead-loading-logo {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 8px;
+}
+
+.lead-loading-bar-container {
+  width: 220px;
+  height: 18px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(27,126,234,0.08);
+}
+
+.lead-loading-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #1b7eea 0%, #10b981 100%);
+  border-radius: 12px;
+  animation: lead-bar-anim 1.6s cubic-bezier(0.4,0,0.2,1) infinite;
+}
+
+@keyframes lead-bar-anim {
+  0% { width: 0%; }
+  60% { width: 100%; }
+  100% { width: 0%; }
+}
+
+.lead-loading-text {
+  font-size: 1.2rem;
+  color: #1b7eea;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+  text-align: center;
+}
 * {
   box-sizing: border-box;
 }
@@ -38,6 +101,12 @@ h1 {
 .subtitle {
   margin-top: 10px;
   color: #5b6470;
+}
+
+.energyo-subtitle {
+  color: #1b7eea !important;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .stats-grid {
