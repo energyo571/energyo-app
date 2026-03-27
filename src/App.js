@@ -315,6 +315,8 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
   const [showCallForm, setShowCallForm] = useState(false);
   const [callForm, setCallForm] = useState({ duration: "", outcome: CALL_OUTCOMES[0], notes: "" });
   const [saving, setSaving] = useState(false);
+  const [previewAttachment, setPreviewAttachment] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   const priority = calculatePriority(lead);
   const umsatz = calculateUmsatzPotential(lead.consumption);
@@ -636,8 +638,9 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
                       <span className="att-meta">{(att.size / 1024).toFixed(1)} KB · {formatDate(att.uploadedAt)}</span>
                     </div>
                     <div className="attachment-row-actions">
+                      <button type="button" onClick={() => setPreviewAttachment(att)} className="att-btn preview" title="Vorschau">👁</button>
                       <a href={att.data} download={att.name} className="att-btn download" title="Herunterladen">⬇</a>
-                      <button type="button" onClick={() => onRemoveAttachment(lead.id, att.id)} className="att-btn delete" title="Löschen">✕</button>
+                      <button type="button" onClick={() => setDeleteConfirmId(att.id)} className="att-btn delete" title="Löschen">✕</button>
                     </div>
                   </div>
                 ))}
@@ -645,6 +648,56 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
             ) : (
               <p className="empty-timeline">Keine Anhänge vorhanden.</p>
             )}
+          </div>
+        )}
+
+        {/* Preview Modal */}
+        {previewAttachment && (
+          <div className="modal-backdrop" onClick={() => setPreviewAttachment(null)}>
+            <div className="preview-modal" onClick={e => e.stopPropagation()}>
+              <div className="preview-header">
+                <h3>{previewAttachment.name}</h3>
+                <button className="preview-close" onClick={() => setPreviewAttachment(null)}>✕</button>
+              </div>
+              <div className="preview-content">
+                {previewAttachment.type?.startsWith("image/") ? (
+                  <img src={previewAttachment.data} alt={previewAttachment.name} className="preview-image" />
+                ) : previewAttachment.type === "application/pdf" ? (
+                  <div className="preview-pdf">
+                    <p>📄 PDF-Datei</p>
+                    <a href={previewAttachment.data} target="_blank" rel="noreferrer" className="primary-btn-modal">PDF öffnen</a>
+                  </div>
+                ) : previewAttachment.type?.startsWith("text/") || previewAttachment.name?.match(/\.(txt|json|csv|md)$/i) ? (
+                  <div className="preview-text">
+                    <pre>{previewAttachment.data?.substring(0, 2000) || "Datei konnte nicht angezeigt werden"}</pre>
+                    {previewAttachment.data?.length > 2000 && <p className="preview-truncated">... Datei gekürzt (max 2000 Zeichen)</p>}
+                  </div>
+                ) : (
+                  <div className="preview-generic">
+                    <p>📎 {previewAttachment.type || "Unbekannter Dateityp"}</p>
+                    <a href={previewAttachment.data} download={previewAttachment.name} className="primary-btn-modal">Datei herunterladen</a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmId && (
+          <div className="modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
+            <div className="confirm-modal" onClick={e => e.stopPropagation()}>
+              <div className="confirm-icon">⚠️</div>
+              <h3>Anhang löschen?</h3>
+              <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
+              <div className="confirm-actions">
+                <button className="ghost-btn" onClick={() => setDeleteConfirmId(null)}>Abbrechen</button>
+                <button className="danger-btn" onClick={() => {
+                  onRemoveAttachment(lead.id, deleteConfirmId);
+                  setDeleteConfirmId(null);
+                }}>Löschen</button>
+              </div>
+            </div>
           </div>
         )}
 
