@@ -7,6 +7,7 @@ import {
 import { auth, db } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
 import logo from "./logo.png";
+import Papa from "papaparse";
 import "./App.css";
 
 // ─── Konstanten ───────────────────────────────────────────────────────────────
@@ -159,6 +160,98 @@ const sortLeads = (items, sortMode) => {
     if (ca !== cb) return ca ? -1 : 1;
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
+};
+
+// ─── CSV Import Helpers ──────────────────────────────────────────────────────
+const detectColumnHeaders = (headers) => {
+  const headerLower = headers.map(h => h.toLowerCase().trim());
+  return {
+    name: headerLower.findIndex(h => h.includes('name') || h.includes('kontakt') || h.includes('person')) ?? -1,
+    firma: headerLower.findIndex(h => h.includes('firma') || h.includes('company') || h.includes('unternehmen')) ?? -1,
+    phone: headerLower.findIndex(h => h.includes('telefon') || h.includes('phone') || h.includes('tel')) ?? -1,
+    email: headerLower.findIndex(h => h.includes('email') || h.includes('mail') || h.includes('e-mail')) ?? -1,
+    plz: headerLower.findIndex(h => h.includes('plz') || h.includes('postleitzahl') || h.includes('zip')) ?? -1,
+    verbrauch: headerLower.findIndex(h => h.includes('verbrauch') || h.includes('kwh') || h.includes('consumption')) ?? -1,
+    stromZaehler: headerLower.findIndex(h => h.includes('strom') && h.includes('zähler')) ?? -1,
+    stromMalo: headerLower.findIndex(h => h.includes('strom') && h.includes('malo')) ?? -1,
+    gasZaehler: headerLower.findIndex(h => h.includes('gas') && h.includes('zähler')) ?? -1,
+    gasMalo: headerLower.findIndex(h => h.includes('gas') && h.includes('malo')) ?? -1,
+    lieferanschrift: headerLower.findIndex(h => h.includes('lieferanschrift') || h.includes('adresse') || h.includes('address')) ?? -1,
+    owner: headerLower.findIndex(h => h.includes('owner') || h.includes('agent') || h.includes('zuständig')) ?? -1,
+  };
+};
+
+const parseImportRow = (row, cols, allUsers, currentUserEmail) => {
+  const getValue = (idx) => idx >= 0 && row[idx] ? row[idx].trim() : '';
+  const extras = {};
+  
+  const name = getValue(cols.name) || getValue(cols.firma) || 'Unbekannt';
+  const firma = getValue(cols.firma) || getValue(cols.name) || '';
+  const phone = getValue(cols.phone) || '';
+  const email = getValue(cols.email) || '';
+  const plz = getValue(cols.plz) || '';
+  const verbrauch = getValue(cols.verbrauch) ? parseInt(getValue(cols.verbrauch)) || 0 : 0;
+  const ownerEmail = getValue(cols.owner);
+  
+  // Energy meters
+  const stromZaehler = getValue(cols.stromZaehler);
+  const stromMalo = getValue(cols.stromMalo);
+  const gasZaehler = getValue(cols.gasZaehler);
+  const gasMalo = getValue(cols.gasMalo);
+  const lieferanschrift = getValue(cols.lieferanschrift);
+  
+  const energy = { strom: [], gas: [] };
+  if (stromZaehler) {
+    energy.strom.push({
+      zählernummer: stromZaehler,
+      maloId: stromMalo || '',
+      lieferanschrift: lieferanschrift || '',
+      kontaktanschrift: ''
+    });
+  }
+  if (gasZaehler) {
+    energy.gas.push({
+      zählernummer: gasZaehler,
+      maloId: gasMalo || '',
+      lieferanschrift: lieferanschrift || '',
+      kontaktanschrift: ''
+    });
+  }
+  
+  // Collect unmapped fields as extras
+  for (let i = 0; i < row.length; i++) {
+    const mapIndex = Object.values(cols).includes(i);
+    if (!mapIndex && row[i]) {
+      const headerName = i < row.length ? `Spalte ${i + 1}` : '';
+      extras[headerName] = row[i];
+    }
+  }
+  
+  return {
+    person: name,
+    company: firma,
+    phone,
+    email,
+    postalCode: plz,
+    consumption: verbrauch ? verbrauch.toString() : '',
+    energy,
+    status: 'Neu',
+    createdBy: {
+      email: ownerEmail && allUsers.find(u => u.email === ownerEmail) ? ownerEmail : currentUserEmail,
+      timestamp: new Date().toISOString()
+    },
+    extras: Object.keys(extras).length > 0 ? extras : null
+  };
+};
+
+const detectDuplicates = (newLead, existingLeads) => {
+  if (newLead.phone) {
+    return existingLeads.find(l => l.phone === newLead.phone);
+  }
+  if (newLead.email && newLead.person) {
+    return existingLeads.find(l => l.email === newLead.email && l.person === newLead.person);
+  }
+  return null;
 };
 
 // ─── LeadLoadingOverlay ───────────────────────────────────────────────────────
@@ -1801,6 +1894,179 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
   );
 }
 
+// ─── Import Modal Component ────────────────────────────────────────────────────
+function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
+  const [step, setStep] = React.useState(1);
+  const [file, setFile] = React.useState(null);
+  const [csvData, setCsvData] = React.useState([]);
+  const [columns, setColumns] = React.useState(null);
+  const [parsedLeads, setParsedLeads] = React.useState([]);
+  const [duplicates, setDuplicates] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const fileInputRef = React.useRef(null);
+
+  const handleFileChange = (e) => {
+    const f = e.target.files?.[0];
+    if (f) {
+      setFile(f);
+      setError('');
+      Papa.parse(f, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          if (results.data.length < 2) {
+            setError('CSV muss mindestens 1 Kopfzeile + 1 Datenzeile haben');
+            return;
+          }
+          setCsvData(results.data);
+          const cols = detectColumnHeaders(results.data[0]);
+          setColumns(cols);
+          
+          const newLeads = [];
+          const dups = [];
+          for (let i = 1; i < results.data.length; i++) {
+            if (!results.data[i] || results.data[i].every(c => !c)) continue;
+            const parsed = parseImportRow(results.data[i], cols, users, currentUser.email);
+            const dup = detectDuplicates(parsed, leads);
+            if (dup) {
+              dups.push({ row: i + 1, lead: parsed, duplicate: dup });
+            } else {
+              newLeads.push({ row: i + 1, lead: parsed });
+            }
+          }
+          setParsedLeads(newLeads);
+          setDuplicates(dups);
+          setStep(2);
+        },
+        error: (error) => setError(`Parse-Fehler: ${error.message}`)
+      });
+    }
+  };
+
+  const handleImport = async () => {
+    setLoading(true);
+    try {
+      const leadsToImport = parsedLeads.map(p => p.lead);
+      await onImport(leadsToImport);
+      setStep(3);
+      setTimeout(() => {
+        resetModal();
+        onClose();
+      }, 2000);
+    } catch (err) {
+      setError(`Import-Fehler: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetModal = () => {
+    setStep(1);
+    setFile(null);
+    setCsvData([]);
+    setColumns(null);
+    setParsedLeads([]);
+    setDuplicates([]);
+    setError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content import-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>📥 Lead-Import</h2>
+          <button className="modal-close-btn" onClick={onClose}>✕</button>
+        </div>
+
+        {step === 1 && (
+          <div className="import-step">
+            <p className="step-desc">Lade eine CSV/Excel-Datei mit Kundendaten hoch</p>
+            <div className="import-upload-zone" onClick={() => fileInputRef.current?.click()}>
+              <span className="upload-icon">📄</span>
+              <span className="upload-label">{file ? file.name : 'Datei auswählen'}</span>
+              <span className="upload-hint">CSV oder Excel (XLSX)</span>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,.xlsx,.xls"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            {error && <div className="import-error">{error}</div>}
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="import-step">
+            <p className="step-desc">Überprüfung: {parsedLeads.length} neue Leads, {duplicates.length} Duplikate</p>
+            
+            {duplicates.length > 0 && (
+              <div className="import-warning">
+                ⚠️ {duplicates.length} Zeile(n) mit existierenden Telefonnummern:
+                <div className="dup-list">
+                  {duplicates.slice(0, 3).map((d, i) => (
+                    <div key={i} className="dup-item">
+                      Zeile {d.row}: {d.lead.person} ({d.lead.phone}) existiert
+                    </div>
+                  ))}
+                  {duplicates.length > 3 && <div className="dup-item">...+ {duplicates.length - 3} weitere</div>}
+                </div>
+              </div>
+            )}
+
+            <div className="import-preview">
+              <h4>Vorschau (erste {Math.min(3, parsedLeads.length)} Leads)</h4>
+              {parsedLeads.slice(0, 3).map((p, i) => (
+                <div key={i} className="preview-item">
+                  <strong>{p.lead.person}</strong> <br/>
+                  {p.lead.company && <span>{p.lead.company} · </span>}
+                  {p.lead.phone && <span>{p.lead.phone}</span>}
+                </div>
+              ))}
+            </div>
+
+            {error && <div className="import-error">{error}</div>}
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="import-step">
+            <div className="import-success">
+              <span className="success-icon">✅</span>
+              <h3>{parsedLeads.length} Leads erfolgreich importiert!</h3>
+              <p>Alle Leads wurden als "Neu" eingestuft.</p>
+            </div>
+          </div>
+        )}
+
+        <div className="modal-footer">
+          {step === 1 && (
+            <>
+              <button className="ghost-btn" onClick={onClose}>Abbrechen</button>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <button className="ghost-btn" onClick={() => setStep(1)}>Zurück</button>
+              <button className="primary-btn" onClick={handleImport} disabled={loading || parsedLeads.length === 0}>
+                {loading ? '⏳ Importiere...' : `✅ Importiere ${parsedLeads.length} Leads`}
+              </button>
+            </>
+          )}
+          {step === 3 && (
+            <button className="primary-btn" onClick={onClose}>Schließen</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 function App() {
   const [user, setUser] = useState(null);
@@ -1819,6 +2085,7 @@ function App() {
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [viewMode, setViewMode] = useState("list");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [smartView, setSmartView] = useState("all");
   const [sortMode, setSortMode] = useState("priority");
   const [kpiFocus, setKpiFocus] = useState("all");
@@ -1969,6 +2236,41 @@ function App() {
     }
   };
 
+  const onImportLeads = async (importedLeads) => {
+    if (!teamId || !user) throw new Error("Team/User nicht gefunden");
+    const createdAt = new Date().toISOString();
+    let imported = 0;
+    let failed = 0;
+
+    for (const lead of importedLeads) {
+      try {
+        await addDoc(collection(db, "leads"), {
+          ...lead,
+          teamId,
+          ownerUserId: lead.createdBy?.email === user.email ? user.uid : user.uid,
+          ownerEmail: lead.createdBy?.email || user.email,
+          createdBy: {
+            uid: user.uid,
+            email: lead.createdBy?.email || user.email,
+            timestamp: createdAt
+          },
+          status: lead.status || "Neu",
+          createdAt,
+          comments: lead.extras ? [{ timestamp: createdAt, text: `📥 CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
+          callLogs: [],
+        });
+        imported++;
+      } catch (error) {
+        console.error("Import row failed:", lead, error);
+        failed++;
+      }
+    }
+
+    if (failed > 0) {
+      alert(`⚠️ ${imported} importiert, ${failed} fehlgeschlagen`);
+    }
+  };
+
   const updateLeadStatus = async (id, newStatus) => {
     const leadDoc = leads.find((lead) => lead.id === id);
     if (!leadDoc || leadDoc.status === newStatus) return;
@@ -2087,6 +2389,7 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>≡ Liste</button>
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
+                <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
                 <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
             </div>
@@ -2183,6 +2486,17 @@ function App() {
 
       {showNewLeadModal && (
         <NewLeadModal onClose={() => setShowNewLeadModal(false)} onSubmit={addLead} loading={loading} />
+      )}
+
+      {showImportModal && (
+        <ImportModal 
+          isOpen={showImportModal} 
+          onClose={() => setShowImportModal(false)} 
+          leads={leads}
+          users={teamMembers}
+          currentUser={user}
+          onImport={onImportLeads}
+        />
       )}
     </div>
   );
