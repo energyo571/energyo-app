@@ -819,6 +819,10 @@ textarea:focus {
   justify-content: center;
 }
 
+.lead-row-checkbox-placeholder {
+  width: 30px;
+}
+
 .lead-row-checkbox input[type="checkbox"] {
   width: 18px;
   height: 18px;
@@ -2087,6 +2091,16 @@ select {
 
 .danger-btn:hover {
   opacity: 0.9;
+}
+
+.danger-btn-outline {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.danger-btn-outline:hover {
+  background: rgba(220, 53, 69, 0.1);
 }
 
 .modal {
