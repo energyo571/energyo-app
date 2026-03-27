@@ -644,6 +644,29 @@ textarea:focus {
   color: var(--primary-deep);
 }
 
+.density-toggle-group {
+  display: inline-flex;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.density-toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text-soft);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.density-toggle-btn.active {
+  background: #f1f5fb;
+  color: var(--primary-deep);
+}
+
 .new-lead-btn,
 .primary-btn-modal,
 .primary-btn-sm,
@@ -1378,9 +1401,33 @@ textarea:focus {
   display: inline-block;
 }
 
-.prio-A { background: #0f6fff; }
-.prio-B { background: #f59f00; }
-.prio-C { background: #adb5bd; }
+.prio-A { background: #d94848; }
+.prio-B { background: #d89a08; }
+.prio-C { background: #1d4ed8; }
+
+.density-comfort .lead-row {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.density-comfort .lead-row-company {
+  font-size: 13px;
+}
+
+.density-comfort .lead-row-sub,
+.density-comfort .lead-row-umsatz,
+.density-comfort .lead-row-followup,
+.density-comfort .lead-row-activity {
+  font-size: 11px;
+}
+
+.density-comfort .energy-badge,
+.density-comfort .health-pill,
+.density-comfort .next-action-pill,
+.density-comfort .followup-chip {
+  font-size: 9px;
+  padding: 3px 6px;
+}
 
 .lead-row-company {
   font-weight: 700;
@@ -1825,9 +1872,9 @@ textarea:focus {
   box-shadow: 0 14px 24px rgba(13, 31, 61, 0.12);
 }
 
-.prio-border-A { border-left: 4px solid #0f6fff; }
-.prio-border-B { border-left: 4px solid #f59f00; }
-.prio-border-C { border-left: 4px solid #adb5bd; }
+.prio-border-A { border-left: 4px solid #d94848; }
+.prio-border-B { border-left: 4px solid #d89a08; }
+.prio-border-C { border-left: 4px solid #1d4ed8; }
 
 .kanban-card-header,
 .kanban-card-footer {
@@ -1947,9 +1994,9 @@ textarea:focus {
   font-weight: 800;
 }
 
-.drawer-prio-badge.prio-A { background: #e9f2ff; color: #0f6fff; }
-.drawer-prio-badge.prio-B { background: #fff1da; color: #d97706; }
-.drawer-prio-badge.prio-C { background: #eff2f5; color: #6b7280; }
+.drawer-prio-badge.prio-A { background: #ffe8e8; color: #b42323; }
+.drawer-prio-badge.prio-B { background: #fff4d9; color: #a56a00; }
+.drawer-prio-badge.prio-C { background: #eaf1ff; color: #1d4ed8; }
 .drawer-badge.alert { background: #fff1f0; color: #c92a2a; }
 .drawer-badge.danger { background: #ffe3e3; color: #c92a2a; }
 .drawer-badge.today { background: #f2e9ff; color: #7c3aed; }

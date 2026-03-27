@@ -59,6 +59,12 @@ const calculatePriority = (lead) => {
   if ((consumption >= 20000 && consumption < 50000) || (laufzeit && laufzeit >= 1 && laufzeit <= 2)) return "B";
   return "C";
 };
+const PRIORITY_META = {
+  A: { label: "Hot", code: "A" },
+  B: { label: "Warm", code: "B" },
+  C: { label: "Cold", code: "C" },
+};
+const getPriorityMeta = (priority) => PRIORITY_META[priority] || { label: "Cold", code: "C" };
 const calculateUmsatzPotential = (consumption) => {
   if (!consumption) return 0;
   const kwh = parseInt(consumption);
@@ -810,7 +816,7 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
         </div>
         <div className="command-card emphasize">
           <span className="command-card-label">Pipeline Fokus</span>
-          <strong>{stats.priorityA} A-Leads</strong>
+          <strong>{stats.priorityA} Hot-Leads</strong>
           <p>{stats.openCancellation} Leads im Kündigungsfenster</p>
           <span className="command-card-meta">Arbeite diese zuerst, bevor du neue Kaltleads ansprichst.</span>
         </div>
@@ -832,6 +838,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
   const priority = calculatePriority(lead);
+  const priorityMeta = getPriorityMeta(priority);
   const umsatz = calculateUmsatzPotential(lead.consumption);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
@@ -908,7 +915,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               {lead.person}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
             </p>
             <div className="drawer-header-badges">
-              <span className={`drawer-prio-badge prio-${priority}`}>Priorität {priority}</span>
+              <span className={`drawer-prio-badge prio-${priority}`}>{priorityMeta.label} · Prio {priorityMeta.code}</span>
               {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
               {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
@@ -1429,6 +1436,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 // ─── UPDATED: LeadRow (with multiselect checkbox) ─────────────────────────────
 function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggleCheck }) {
   const priority = calculatePriority(lead);
+  const priorityMeta = getPriorityMeta(priority);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
   const isTodayNow = isTodayDue(lead.followUp);
@@ -1460,7 +1468,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
       )}
       {!selectionMode && <div className="lead-row-checkbox-placeholder" />}
       <div className="lead-row-prio">
-        <span className={`prio-dot prio-${priority}`} title={`Priorität ${priority}`} />
+        <span className={`prio-dot prio-${priority}`} title={`${priorityMeta.label} (Prio ${priorityMeta.code})`} />
       </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
@@ -2159,6 +2167,7 @@ function App() {
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [viewMode, setViewMode] = useState("list");
+  const [densityMode, setDensityMode] = useState("dense");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [smartView, setSmartView] = useState("all");
@@ -2483,6 +2492,10 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>≡ Liste</button>
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
+                <div className="density-toggle-group">
+                  <button className={`density-toggle-btn ${densityMode === "dense" ? "active" : ""}`} onClick={() => setDensityMode("dense")}>Kompakt</button>
+                  <button className={`density-toggle-btn ${densityMode === "comfort" ? "active" : ""}`} onClick={() => setDensityMode("comfort")}>Komfort</button>
+                </div>
                 {/* NEW: Multiselect toggle (admin only) */}
                 {userRole === "admin" && (
                   <button
@@ -2523,8 +2536,8 @@ function App() {
 
             <div className="filter-bar">
               <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
-                <option value="all">Alle Prioritäten</option>
-                <option value="A">Priorität A</option><option value="B">Priorität B</option><option value="C">Priorität C</option>
+                <option value="all">Alle Heat-Level</option>
+                <option value="A">Hot (Prio A)</option><option value="B">Warm (Prio B)</option><option value="C">Cold (Prio C)</option>
               </select>
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="filter-select-inline">
                 <option value="all">Alle Status</option>
@@ -2544,14 +2557,14 @@ function App() {
               <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
               <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
-              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Priorität A</span></button>
+              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot (Prio A)</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
               <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
               <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
             </div>
 
             {viewMode === "list" ? (
-              <div className="leads-table-wrap">
+              <div className={`leads-table-wrap density-${densityMode}`}>
                 <div className="leads-table-header">
                   <div className="lth-checkbox" />
                   <div className="lth-prio" />
