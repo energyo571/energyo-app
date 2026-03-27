@@ -424,8 +424,9 @@ function AppointmentModal({ lead, onClose, onSave }) {
   };
 
   const buildCalendlyUrl = () => {
-    const base = (process.env.REACT_APP_CALENDLY_URL || "").trim();
-    if (!base) return null;
+    const rawBase = (process.env.REACT_APP_CALENDLY_URL || "calendly.com/yasin-oezdemir-energyo").trim();
+    if (!rawBase) return null;
+    const base = /^https?:\/\//i.test(rawBase) ? rawBase : `https://${rawBase}`;
     const params = new URLSearchParams();
     if (lead.person) params.set("name", lead.person);
     if (lead.email) params.set("email", lead.email);
