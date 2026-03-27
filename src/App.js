@@ -756,6 +756,10 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
             <span>Hot</span>
           </div>
           <div className="summary-metric-card">
+            <strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong>
+            <span>Closing</span>
+          </div>
+          <div className="summary-metric-card">
             <strong className="kpi-success">{formatEuro(stats.totalUmsatzPotential)}</strong>
             <span>Potenzial</span>
           </div>
@@ -2412,8 +2416,6 @@ function App() {
                     {selectionMode ? "✕ Auswahl" : "☑ Auswählen"}
                   </button>
                 )}
-                <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
-                <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
             </div>
 
@@ -2467,8 +2469,8 @@ function App() {
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
               <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Priorität A</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
-              <div className="kpi-item"><span className={`kpi-val ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span><span className="kpi-label">Closing rate</span></div>
-              <div className="kpi-item kpi-umsatz"><span className="kpi-val kpi-success">{formatEuro(stats.totalUmsatzPotential)}</span><span className="kpi-label">Umsatzpotenzial</span></div>
+              <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
+              <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
             </div>
 
             {viewMode === "list" ? (

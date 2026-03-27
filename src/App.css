@@ -560,11 +560,12 @@ button {
 
 .toolbar-search {
   width: min(420px, 42vw);
-  padding: 13px 16px;
-  border-radius: 14px;
+  padding: 10px 12px;
+  border-radius: 11px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: var(--shadow-soft);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: none;
+  font-size: 14px;
 }
 
 .eyebrow {
@@ -589,24 +590,25 @@ textarea:focus {
 
 .view-toggle-group {
   display: inline-flex;
-  padding: 4px;
-  background: var(--surface);
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: var(--shadow-soft);
+  border-radius: 11px;
+  box-shadow: none;
 }
 
 .view-toggle-btn {
   border: none;
   background: transparent;
-  padding: 11px 14px;
-  border-radius: 10px;
+  padding: 8px 11px;
+  border-radius: 8px;
   color: var(--text-soft);
   font-weight: 700;
+  font-size: 13px;
 }
 
 .view-toggle-btn.active {
-  background: #eef5ff;
+  background: #f1f5fb;
   color: var(--primary-deep);
 }
 
@@ -1112,6 +1114,34 @@ textarea:focus {
 
 .kpi-item.kpi-umsatz {
   background: linear-gradient(180deg, #ebfbf4 0%, #ffffff 100%);
+}
+
+.kpi-action-btn {
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  padding: 12px 14px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-soft);
+}
+
+.kpi-action-btn.import {
+  border-color: #d3e5ff;
+  color: #0b5ed7;
+  background: #f4f9ff;
+}
+
+.kpi-action-btn.create {
+  border-color: #cfe0ff;
+  color: #0b4db8;
+  background: linear-gradient(135deg, #eaf2ff 0%, #f7fbff 100%);
+}
+
+.kpi-action-btn:hover {
+  transform: translateY(-1px);
 }
 
 .kpi-val {
@@ -3396,6 +3426,11 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .kpi-action-btn {
+    padding: 10px 10px;
+    font-size: 12px;
+  }
+
   .quick-action-row,
   .smart-view-bar {
     overflow-x: auto;
@@ -3421,6 +3456,10 @@ select {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
+  }
+
+  .command-insights-toggle {
+    grid-column: 1 / -1;
   }
 
   .summary-metric-card {
