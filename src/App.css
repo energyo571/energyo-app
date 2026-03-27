@@ -70,6 +70,8 @@ button {
 
 .sidebar-header {
   padding: 6px 8px 18px;
+  display: flex;
+  justify-content: center;
 }
 
 .sidebar-logo {
@@ -432,8 +434,10 @@ textarea:focus {
   padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
   min-height: 120px;
+  text-align: center;
 }
 
 .hero-metric-card strong {
@@ -547,6 +551,8 @@ textarea:focus {
   box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 8px;
 }
 
@@ -624,7 +630,7 @@ textarea:focus {
 .leads-table-header,
 .lead-row {
   display: grid;
-  grid-template-columns: 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px 130px 90px;
+  grid-template-columns: 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px minmax(0, 130px) 90px;
   align-items: center;
   gap: 12px;
 }
@@ -795,6 +801,7 @@ textarea:focus {
 
 .lead-row-followup {
   min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
   white-space: normal;
@@ -1264,6 +1271,101 @@ textarea:focus {
 .drawer-umsatz-hint {
   color: var(--text-soft);
   font-size: 13px;
+}
+
+/* ─── Contact Bar ─────────────────────────────────────────────────────── */
+.contact-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.contact-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border-radius: 18px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.contact-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.contact-btn.disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.contact-btn-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.contact-btn-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.contact-btn-sub {
+  font-size: 10px;
+  color: var(--text-soft);
+  font-weight: 600;
+  text-align: center;
+  word-break: break-all;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-btn.call {
+  background: linear-gradient(160deg, #f0fff8 0%, #ffffff 100%);
+  border-color: #a7f3d0;
+}
+
+.contact-btn.call:hover:not(.disabled) {
+  background: linear-gradient(160deg, #d1fae5 0%, #f0fff8 100%);
+}
+
+.contact-btn.whatsapp {
+  background: linear-gradient(160deg, #f0fff4 0%, #ffffff 100%);
+  border-color: #bbf7d0;
+}
+
+.contact-btn.whatsapp:hover:not(.disabled) {
+  background: linear-gradient(160deg, #dcfce7 0%, #f0fff4 100%);
+}
+
+.contact-btn.email {
+  background: linear-gradient(160deg, #eff6ff 0%, #ffffff 100%);
+  border-color: #bfdbfe;
+}
+
+.contact-btn.email:hover:not(.disabled) {
+  background: linear-gradient(160deg, #dbeafe 0%, #eff6ff 100%);
+}
+
+/* ─── Clickable phone in lead row ───────────────────────────────────────── */
+.lead-phone-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.lead-phone-link:hover {
+  text-decoration: underline;
 }
 
 .drawer-status-stepper {

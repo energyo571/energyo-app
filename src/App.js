@@ -77,6 +77,19 @@ const formatDateTime = (d) => {
   const dt = new Date(d);
   return dt.toLocaleDateString("de-DE") + " " + dt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
 };
+const formatEuro = (value) => '€' + Math.round(value).toLocaleString('de-DE');
+const formatWaPhone = (phone) => {
+  if (!phone) return '';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('49')) return digits;
+  if (digits.startsWith('0')) return '49' + digits.slice(1);
+  return digits;
+};
+const getClosingRateClass = (rate) => {
+  if (rate < 15) return 'kpi-alert';
+  if (rate < 25) return 'kpi-warning';
+  return 'kpi-success';
+};
 
 const getLeadOwnerEmail = (lead) => lead.ownerEmail || lead.createdBy?.email || "Nicht zugewiesen";
 
@@ -253,11 +266,11 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
             <span>Action Queue</span>
           </div>
           <div className="hero-metric-card">
-            <strong>€{stats.totalUmsatzPotential.toFixed(0)}</strong>
-            <span>Open potential</span>
+            <strong className="kpi-success">{formatEuro(stats.totalUmsatzPotential)}</strong>
+            <span>Offenes Potenzial</span>
           </div>
           <div className="hero-metric-card">
-            <strong>{stats.closingRate}%</strong>
+            <strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong>
             <span>Closing rate</span>
           </div>
         </div>
@@ -303,7 +316,7 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
             <>
               <strong>{hotLead.company || hotLead.person}</strong>
               <p>{getNextAction(hotLead).label}</p>
-              <span className="command-card-meta">Potenzial: €{calculateUmsatzPotential(hotLead.consumption).toFixed(0)}</span>
+              <span className="command-card-meta">Potenzial: {formatEuro(calculateUmsatzPotential(hotLead.consumption))}</span>
             </>
           ) : (
             <p>Aktuell kein Deal mit Hot-Signal.</p>
@@ -390,13 +403,56 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
 
         {/* Umsatz Banner */}
         <div className="drawer-umsatz-bar">
-          <span className="drawer-umsatz-label">Umsatzpotential</span>
-          <span className="drawer-umsatz-value">€{umsatz.toFixed(0)}</span>
+          <span className="drawer-umsatz-label">Umsatzpotenzial</span>
+          <span className="drawer-umsatz-value">{formatEuro(umsatz)}</span>
           <span className="drawer-umsatz-hint">
             {lead.consumption && parseInt(lead.consumption) >= 50000
               ? `(${parseInt(lead.consumption).toLocaleString("de-DE")} kWh × 0,01 €)`
               : "(Pauschale)"}
           </span>
+        </div>
+
+        {/* Kontakt-Aktionen */}
+        <div className="contact-bar">
+          {lead.phone ? (
+            <a className="contact-btn call" href={`tel:${lead.phone}`}>
+              <span className="contact-btn-icon">📞</span>
+              <span className="contact-btn-label">Anrufen</span>
+              <span className="contact-btn-sub">{lead.phone}</span>
+            </a>
+          ) : (
+            <div className="contact-btn call disabled">
+              <span className="contact-btn-icon">📞</span>
+              <span className="contact-btn-label">Anrufen</span>
+              <span className="contact-btn-sub">Kein Tel.</span>
+            </div>
+          )}
+          {lead.phone ? (
+            <a className="contact-btn whatsapp" href={`https://wa.me/${formatWaPhone(lead.phone)}?text=${encodeURIComponent(`Hallo ${lead.person || ''},\n\nhier ist Ihr ENERGYO-Berater. Ich melde mich bezüglich Ihres Energievertrags. Haben Sie kurz Zeit?`)}`} target="_blank" rel="noreferrer">
+              <span className="contact-btn-icon">💬</span>
+              <span className="contact-btn-label">WhatsApp</span>
+              <span className="contact-btn-sub">Nachricht</span>
+            </a>
+          ) : (
+            <div className="contact-btn whatsapp disabled">
+              <span className="contact-btn-icon">💬</span>
+              <span className="contact-btn-label">WhatsApp</span>
+              <span className="contact-btn-sub">Kein Tel.</span>
+            </div>
+          )}
+          {lead.email ? (
+            <a className="contact-btn email" href={`mailto:${lead.email}?subject=${encodeURIComponent('Ihr Energievertrag – ENERGYO')}&body=${encodeURIComponent(`Sehr geehrte/r ${lead.person || 'Kundin/Kunde'},\n\n`)}`}>
+              <span className="contact-btn-icon">📧</span>
+              <span className="contact-btn-label">E-Mail</span>
+              <span className="contact-btn-sub">{lead.email}</span>
+            </a>
+          ) : (
+            <div className="contact-btn email disabled">
+              <span className="contact-btn-icon">📧</span>
+              <span className="contact-btn-label">E-Mail</span>
+              <span className="contact-btn-sub">Keine E-Mail</span>
+            </div>
+          )}
         </div>
 
         {/* Status Stepper */}
@@ -975,7 +1031,19 @@ function LeadRow({ lead, onSelect, isSelected }) {
       </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
-        <div className="lead-row-sub">{lead.person}{lead.phone ? ` · ${lead.phone}` : ""}</div>
+        <div className="lead-row-sub">
+          {lead.person}
+          {lead.phone ? (
+            <>
+              {" · "}
+              <a
+                className="lead-phone-link"
+                href={`tel:${lead.phone}`}
+                onClick={e => e.stopPropagation()}
+              >{lead.phone}</a>
+            </>
+          ) : ""}
+        </div>
         <div className="lead-row-owner">Owner: {owner}</div>
       </div>
       <div className="lead-row-energy">
@@ -994,7 +1062,7 @@ function LeadRow({ lead, onSelect, isSelected }) {
       <div className="lead-row-status">
         <span className="status-chip" style={{ background: meta.bg, color: meta.color }}>{lead.status}</span>
       </div>
-      <div className="lead-row-umsatz">€{umsatz.toFixed(0)}</div>
+      <div className="lead-row-umsatz">{formatEuro(umsatz)}</div>
       <div className="lead-row-followup">
         {lead.followUp ? (
           <span className={isOverdueNow ? "date-overdue" : isTodayNow ? "date-today" : ""}>
@@ -1028,7 +1096,7 @@ function KanbanBoard({ leads, onSelectLead }) {
               <span className="kanban-status-name" style={{ color: meta.color }}>{status}</span>
               <div className="kanban-col-meta">
                 <span className="kanban-count">{col.length}</span>
-                <span className="kanban-col-umsatz">€{colUmsatz.toFixed(0)}</span>
+                <span className="kanban-col-umsatz">{formatEuro(colUmsatz)}</span>
               </div>
             </div>
             <div className="kanban-cards">
@@ -1054,7 +1122,7 @@ function KanbanBoard({ leads, onSelectLead }) {
                       )}
                     </div>
                     <div className="kanban-card-footer">
-                      <span className="kanban-umsatz-chip">€{calculateUmsatzPotential(lead.consumption).toFixed(0)}</span>
+                      <span className="kanban-umsatz-chip">{formatEuro(calculateUmsatzPotential(lead.consumption))}</span>
                       <div className="kanban-flags">
                         {isOpenCancellationWindow(lead.contractEnd) && <span title="Kündigungsfenster">🔔</span>}
                         {isOverdue(lead.followUp) && <span title="Überfällig">⏰</span>}
@@ -1109,9 +1177,9 @@ function Dashboard({ leads, teamMembers }) {
           ))}
         </div>
         <div className="dashboard-summary">
-          <div className="summary-item"><span>Abschlussquote</span><strong>{stats.closingRate}%</strong></div>
+          <div className="summary-item"><span>Closing rate</span><strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong></div>
           <div className="summary-item"><span>Gewonnen</span><strong>{stats.wonLeads}</strong></div>
-          <div className="summary-item"><span>Umsatzpotential</span><strong>€{stats.totalUmsatz.toFixed(0)}</strong></div>
+          <div className="summary-item"><span>Umsatzpotenzial</span><strong className="kpi-success">{formatEuro(stats.totalUmsatz)}</strong></div>
         </div>
       </div>
       <div className="card dashboard-card">
@@ -1130,7 +1198,7 @@ function Dashboard({ leads, teamMembers }) {
                 <div className="performer-stats">
                   <span title="Leads">📋 {p.total}</span>
                   <span title="Gewonnen">✅ {p.won}</span>
-                  <span title="Umsatz">💶 €{p.umsatz.toFixed(0)}</span>
+                  <span title="Umsatz">💶 {formatEuro(p.umsatz)}</span>
                 </div>
               </div>
             ))}
@@ -1712,8 +1780,8 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
           <span className="sidebar-kpi-label">Gewonnen</span>
         </div>
         <div className="sidebar-kpi-item">
-          <span className="sidebar-kpi-value kpi-blue">{stats.closingRate}%</span>
-          <span className="sidebar-kpi-label">Abschlussquote</span>
+          <span className={`sidebar-kpi-value ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span>
+          <span className="sidebar-kpi-label">Closing rate</span>
         </div>
       </div>
       <div className="sidebar-footer">
@@ -2052,8 +2120,8 @@ function App() {
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
               <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Priorität A</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
-              <div className="kpi-item"><span className="kpi-val">{stats.closingRate}%</span><span className="kpi-label">Abschlussquote</span></div>
-              <div className="kpi-item kpi-umsatz"><span className="kpi-val">€{stats.totalUmsatzPotential.toFixed(0)}</span><span className="kpi-label">Umsatzpotential</span></div>
+              <div className="kpi-item"><span className={`kpi-val ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span><span className="kpi-label">Closing rate</span></div>
+              <div className="kpi-item kpi-umsatz"><span className="kpi-val kpi-success">{formatEuro(stats.totalUmsatzPotential)}</span><span className="kpi-label">Umsatzpotenzial</span></div>
             </div>
 
             {viewMode === "list" ? (
