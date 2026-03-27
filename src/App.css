@@ -3077,6 +3077,22 @@ select {
   transform: translate(-50%, -50%);
 }
 
+.new-lead-modal {
+  box-shadow: none;
+  border: 1px solid var(--line-soft);
+}
+
+.new-lead-modal .create-lead-submit {
+  border-color: #43b975;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1f9f5d 0%, #147c45 100%);
+  box-shadow: 0 8px 18px rgba(20, 124, 69, 0.25);
+}
+
+.new-lead-modal .create-lead-submit:hover {
+  transform: translateY(-1px);
+}
+
 .modal-form {
   display: flex;
   flex-direction: column;

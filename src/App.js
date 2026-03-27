@@ -1323,7 +1323,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
   };
   return (
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
+      <div className="modal new-lead-modal">
         <div className="modal-header">
           <h2>Neuer Lead</h2>
           <button className="drawer-close-btn" onClick={onClose}>✕</button>
@@ -1416,7 +1416,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
           </div>
           <div className="modal-footer">
             <button type="button" className="ghost-btn" onClick={onClose}>Abbrechen</button>
-            <button type="submit" className="primary-btn-modal" disabled={loading}>
+            <button type="submit" className="primary-btn-modal create-lead-submit" disabled={loading}>
               {loading ? "Wird gespeichert..." : "Lead anlegen"}
             </button>
           </div>
@@ -2316,7 +2316,7 @@ function App() {
           await updateDoc(doc(db, "leads", docRef.id), { attachments: uploadedAttachments });
         } catch (uploadError) {
           console.error(uploadError);
-          alert("Lead wurde angelegt, aber Anhänge konnten nicht vollständig hochgeladen werden.");
+          alert(`Lead wurde angelegt, aber Anhänge konnten nicht vollständig hochgeladen werden. (${uploadError?.code || uploadError?.message || "Unbekannter Fehler"})`);
         }
       }
 
@@ -2412,7 +2412,7 @@ function App() {
       });
     } catch (e) {
       console.error(e);
-      alert("Anhänge konnten nicht hochgeladen werden.");
+      alert(`Anhänge konnten nicht hochgeladen werden. (${e?.code || e?.message || "Unbekannter Fehler"})`);
     }
   };
 
