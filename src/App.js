@@ -8,6 +8,7 @@ import { auth, db } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
 import logo from "./logo.png";
 import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import "./App.css";
 
 // ─── Konstanten ───────────────────────────────────────────────────────────────
@@ -163,93 +164,221 @@ const sortLeads = (items, sortMode) => {
 };
 
 // ─── CSV Import Helpers ──────────────────────────────────────────────────────
-const detectColumnHeaders = (headers) => {
-  const headerLower = headers.map(h => h.toLowerCase().trim());
+const normalizeText = (val) => String(val || "")
+  .toLowerCase()
+  .trim()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "");
+
+const findHeaderIndex = (headers, predicates) => {
+  const normalized = headers.map(normalizeText);
+  return normalized.findIndex((h) => predicates.some((p) => p(h)));
+};
+
+const parseConsumptionNumber = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const digitsOnly = raw.replace(/[^\d]/g, "");
+  return digitsOnly || "";
+};
+
+const looksLikeCompanyName = (value) => {
+  const text = String(value || "").trim();
+  if (!text) return false;
+  const n = normalizeText(text);
+  return (
+    n.startsWith("firma ") ||
+    /(\bgmbh\b|\bag\b|\bug\b|\bkg\b|\bohg\b|\bgbr\b|\be\.?k\b|\bltd\b|\bllc\b|\binc\b)/.test(n)
+  );
+};
+
+const parseZaehlerInfo = (value) => {
+  const text = String(value || "").trim();
+  if (!text) return { zaehlernummer: "", maloId: "" };
+  const maloMatch = text.match(/malo\s*[:=\-]?\s*([a-z0-9\-]+)/i);
+  const zaehlerMatch = text.match(/zaehler|zahler|zaehlernummer|zahlernummer/i)
+    ? text.match(/(?:zaehler|zahler|zaehlernummer|zahlernummer)\s*[:=\-]?\s*([a-z0-9\-\/]+)/i)
+    : text.match(/([a-z0-9\-\/]{6,})/i);
   return {
-    name: headerLower.findIndex(h => h.includes('name') || h.includes('kontakt') || h.includes('person')) ?? -1,
-    firma: headerLower.findIndex(h => h.includes('firma') || h.includes('company') || h.includes('unternehmen')) ?? -1,
-    phone: headerLower.findIndex(h => h.includes('telefon') || h.includes('phone') || h.includes('tel')) ?? -1,
-    email: headerLower.findIndex(h => h.includes('email') || h.includes('mail') || h.includes('e-mail')) ?? -1,
-    plz: headerLower.findIndex(h => h.includes('plz') || h.includes('postleitzahl') || h.includes('zip')) ?? -1,
-    verbrauch: headerLower.findIndex(h => h.includes('verbrauch') || h.includes('kwh') || h.includes('consumption')) ?? -1,
-    stromZaehler: headerLower.findIndex(h => h.includes('strom') && h.includes('zähler')) ?? -1,
-    stromMalo: headerLower.findIndex(h => h.includes('strom') && h.includes('malo')) ?? -1,
-    gasZaehler: headerLower.findIndex(h => h.includes('gas') && h.includes('zähler')) ?? -1,
-    gasMalo: headerLower.findIndex(h => h.includes('gas') && h.includes('malo')) ?? -1,
-    lieferanschrift: headerLower.findIndex(h => h.includes('lieferanschrift') || h.includes('adresse') || h.includes('address')) ?? -1,
-    owner: headerLower.findIndex(h => h.includes('owner') || h.includes('agent') || h.includes('zuständig')) ?? -1,
+    zaehlernummer: zaehlerMatch?.[1] || text,
+    maloId: maloMatch?.[1] || "",
   };
 };
 
-const parseImportRow = (row, cols, allUsers, currentUserEmail) => {
-  const getValue = (idx) => idx >= 0 && row[idx] ? row[idx].trim() : '';
+const detectColumnHeaders = (headers) => ({
+  name: findHeaderIndex(headers, [
+    (h) => h.includes("name"),
+    (h) => h.includes("kontakt"),
+    (h) => h.includes("ansprechpartner"),
+    (h) => h.includes("person"),
+  ]),
+  firma: findHeaderIndex(headers, [
+    (h) => h.includes("firma"),
+    (h) => h.includes("company"),
+    (h) => h.includes("unternehmen"),
+  ]),
+  phone: findHeaderIndex(headers, [
+    (h) => h.includes("telefon"),
+    (h) => h.includes("phone"),
+    (h) => h === "tel",
+    (h) => h.includes("mobil"),
+  ]),
+  email: findHeaderIndex(headers, [
+    (h) => h.includes("email"),
+    (h) => h.includes("e-mail"),
+    (h) => h.includes("mail"),
+  ]),
+  plz: findHeaderIndex(headers, [
+    (h) => h.includes("plz"),
+    (h) => h.includes("postleitzahl"),
+    (h) => h.includes("zip"),
+  ]),
+  verbrauch: findHeaderIndex(headers, [
+    (h) => h.includes("verbrauch"),
+    (h) => h.includes("kwh"),
+    (h) => h.includes("consumption"),
+  ]),
+  stromZaehler: findHeaderIndex(headers, [
+    (h) => h.includes("strom") && (h.includes("zahler") || h.includes("zaehler")),
+  ]),
+  stromMalo: findHeaderIndex(headers, [
+    (h) => h.includes("strom") && h.includes("malo"),
+  ]),
+  gasZaehler: findHeaderIndex(headers, [
+    (h) => h.includes("gas") && (h.includes("zahler") || h.includes("zaehler")),
+  ]),
+  gasMalo: findHeaderIndex(headers, [
+    (h) => h.includes("gas") && h.includes("malo"),
+  ]),
+  energyType: findHeaderIndex(headers, [
+    (h) => h.includes("strom / gas"),
+    (h) => h.includes("energietyp"),
+    (h) => h.includes("energieart"),
+  ]),
+  zaehlerInfos: findHeaderIndex(headers, [
+    (h) => h.includes("zahlerinfo"),
+    (h) => h.includes("zaehlerinfo"),
+    (h) => h.includes("zahlerinfos"),
+    (h) => h.includes("zaehlerinfos"),
+  ]),
+  lieferanschrift: findHeaderIndex(headers, [
+    (h) => h.includes("lieferanschrift"),
+    (h) => h.includes("adresse"),
+    (h) => h.includes("address"),
+  ]),
+  owner: findHeaderIndex(headers, [
+    (h) => h.includes("owner"),
+    (h) => h.includes("agent"),
+    (h) => h.includes("zustandig"),
+    (h) => h.includes("zuständig"),
+  ]),
+});
+
+const buildLeadMergeKey = (lead) => {
+  const phone = String(lead.phone || "").replace(/\D/g, "");
+  if (phone) return `phone:${phone}`;
+  const email = normalizeText(lead.email || "");
+  const person = normalizeText(lead.person || "");
+  const company = normalizeText(lead.company || "");
+  if (email && person) return `emailperson:${email}|${person}`;
+  return `personcompany:${person}|${company}`;
+};
+
+const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
+  const getValue = (idx) => {
+    if (idx < 0 || idx >= row.length) return "";
+    return String(row[idx] ?? "").trim();
+  };
   const extras = {};
-  
-  const name = getValue(cols.name) || getValue(cols.firma) || 'Unbekannt';
-  const firma = getValue(cols.firma) || getValue(cols.name) || '';
-  const phone = getValue(cols.phone) || '';
-  const email = getValue(cols.email) || '';
-  const plz = getValue(cols.plz) || '';
-  const verbrauch = getValue(cols.verbrauch) ? parseInt(getValue(cols.verbrauch)) || 0 : 0;
+
+  const rawName = getValue(cols.name);
+  const rawFirma = getValue(cols.firma);
+  const inferredCompany = !rawFirma && looksLikeCompanyName(rawName) ? rawName : "";
+  const name = inferredCompany ? "" : (rawName || rawFirma || "Unbekannt");
+  const firma = rawFirma || inferredCompany;
+  const phone = getValue(cols.phone);
+  const email = getValue(cols.email);
+  const plz = getValue(cols.plz);
+  const verbrauch = parseConsumptionNumber(getValue(cols.verbrauch));
   const ownerEmail = getValue(cols.owner);
-  
-  // Energy meters
-  const stromZaehler = getValue(cols.stromZaehler);
-  const stromMalo = getValue(cols.stromMalo);
-  const gasZaehler = getValue(cols.gasZaehler);
-  const gasMalo = getValue(cols.gasMalo);
   const lieferanschrift = getValue(cols.lieferanschrift);
-  
+  const energyType = normalizeText(getValue(cols.energyType));
+
   const energy = { strom: [], gas: [] };
-  if (stromZaehler) {
-    energy.strom.push({
-      zählernummer: stromZaehler,
-      maloId: stromMalo || '',
-      lieferanschrift: lieferanschrift || '',
-      kontaktanschrift: ''
+
+  const addMeter = (target, zaehlernummer, maloId = "") => {
+    if (!zaehlernummer) return;
+    energy[target].push({
+      zählernummer: zaehlernummer,
+      maloId: maloId || "",
+      lieferanschrift: lieferanschrift || "",
+      kontaktanschrift: "",
     });
+  };
+
+  addMeter("strom", getValue(cols.stromZaehler), getValue(cols.stromMalo));
+  addMeter("gas", getValue(cols.gasZaehler), getValue(cols.gasMalo));
+
+  const genericZaehler = getValue(cols.zaehlerInfos);
+  if (genericZaehler) {
+    const parsed = parseZaehlerInfo(genericZaehler);
+    if (energyType.includes("strom")) addMeter("strom", parsed.zaehlernummer, parsed.maloId);
+    else if (energyType.includes("gas")) addMeter("gas", parsed.zaehlernummer, parsed.maloId);
+    else extras["zaehlerInfos"] = genericZaehler;
   }
-  if (gasZaehler) {
-    energy.gas.push({
-      zählernummer: gasZaehler,
-      maloId: gasMalo || '',
-      lieferanschrift: lieferanschrift || '',
-      kontaktanschrift: ''
-    });
-  }
-  
-  // Collect unmapped fields as extras
+
+  const mappedIndexes = new Set(Object.values(cols).filter((i) => i >= 0));
   for (let i = 0; i < row.length; i++) {
-    const mapIndex = Object.values(cols).includes(i);
-    if (!mapIndex && row[i]) {
-      const headerName = i < row.length ? `Spalte ${i + 1}` : '';
-      extras[headerName] = row[i];
+    if (!mappedIndexes.has(i) && String(row[i] || "").trim()) {
+      const key = headers[i] ? String(headers[i]).trim() : `Spalte ${i + 1}`;
+      extras[key] = String(row[i]).trim();
     }
   }
-  
+
   return {
     person: name,
     company: firma,
     phone,
     email,
     postalCode: plz,
-    consumption: verbrauch ? verbrauch.toString() : '',
+    consumption: verbrauch,
     energy,
-    status: 'Neu',
+    status: "Neu",
     createdBy: {
-      email: ownerEmail && allUsers.find(u => u.email === ownerEmail) ? ownerEmail : currentUserEmail,
-      timestamp: new Date().toISOString()
+      email: ownerEmail && allUsers.find((u) => u.email === ownerEmail) ? ownerEmail : currentUserEmail,
+      timestamp: new Date().toISOString(),
     },
-    extras: Object.keys(extras).length > 0 ? extras : null
+    extras: Object.keys(extras).length > 0 ? extras : null,
   };
 };
 
+const mergeImportedLeads = (rowsWithLead) => {
+  const map = new Map();
+  rowsWithLead.forEach(({ row, lead }) => {
+    const key = buildLeadMergeKey(lead);
+    if (!map.has(key)) {
+      map.set(key, { rows: [row], lead: { ...lead, energy: { strom: [...lead.energy.strom], gas: [...lead.energy.gas] } } });
+      return;
+    }
+    const current = map.get(key);
+    current.rows.push(row);
+    current.lead.energy.strom.push(...lead.energy.strom);
+    current.lead.energy.gas.push(...lead.energy.gas);
+    current.lead.extras = { ...(current.lead.extras || {}), ...(lead.extras || {}) };
+  });
+  return Array.from(map.values()).map((entry) => ({ row: entry.rows.join(", "), lead: entry.lead }));
+};
+
 const detectDuplicates = (newLead, existingLeads) => {
-  if (newLead.phone) {
-    return existingLeads.find(l => l.phone === newLead.phone);
+  const phone = String(newLead.phone || "").replace(/\D/g, "");
+  if (phone) {
+    const byPhone = existingLeads.find((l) => String(l.phone || "").replace(/\D/g, "") === phone);
+    if (byPhone) return byPhone;
   }
   if (newLead.email && newLead.person) {
-    return existingLeads.find(l => l.email === newLead.email && l.person === newLead.person);
+    return existingLeads.find(
+      (l) => normalizeText(l.email || "") === normalizeText(newLead.email) && normalizeText(l.person || "") === normalizeText(newLead.person)
+    );
   }
   return null;
 };
@@ -1102,7 +1231,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 }
 
 // ─── LeadRow ──────────────────────────────────────────────────────────────────
-function LeadRow({ lead, onSelect, isSelected }) {
+function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked }) {
   const priority = calculatePriority(lead);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
@@ -1119,6 +1248,16 @@ function LeadRow({ lead, onSelect, isSelected }) {
   const deliveryPoints = getTotalDeliveryPoints(lead);
   return (
     <div className={`lead-row ${isSelected ? "selected" : ""}`} onClick={() => onSelect(lead)}>
+      <div className="lead-row-checkbox">
+        <input
+          type="checkbox"
+          checked={isChecked || false}
+          onChange={(e) => {
+            e.stopPropagation();
+            onToggleSelect(lead.id);
+          }}
+        />
+      </div>
       <div className="lead-row-prio">
         <span className={`prio-dot prio-${priority}`} title={`Priorität ${priority}`} />
       </div>
@@ -1906,38 +2045,74 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   const [error, setError] = React.useState('');
   const fileInputRef = React.useRef(null);
 
+  const processTabularData = React.useCallback((rows) => {
+    if (!rows || rows.length < 2) {
+      setError('Datei muss mindestens 1 Kopfzeile + 1 Datenzeile haben');
+      return;
+    }
+
+    const headers = rows[0].map((h) => String(h || '').trim());
+    setCsvData(rows);
+    const cols = detectColumnHeaders(headers);
+    setColumns(cols);
+
+    const parsedRows = [];
+    const dups = [];
+    for (let i = 1; i < rows.length; i++) {
+      if (!rows[i] || rows[i].every((c) => !String(c || '').trim())) continue;
+      const parsed = parseImportRow(rows[i], headers, cols, users, currentUser.email);
+      parsedRows.push({ row: i + 1, lead: parsed });
+    }
+
+    const mergedLeads = mergeImportedLeads(parsedRows);
+    const newLeads = [];
+    mergedLeads.forEach((entry) => {
+      const dup = detectDuplicates(entry.lead, leads);
+      if (dup) dups.push({ row: entry.row, lead: entry.lead, duplicate: dup });
+      else newLeads.push(entry);
+    });
+
+    setParsedLeads(newLeads);
+    setDuplicates(dups);
+    setStep(2);
+  }, [currentUser.email, leads, users]);
+
   const handleFileChange = (e) => {
     const f = e.target.files?.[0];
     if (f) {
       setFile(f);
       setError('');
+      const fileName = String(f.name || '').toLowerCase();
+
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = evt.target?.result;
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.SheetNames[0];
+            if (!firstSheet) {
+              setError('Excel-Datei enthält kein Tabellenblatt.');
+              return;
+            }
+            const worksheet = workbook.Sheets[firstSheet];
+            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+            processTabularData(rows);
+          } catch (err) {
+            setError(`Excel-Parse-Fehler: ${err?.message || 'Unbekannter Fehler'}`);
+          }
+        };
+        reader.onerror = () => setError('Excel-Datei konnte nicht gelesen werden.');
+        reader.readAsArrayBuffer(f);
+        return;
+      }
+
       Papa.parse(f, {
         header: false,
         skipEmptyLines: true,
+        delimiter: "",
         complete: (results) => {
-          if (results.data.length < 2) {
-            setError('CSV muss mindestens 1 Kopfzeile + 1 Datenzeile haben');
-            return;
-          }
-          setCsvData(results.data);
-          const cols = detectColumnHeaders(results.data[0]);
-          setColumns(cols);
-          
-          const newLeads = [];
-          const dups = [];
-          for (let i = 1; i < results.data.length; i++) {
-            if (!results.data[i] || results.data[i].every(c => !c)) continue;
-            const parsed = parseImportRow(results.data[i], cols, users, currentUser.email);
-            const dup = detectDuplicates(parsed, leads);
-            if (dup) {
-              dups.push({ row: i + 1, lead: parsed, duplicate: dup });
-            } else {
-              newLeads.push({ row: i + 1, lead: parsed });
-            }
-          }
-          setParsedLeads(newLeads);
-          setDuplicates(dups);
-          setStep(2);
+          processTabularData(results.data || []);
         },
         error: (error) => setError(`Parse-Fehler: ${error.message}`)
       });
@@ -1975,20 +2150,20 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content import-modal" onClick={e => e.stopPropagation()}>
+    <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal import-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>📥 Lead-Import</h2>
-          <button className="modal-close-btn" onClick={onClose}>✕</button>
+          <button className="drawer-close-btn" onClick={onClose}>✕</button>
         </div>
 
         {step === 1 && (
           <div className="import-step">
-            <p className="step-desc">Lade eine CSV/Excel-Datei mit Kundendaten hoch</p>
+            <p className="step-desc">Lade eine CSV- oder Excel-Datei mit Kundendaten hoch</p>
             <div className="import-upload-zone" onClick={() => fileInputRef.current?.click()}>
               <span className="upload-icon">📄</span>
               <span className="upload-label">{file ? file.name : 'Datei auswählen'}</span>
-              <span className="upload-hint">CSV oder Excel (XLSX)</span>
+              <span className="upload-hint">CSV (; oder ,) oder Excel (.xlsx/.xls)</span>
             </div>
             <input
               ref={fileInputRef}
@@ -2083,6 +2258,7 @@ function App() {
   const [activeTab, setActiveTab] = useState("leads");
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
+  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
   const [viewMode, setViewMode] = useState("list");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -2304,6 +2480,23 @@ function App() {
   const deleteLead = async (id) => {
     try { await deleteDoc(doc(db, "leads", id)); } catch (e) { console.error(e); }
   };
+  const bulkDeleteLeads = async (ids) => {
+    if (userRole !== "admin") {
+      alert("Sie haben keine Berechtigung zum Löschen von Leads.");
+      return;
+    }
+    if (!ids || ids.size === 0) return;
+    const count = ids.size;
+    if (!window.confirm(`${count} Lead(s) wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return;
+    try {
+      const promises = Array.from(ids).map(id => deleteDoc(doc(db, "leads", id)));
+      await Promise.all(promises);
+      setSelectedLeadIds(new Set());
+    } catch (e) { 
+      console.error(e);
+      alert("Fehler beim Löschen der Leads.");
+    }
+  };
   const addLeadAttachment = (leadId, files) => {
     Array.from(files).forEach(file => {
       if (file.size > 10 * 1024 * 1024) return alert(`${file.name} ist zu groß (max 10MB)`);
@@ -2390,6 +2583,11 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
                 <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
+                {userRole === "admin" && selectedLeadIds.size > 0 && (
+                  <button className="danger-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
+                    🗑️ {selectedLeadIds.size} löschen
+                  </button>
+                )}
                 <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
             </div>
@@ -2430,6 +2628,7 @@ function App() {
             {viewMode === "list" ? (
               <div className="leads-table-wrap">
                 <div className="leads-table-header">
+                  <div className="lth-checkbox" />
                   <div className="lth-prio" />
                   <div className="lth-main">Unternehmen / Kontakt</div>
                   <div className="lth-energy">Energie</div>
@@ -2446,7 +2645,15 @@ function App() {
                   </div>
                 ) : (
                   filteredLeads.map(lead => (
-                    <LeadRow key={lead.id} lead={lead} onSelect={l => setSelectedLeadId(l.id)} isSelected={selectedLeadId === lead.id} />
+                    <LeadRow key={lead.id} lead={lead} onSelect={l => setSelectedLeadId(l.id)} isSelected={selectedLeadId === lead.id} onToggleSelect={(id) => {
+                      const newSet = new Set(selectedLeadIds);
+                      if (newSet.has(id)) {
+                        newSet.delete(id);
+                      } else {
+                        newSet.add(id);
+                      }
+                      setSelectedLeadIds(newSet);
+                    }} isChecked={selectedLeadIds.has(lead.id)} />
                   ))
                 )}
               </div>

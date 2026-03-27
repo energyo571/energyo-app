@@ -778,7 +778,7 @@ textarea:focus {
 .leads-table-header,
 .lead-row {
   display: grid;
-  grid-template-columns: 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px minmax(0, 130px) 90px;
+  grid-template-columns: 30px 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px minmax(0, 130px) 90px;
   align-items: center;
   gap: 12px;
 }
@@ -811,6 +811,25 @@ textarea:focus {
 
 .lead-row.selected {
   background: linear-gradient(90deg, rgba(15, 111, 255, 0.08), rgba(255,255,255,0));
+}
+
+.lead-row-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lead-row-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0f6fff;
+}
+
+.lead-row-prio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .prio-dot {
