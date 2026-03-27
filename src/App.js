@@ -1231,7 +1231,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 }
 
 // ─── LeadRow ──────────────────────────────────────────────────────────────────
-function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked }) {
+function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiSelectMode }) {
   const priority = calculatePriority(lead);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
@@ -1247,17 +1247,20 @@ function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked }) {
   const gasCount = getEnergyMeterCount(lead, "gas");
   const deliveryPoints = getTotalDeliveryPoints(lead);
   return (
-    <div className={`lead-row ${isSelected ? "selected" : ""}`} onClick={() => onSelect(lead)}>
-      <div className="lead-row-checkbox">
-        <input
-          type="checkbox"
-          checked={isChecked || false}
-          onChange={(e) => {
-            e.stopPropagation();
-            onToggleSelect(lead.id);
-          }}
-        />
-      </div>
+    <div className={`lead-row ${isSelected ? "selected" : ""}`} onClick={() => !multiSelectMode && onSelect(lead)}>
+      {multiSelectMode && (
+        <div className="lead-row-checkbox">
+          <input
+            type="checkbox"
+            checked={isChecked || false}
+            onChange={(e) => {
+              e.stopPropagation();
+              onToggleSelect(lead.id);
+            }}
+          />
+        </div>
+      )}
+      {!multiSelectMode && <div className="lead-row-checkbox-placeholder" />}
       <div className="lead-row-prio">
         <span className={`prio-dot prio-${priority}`} title={`Priorität ${priority}`} />
       </div>
@@ -2259,6 +2262,7 @@ function App() {
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -2583,10 +2587,23 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
                 <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
-                {userRole === "admin" && selectedLeadIds.size > 0 && (
-                  <button className="danger-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
-                    🗑️ {selectedLeadIds.size} löschen
-                  </button>
+                {!multiSelectMode && userRole === "admin" && (
+                  <button className="danger-btn-outline" onClick={() => setMultiSelectMode(true)}>🗑️ Leads löschen</button>
+                )}
+                {multiSelectMode && (
+                  <>
+                    {selectedLeadIds.size > 0 && (
+                      <button className="danger-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
+                        🗑️ {selectedLeadIds.size} löschen
+                      </button>
+                    )}
+                    <button className="ghost-btn" onClick={() => {
+                      setMultiSelectMode(false);
+                      setSelectedLeadIds(new Set());
+                    }}>
+                      ✕ Abbrechen
+                    </button>
+                  </>
                 )}
                 <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
@@ -2653,7 +2670,7 @@ function App() {
                         newSet.add(id);
                       }
                       setSelectedLeadIds(newSet);
-                    }} isChecked={selectedLeadIds.has(lead.id)} />
+                    }} isChecked={selectedLeadIds.has(lead.id)} multiSelectMode={multiSelectMode} />
                   ))
                 )}
               </div>
