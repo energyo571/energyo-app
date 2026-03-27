@@ -739,20 +739,12 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
 
   const hotLead = filteredLeads.find((lead) => getLeadTemperature(lead).tone === "hot");
   const urgentLead = filteredLeads.find((lead) => isOverdue(lead.followUp) || isTodayDue(lead.followUp));
-  const smartViewLabel = {
-    all: "Alle Leads",
-    mine: "Meine Leads",
-    action: "Action Queue",
-    hot: "Hot Deals",
-    won: "Gewonnen",
-  }[smartView] || "Alle Leads";
 
   return (
     <section className="command-center compact">
       <div className="command-summary-bar">
         <div className="command-summary-head">
           <span className="eyebrow">Sales cockpit</span>
-          <span className="command-summary-focus">Fokus: {smartViewLabel}</span>
         </div>
         <div className="command-summary-metrics">
           <div className="summary-metric-card">
