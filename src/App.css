@@ -495,8 +495,10 @@ button {
 
 .page-title {
   margin: 0;
-  font-size: 30px;
-  letter-spacing: -0.03em;
+  font-size: 27px;
+  letter-spacing: -0.02em;
+  font-weight: 820;
+  color: #15213a;
 }
 
 .lead-count-badge {
@@ -809,7 +811,7 @@ textarea:focus {
 }
 
 .command-center.compact {
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -818,13 +820,13 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 14px;
-  border-radius: 16px;
+  padding: 10px 12px;
+  border-radius: 20px;
   border: 1px solid #d9e5fb;
   background:
     radial-gradient(circle at top right, rgba(15, 111, 255, 0.15), transparent 34%),
     linear-gradient(135deg, #ffffff 0%, #f6f9ff 100%);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 8px 16px rgba(16, 23, 38, 0.05);
 }
 
 .command-summary-head {

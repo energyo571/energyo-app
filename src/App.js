@@ -719,17 +719,12 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
   const [isMobileViewport, setIsMobileViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 820px)").matches : false
   );
-  const [showInsights, setShowInsights] = useState(() =>
-    typeof window !== "undefined" ? !window.matchMedia("(max-width: 820px)").matches : true
-  );
+  const [showInsights, setShowInsights] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(max-width: 820px)");
-    const applyViewportState = (matches) => {
-      setIsMobileViewport(matches);
-      setShowInsights(!matches);
-    };
+    const applyViewportState = (matches) => setIsMobileViewport(matches);
 
     applyViewportState(mediaQuery.matches);
     const onViewportChange = (event) => applyViewportState(event.matches);
