@@ -5,6 +5,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+import logo from "./logo.png";
 import "./LoginPage.css";
 
 export default function LoginPage({ onLogin, user }) {
@@ -81,6 +82,7 @@ export default function LoginPage({ onLogin, user }) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
+          <img src={logo} alt="ENERGYO" className="login-logo" />
           <h1>ENERGYO - Sales Engine</h1>
           <p className="login-subtitle">
             {isSignUp ? "Neuen Account erstellen" : "Anmelden"}
