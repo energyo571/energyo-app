@@ -195,10 +195,10 @@ const looksLikeCompanyName = (value) => {
 const parseZaehlerInfo = (value) => {
   const text = String(value || "").trim();
   if (!text) return { zaehlernummer: "", maloId: "" };
-  const maloMatch = text.match(/malo\s*[:=\-]?\s*([a-z0-9\-]+)/i);
+    const maloMatch = text.match(/malo\s*[:-=]?\s*([a-z0-9-]+)/i);
   const zaehlerMatch = text.match(/zaehler|zahler|zaehlernummer|zahlernummer/i)
-    ? text.match(/(?:zaehler|zahler|zaehlernummer|zahlernummer)\s*[:=\-]?\s*([a-z0-9\-\/]+)/i)
-    : text.match(/([a-z0-9\-\/]{6,})/i);
+      ? text.match(/(?:zaehler|zahler|zaehlernummer|zahlernummer)\s*[:-=]?\s*([a-z0-9-/]+)/i)
+      : text.match(/([a-z0-9-/]{6,})/i);
   return {
     zaehlernummer: zaehlerMatch?.[1] || text,
     maloId: maloMatch?.[1] || "",
@@ -2107,8 +2107,6 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
 function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   const [step, setStep] = React.useState(1);
   const [file, setFile] = React.useState(null);
-  const [csvData, setCsvData] = React.useState([]);
-  const [columns, setColumns] = React.useState(null);
   const [parsedLeads, setParsedLeads] = React.useState([]);
   const [duplicates, setDuplicates] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -2122,9 +2120,7 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
     }
 
     const headers = rows[0].map((h) => String(h || '').trim());
-    setCsvData(rows);
     const cols = detectColumnHeaders(headers);
-    setColumns(cols);
 
     const parsedRows = [];
     const dups = [];
@@ -2209,8 +2205,6 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   const resetModal = () => {
     setStep(1);
     setFile(null);
-    setCsvData([]);
-    setColumns(null);
     setParsedLeads([]);
     setDuplicates([]);
     setError('');
