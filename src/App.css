@@ -295,6 +295,51 @@ button {
   box-shadow: var(--shadow-soft);
 }
 
+.delete-mode-link {
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.delete-mode-link:hover {
+  opacity: 0.8;
+}
+
+.delete-mode-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  height: 36px;
+  background: rgba(220, 53, 69, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.delete-mode-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--danger);
+  white-space: nowrap;
+}
+
+.delete-mode-btn {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.delete-mode-cancel {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 14px;
+}
+}
+
 .toolbar-search {
   width: min(420px, 42vw);
   padding: 13px 16px;

@@ -2573,6 +2573,25 @@ function App() {
               <div className="toolbar-left">
                 <h1 className="page-title">Lead-Pipeline</h1>
                 <span className="lead-count-badge">{filteredLeads.length}</span>
+                {!multiSelectMode && userRole === "admin" && (
+                  <span className="delete-mode-link" onClick={() => setMultiSelectMode(true)}>🗑️ Leads löschen</span>
+                )}
+                {multiSelectMode && (
+                  <div className="delete-mode-info">
+                    <span className="delete-mode-count">{selectedLeadIds.size} ausgewählt</span>
+                    {selectedLeadIds.size > 0 && (
+                      <button className="danger-btn-sm delete-mode-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
+                        Löschen
+                      </button>
+                    )}
+                    <button className="ghost-btn-sm delete-mode-cancel" onClick={() => {
+                      setMultiSelectMode(false);
+                      setSelectedLeadIds(new Set());
+                    }}>
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="toolbar-right">
                 <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
@@ -2587,24 +2606,6 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
                 <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
-                {!multiSelectMode && userRole === "admin" && (
-                  <button className="danger-btn-outline" onClick={() => setMultiSelectMode(true)}>🗑️ Leads löschen</button>
-                )}
-                {multiSelectMode && (
-                  <>
-                    {selectedLeadIds.size > 0 && (
-                      <button className="danger-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
-                        🗑️ {selectedLeadIds.size} löschen
-                      </button>
-                    )}
-                    <button className="ghost-btn" onClick={() => {
-                      setMultiSelectMode(false);
-                      setSelectedLeadIds(new Set());
-                    }}>
-                      ✕ Abbrechen
-                    </button>
-                  </>
-                )}
                 <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
             </div>
