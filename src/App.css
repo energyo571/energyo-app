@@ -201,6 +201,18 @@ button {
   background: rgba(255, 255, 255, 0.06);
 }
 
+.user-avatar-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.user-avatar-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .user-avatar {
   width: 40px;
   height: 40px;
@@ -211,6 +223,13 @@ button {
   font-weight: 800;
   background: linear-gradient(135deg, #2a7dff 0%, #6da8ff 100%);
   color: white;
+  overflow: hidden;
+}
+
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .user-info {
@@ -256,6 +275,28 @@ button {
   background: rgba(147, 197, 253, 0.2);
   border-color: rgba(96, 165, 250, 0.35);
   color: #bfdbfe;
+}
+
+.avatar-upload-link {
+  margin-top: 4px;
+  width: fit-content;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: rgba(244, 247, 251, 0.78);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.avatar-upload-link:hover {
+  color: #ffffff;
+}
+
+.avatar-upload-link:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .sidebar-signout-btn {

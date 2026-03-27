@@ -1970,7 +1970,16 @@ async function acceptInviteLink(token, userId, userEmail) {
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
-function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) {
+function Sidebar({ activeTab, setActiveTab, stats, user, userRole, userProfile, avatarUploading, onAvatarUpload, onSignOut }) {
+  const avatarInputRef = useRef(null);
+  const avatarUrl = userProfile?.avatarDataUrl || "";
+
+  const handleAvatarChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) onAvatarUpload(file);
+    event.target.value = "";
+  };
+
   const navItems = [
     { id: "leads", label: "Lead-Pipeline", icon: "📋" },
     { id: "calendar", label: "Kalender", icon: "🗓️" },
@@ -1996,11 +2005,35 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
       </div>
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <div className="user-avatar">{user.email[0].toUpperCase()}</div>
+          <button
+            type="button"
+            className="user-avatar-btn"
+            onClick={() => avatarInputRef.current?.click()}
+            title="Profilbild ändern"
+            disabled={avatarUploading}
+          >
+            <div className="user-avatar">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Profilbild" className="user-avatar-img" />
+              ) : (
+                user.email[0].toUpperCase()
+              )}
+            </div>
+          </button>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleAvatarChange}
+          />
           <div className="user-info">
             <span className="user-email-short">{user.email.split("@")[0]}</span>
             <span className="user-domain">{user.email.split("@")[1]}</span>
             <span className={`user-role-chip ${userRole === "admin" ? "admin" : "agent"}`}>{userRole === "admin" ? "Admin" : "Agent"}</span>
+            <button type="button" className="avatar-upload-link" onClick={() => avatarInputRef.current?.click()} disabled={avatarUploading}>
+              {avatarUploading ? "Bild wird gespeichert..." : "Profilbild ändern"}
+            </button>
           </div>
         </div>
         <button className="sidebar-signout-btn" onClick={onSignOut}>Abmelden</button>
@@ -2153,6 +2186,8 @@ function BulkActionBar({ selectedCount, onDelete, onCancel, onSelectAll, totalCo
 // ─── App ──────────────────────────────────────────────────────────────────────
 function App() {
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [userRole, setUserRole] = useState("agent");
   const [canAssignAdmins, setCanAssignAdmins] = useState(false);
   const [teamId, setTeamId] = useState(null);
@@ -2207,17 +2242,20 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      if (!currentUser) { setTeamId(null); setTeamMembers([]); setCanAssignAdmins(false); return; }
+      if (!currentUser) { setTeamId(null); setTeamMembers([]); setCanAssignAdmins(false); setUserProfile(null); return; }
       const userRef = doc(db, "users", currentUser.uid);
       try {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists() && userDoc.data().teamId) {
+          setUserProfile(userDoc.data());
           setTeamId(userDoc.data().teamId);
           setUserRole(userDoc.data().role || "admin");
           setCanAssignAdmins(userDoc.data().canAssignAdmins === true);
         } else {
           const newTeamId = `team-${currentUser.uid}`;
-          await setDoc(userRef, { email: currentUser.email, teamId: newTeamId, role: "admin", createdAt: new Date().toISOString(), canAssignAdmins: true }, { merge: true });
+          const newProfile = { email: currentUser.email, teamId: newTeamId, role: "admin", createdAt: new Date().toISOString(), canAssignAdmins: true };
+          await setDoc(userRef, newProfile, { merge: true });
+          setUserProfile(newProfile);
           setTeamId(newTeamId); setUserRole("admin"); setCanAssignAdmins(true);
         }
         const normalizedCurrentEmail = (currentUser.email || "").trim().toLowerCase();
@@ -2241,6 +2279,42 @@ function App() {
     });
     return unsubscribe;
   }, []);
+
+  const uploadUserAvatar = async (file) => {
+    if (!user) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Bitte nur Bilddateien auswählen.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Profilbild ist zu groß (max 2MB).");
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target?.result || "");
+        reader.onerror = () => reject(new Error("Lesefehler beim Bild"));
+        reader.readAsDataURL(file);
+      });
+
+      if (!dataUrl) throw new Error("Ungültiges Bildformat");
+
+      await setDoc(doc(db, "users", user.uid), {
+        avatarDataUrl: dataUrl,
+        avatarUpdatedAt: new Date().toISOString(),
+      }, { merge: true });
+
+      setUserProfile((prev) => ({ ...(prev || {}), avatarDataUrl: dataUrl }));
+    } catch (error) {
+      console.error(error);
+      alert(`Profilbild konnte nicht gespeichert werden. (${error?.message || "Unbekannter Fehler"})`);
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
 
   const loadTeamMembers = useCallback(async () => {
     if (!teamId) return;
@@ -2470,7 +2544,17 @@ function App() {
   return (
     <div className="app-layout">
       {loading && <LeadLoadingOverlay />}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} stats={stats} user={user} userRole={userRole} onSignOut={() => signOut(auth)} />
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        stats={stats}
+        user={user}
+        userRole={userRole}
+        userProfile={userProfile}
+        avatarUploading={avatarUploading}
+        onAvatarUpload={uploadUserAvatar}
+        onSignOut={() => signOut(auth)}
+      />
 
       <div className="main-content">
         {activeTab === "leads" && (
