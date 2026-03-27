@@ -88,6 +88,25 @@ const getClosingRateClass = (rate) => {
   if (rate < 25) return 'kpi-warning';
   return 'kpi-success';
 };
+const USER_CALENDLY_LINKS = {
+  yasin: "https://calendly.com/yasin-oezdemir-energyo",
+};
+const normalizeCalendlyBaseUrl = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+};
+const resolveUserCalendlyBaseUrl = (currentUserEmail, ownerEmail) => {
+  const emailCandidates = [currentUserEmail, ownerEmail]
+    .map((email) => String(email || "").trim().toLowerCase())
+    .filter(Boolean);
+
+  for (const email of emailCandidates) {
+    if (email.includes("yasin")) return USER_CALENDLY_LINKS.yasin;
+  }
+
+  return normalizeCalendlyBaseUrl(process.env.REACT_APP_CALENDLY_URL || "");
+};
 const getLeadOwnerEmail = (lead) => lead.ownerEmail || lead.createdBy?.email || "Nicht zugewiesen";
 const getEnergyMeters = (lead, energyType) => {
   const raw = lead?.energy?.[energyType];
@@ -377,7 +396,7 @@ Lead-Informationen:
 }
 
 // ─── NEW: Terminierungs-Modal mit Kalender-Sync ───────────────────────────────
-function AppointmentModal({ lead, onClose, onSave }) {
+function AppointmentModal({ lead, onClose, onSave, currentUserEmail }) {
   const [date, setDate] = useState(lead.appointmentDate || "");
   const [time, setTime] = useState(lead.appointmentTime || "10:00");
   const [title, setTitle] = useState(`Kundengespräch – ${lead.company || lead.person}`);
@@ -424,9 +443,8 @@ function AppointmentModal({ lead, onClose, onSave }) {
   };
 
   const buildCalendlyUrl = () => {
-    const rawBase = (process.env.REACT_APP_CALENDLY_URL || "calendly.com/yasin-oezdemir-energyo").trim();
-    if (!rawBase) return null;
-    const base = /^https?:\/\//i.test(rawBase) ? rawBase : `https://${rawBase}`;
+    const base = resolveUserCalendlyBaseUrl(currentUserEmail, getLeadOwnerEmail(lead));
+    if (!base) return null;
     const params = new URLSearchParams();
     if (lead.person) params.set("name", lead.person);
     if (lead.email) params.set("email", lead.email);
@@ -1216,6 +1234,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
       {showAppointmentModal && (
         <AppointmentModal
           lead={lead}
+          currentUserEmail={user?.email || ""}
           onClose={() => setShowAppointmentModal(false)}
           onSave={handleSaveAppointment}
         />
