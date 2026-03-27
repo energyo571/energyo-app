@@ -1301,14 +1301,14 @@ textarea:focus {
   display: grid;
   grid-template-columns: 28px 24px minmax(230px, 2.2fr) 106px minmax(190px, 1.5fr) 108px 88px 110px 92px;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .leads-table-header {
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: #f7f9fd;
   color: var(--text-soft);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1325,7 +1325,7 @@ textarea:focus {
 }
 
 .lead-row {
-  padding: 7px 14px;
+  padding: 5px 12px;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
   transition: background 150ms ease;
@@ -1383,27 +1383,27 @@ textarea:focus {
 .prio-C { background: #adb5bd; }
 
 .lead-row-company {
-  font-weight: 800;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 12px;
   color: var(--text);
-  margin-bottom: 1px;
+  margin-bottom: 0;
 }
 
 .lead-row-sub,
 .no-company {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-soft);
 }
 
 .lead-row-owner {
-  margin-top: 1px;
-  font-size: 10px;
+  margin-top: 0;
+  font-size: 9px;
   color: #8a94a8;
 }
 
 .lead-row-energy {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
   align-items: center;
   min-width: 0;
@@ -1412,10 +1412,10 @@ textarea:focus {
 .energy-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
+  gap: 3px;
+  padding: 1px 5px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -1449,7 +1449,7 @@ textarea:focus {
 .lead-row-health {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .health-pill,
@@ -1457,9 +1457,9 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
-  padding: 3px 7px;
+  padding: 2px 6px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -1495,16 +1495,16 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 7px;
+  padding: 3px 6px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
 }
 
 .lead-row-umsatz,
 .lead-row-followup,
 .lead-row-activity {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
 }
 
@@ -1529,9 +1529,9 @@ textarea:focus {
 .followup-chip {
   display: inline-block;
   max-width: 100%;
-  padding: 3px 6px;
+  padding: 2px 5px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
   line-height: 1.15;
   white-space: nowrap;
@@ -1548,18 +1548,19 @@ textarea:focus {
 }
 
 .activity-count {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: #edf2ff;
   color: var(--primary-deep);
+  font-size: 11px;
 }
 
 .last-activity-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-soft);
   font-weight: 700;
 }
