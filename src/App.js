@@ -436,12 +436,13 @@ function InlineField({ label, value, onSave, type = "text", options = null, rend
 }
 
 // ─── ActivityItem ─────────────────────────────────────────────────────────────
-function ActivityItem({ item }) {
+function ActivityItem({ item, currentUser, onEditComment, onDeleteComment }) {
   const cfg = {
     comment: { icon: "💬", cls: "act-comment" },
     call:    { icon: "📞", cls: "act-call" },
     status:  { icon: "🔄", cls: "act-status" },
   }[item.type] || { icon: "📝", cls: "act-comment" };
+  const isOwnComment = currentUser?.email === item.author && item.type === "comment";
   return (
     <div className={`activity-item ${cfg.cls}`}>
       <div className="activity-icon-wrap"><span>{cfg.icon}</span></div>
@@ -449,8 +450,18 @@ function ActivityItem({ item }) {
         <div className="activity-meta">
           <span className="activity-author">{item.author || "System"}</span>
           <span className="activity-time">{formatDateTime(item.timestamp)}</span>
+          {isOwnComment && (
+            <div className="activity-actions">
+              <button className="activity-action-btn edit" onClick={() => onEditComment(item)} title="Bearbeiten">✎</button>
+              <button className="activity-action-btn delete" onClick={() => onDeleteComment(item)} title="Löschen">🗑️</button>
+            </div>
+          )}
         </div>
-        {item.type === "comment" && <p className="activity-text">{item.text}</p>}
+        {item.type === "comment" && (
+          <p className="activity-text activity-text-clickable" onClick={() => isOwnComment && onEditComment(item)}>
+            {item.text}
+          </p>
+        )}
         {item.type === "call" && (
           <div className="call-log-display">
             <span className="call-outcome-badge">{item.outcome}</span>
@@ -564,6 +575,8 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
   const [saving, setSaving] = useState(false);
   const [previewAttachment, setPreviewAttachment] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [editCommentId, setEditCommentId] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
 
   const priority = calculatePriority(lead);
   const umsatz = calculateUmsatzPotential(lead.consumption);
@@ -792,7 +805,23 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
               {timeline.length === 0 ? (
                 <p className="empty-timeline">Noch keine Aktivitäten. Füge eine Notiz hinzu oder protokolliere einen Anruf.</p>
               ) : (
-                timeline.map((item, idx) => <ActivityItem key={idx} item={item} />)
+                timeline.map((item, idx) => (
+                  <ActivityItem 
+                    key={idx} 
+                    item={item}
+                    currentUser={user}
+                    onEditComment={(cmt) => {
+                      setEditCommentId(cmt.timestamp);
+                      setEditCommentText(cmt.text);
+                    }}
+                    onDeleteComment={(cmt) => {
+                      if (window.confirm("Kommentar löschen?")) {
+                        const updated = lead.comments.filter((c) => c.timestamp !== cmt.timestamp);
+                        onUpdateField(lead.id, "comments", updated);
+                      }
+                    }}
+                  />
+                ))
               )}
             </div>
           </div>
@@ -938,6 +967,44 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
             ) : (
               <p className="empty-timeline">Keine Anhänge vorhanden.</p>
             )}
+          </div>
+        )}
+
+        {/* Edit Comment Modal */}
+        {editCommentId && (
+          <div className="modal-backdrop" onClick={() => setEditCommentId(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Kommentar bearbeiten</h2>
+                <button className="drawer-close-btn" onClick={() => setEditCommentId(null)}>✕</button>
+              </div>
+              <div className="modal-body">
+                <textarea
+                  value={editCommentText}
+                  onChange={(e) => setEditCommentText(e.target.value)}
+                  rows={4}
+                  placeholder="Kommentartext..."
+                  className="comment-edit-textarea"
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    const updated = lead.comments.map((c) =>
+                      c.timestamp === editCommentId ? { ...c, text: editCommentText } : c
+                    );
+                    onUpdateField(lead.id, "comments", updated);
+                    setEditCommentId(null);
+                    setEditCommentText("");
+                  }}
+                  disabled={!editCommentText.trim()}
+                >
+                  Speichern
+                </button>
+                <button className="ghost-btn" onClick={() => setEditCommentId(null)}>Abbrechen</button>
+              </div>
+            </div>
           </div>
         )}
 
