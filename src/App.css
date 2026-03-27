@@ -1235,7 +1235,7 @@ textarea:focus {
 .leads-table-header,
 .lead-row {
   display: grid;
-  grid-template-columns: 30px 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px minmax(0, 130px) 90px;
+  grid-template-columns: 28px 24px minmax(230px, 2.2fr) 106px minmax(190px, 1.5fr) 108px 88px 110px 92px;
   align-items: center;
   gap: 8px;
 }
@@ -1252,6 +1252,12 @@ textarea:focus {
   position: sticky;
   top: 0;
   z-index: 2;
+}
+
+.lth-followup,
+.lth-activity {
+  white-space: nowrap;
+  text-align: center;
 }
 
 .lead-row {
@@ -1416,8 +1422,9 @@ textarea:focus {
 .lead-row-activity {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
 }
 
 .status-chip {
@@ -1442,15 +1449,17 @@ textarea:focus {
   overflow: hidden;
   display: flex;
   align-items: center;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  justify-content: center;
+  white-space: nowrap;
   line-height: 1.25;
 }
 
 .lead-row-followup span {
   display: inline-block;
   max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .followup-chip {
@@ -1464,7 +1473,7 @@ textarea:focus {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  hyphens: auto;
+  hyphens: none;
 }
 
 .followup-chip.cancellation {
