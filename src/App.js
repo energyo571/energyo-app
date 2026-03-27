@@ -90,6 +90,7 @@ const getClosingRateClass = (rate) => {
 };
 const USER_CALENDLY_LINKS_BY_EMAIL = {
   "y.oezdemir@energyo.de": "https://calendly.com/yasin-oezdemir-energyo",
+  "o.balcioglu@energyo.de": "https://calendly.com/energyobalcioglu",
 };
 const normalizeCalendlyBaseUrl = (value) => {
   const raw = String(value || "").trim();
