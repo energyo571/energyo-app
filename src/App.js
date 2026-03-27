@@ -80,6 +80,16 @@ const formatDateTime = (d) => {
 
 const getLeadOwnerEmail = (lead) => lead.ownerEmail || lead.createdBy?.email || "Nicht zugewiesen";
 
+const getEnergyMeters = (lead, energyType) => {
+  const raw = lead?.energy?.[energyType];
+  if (Array.isArray(raw)) return raw.filter((m) => m?.zählernummer);
+  if (raw?.zählernummer) return [raw];
+  return [];
+};
+
+const getEnergyMeterCount = (lead, energyType) => getEnergyMeters(lead, energyType).length;
+const getTotalDeliveryPoints = (lead) => getEnergyMeterCount(lead, "strom") + getEnergyMeterCount(lead, "gas");
+
 const getLeadActivityCount = (lead) =>
   (lead.comments?.length || 0) + (lead.callLogs?.length || 0) + (lead.statusHistory?.length || 0);
 
@@ -223,7 +233,7 @@ function ActivityItem({ item }) {
   );
 }
 
-function CommandCenter({ stats, filteredLeads, smartView, setSmartView }) {
+function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFocus }) {
   const hotLead = filteredLeads.find((lead) => getLeadTemperature(lead).tone === "hot");
   const urgentLead = filteredLeads.find((lead) => isOverdue(lead.followUp) || isTodayDue(lead.followUp));
 
@@ -232,10 +242,9 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView }) {
       <div className="command-hero">
         <div>
           <span className="eyebrow">Sales cockpit</span>
-          <h2>Fokus statt Formularwüste</h2>
+          <h2>Fokus statt Hokus-Pokus</h2>
           <p>
-            Pipeline, nächste Aktion und Umsatzpotenzial auf einen Blick. So fühlt sich das näher an einem echten
-            Operator-CRM an statt an einer Leadliste.
+            Klar arbeiten, sauber nachfassen, verlässlich abschließen.
           </p>
         </div>
         <div className="command-hero-metrics">
@@ -265,7 +274,10 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView }) {
           <button
             key={item.id}
             className={`smart-view-chip ${smartView === item.id ? "active" : ""}`}
-            onClick={() => setSmartView(item.id)}
+            onClick={() => {
+              setSmartView(item.id);
+              setKpiFocus("all");
+            }}
           >
             {item.label}
           </button>
@@ -953,6 +965,9 @@ function LeadRow({ lead, onSelect, isSelected }) {
   const nextAction = getNextAction(lead);
   const owner = getLeadOwnerEmail(lead);
   const lastActivityAt = getLastActivityTimestamp(lead);
+  const stromCount = getEnergyMeterCount(lead, "strom");
+  const gasCount = getEnergyMeterCount(lead, "gas");
+  const deliveryPoints = getTotalDeliveryPoints(lead);
   return (
     <div className={`lead-row ${isSelected ? "selected" : ""}`} onClick={() => onSelect(lead)}>
       <div className="lead-row-prio">
@@ -964,9 +979,13 @@ function LeadRow({ lead, onSelect, isSelected }) {
         <div className="lead-row-owner">Owner: {owner}</div>
       </div>
       <div className="lead-row-energy">
-        {lead.energy?.strom?.length > 0 && lead.energy.strom.some(m => m.zählernummer) && <span className="energy-badge strom">🔌 Strom</span>}
-        {lead.energy?.gas?.length > 0 && lead.energy.gas.some(m => m.zählernummer) && <span className="energy-badge gas">🔥 Gas</span>}
-        {lead.bundleInquiry && <span className="energy-badge multiple">📍 Mehrere</span>}
+        {stromCount > 0 && <span className="energy-badge strom">🔌 Strom x{stromCount}</span>}
+        {gasCount > 0 && <span className="energy-badge gas">🔥 Gas x{gasCount}</span>}
+        {deliveryPoints > 0 && (
+          <span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>
+            📍 {deliveryPoints} Lieferstellen
+          </span>
+        )}
       </div>
       <div className="lead-row-health">
         <span className={`health-pill ${temperature.tone}`}>{temperature.label}</span>
@@ -981,7 +1000,11 @@ function LeadRow({ lead, onSelect, isSelected }) {
           <span className={isOverdueNow ? "date-overdue" : isTodayNow ? "date-today" : ""}>
             {formatDate(lead.followUp)}
           </span>
-        ) : hasCancellationWindow ? "Kündigungsfenster" : "—"}
+        ) : hasCancellationWindow ? (
+          <span className="followup-chip cancellation" title="Kündigungsfenster offen">
+            Künd.-Fenster
+          </span>
+        ) : "—"}
       </div>
       <div className="lead-row-activity">
         <span className="activity-count">{activityCount}</span>
@@ -1011,6 +1034,9 @@ function KanbanBoard({ leads, onSelectLead }) {
             <div className="kanban-cards">
               {col.map(lead => {
                 const p = calculatePriority(lead);
+                const stromCount = getEnergyMeterCount(lead, "strom");
+                const gasCount = getEnergyMeterCount(lead, "gas");
+                const deliveryPoints = getTotalDeliveryPoints(lead);
                 return (
                   <div key={lead.id} className={`kanban-card prio-border-${p}`} onClick={() => onSelectLead(lead)}>
                     <div className="kanban-card-header">
@@ -1018,6 +1044,15 @@ function KanbanBoard({ leads, onSelectLead }) {
                       <span className={`prio-dot prio-${p}`} />
                     </div>
                     <div className="kanban-person">{lead.person}</div>
+                    <div className="kanban-energy">
+                      {stromCount > 0 && <span className="energy-badge strom">🔌 x{stromCount}</span>}
+                      {gasCount > 0 && <span className="energy-badge gas">🔥 x{gasCount}</span>}
+                      {deliveryPoints > 0 && (
+                        <span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>
+                          📍 {deliveryPoints}
+                        </span>
+                      )}
+                    </div>
                     <div className="kanban-card-footer">
                       <span className="kanban-umsatz-chip">€{calculateUmsatzPotential(lead.consumption).toFixed(0)}</span>
                       <div className="kanban-flags">
@@ -1718,6 +1753,27 @@ function App() {
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [smartView, setSmartView] = useState("all");
   const [sortMode, setSortMode] = useState("priority");
+  const [kpiFocus, setKpiFocus] = useState("all");
+
+  const applyKpiFocus = (focus) => {
+    setKpiFocus(focus);
+    if (focus === "overdue" || focus === "today") {
+      setSortMode("followUp");
+      setSmartView("action");
+      return;
+    }
+    if (focus === "cancellation" || focus === "priorityA") {
+      setSortMode("priority");
+      setSmartView("all");
+      return;
+    }
+    if (focus === "won") {
+      setSortMode("activity");
+      setSmartView("won");
+      return;
+    }
+    setSmartView("all");
+  };
 
   const selectedLead = useMemo(() => leads.find(l => l.id === selectedLeadId) || null, [leads, selectedLeadId]);
 
@@ -1915,10 +1971,15 @@ function App() {
         if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
         if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
         if (smartView === "won" && l.status !== "Gewonnen") return false;
+        if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
+        if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
+        if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
+        if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
+        if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
         return true;
       });
     return sortLeads(visibleLeads, sortMode);
-  }, [leads, searchTerm, filterPriority, filterStatus, filterCancellation, smartView, sortMode, user]);
+  }, [leads, searchTerm, filterPriority, filterStatus, filterCancellation, smartView, sortMode, user, kpiFocus]);
 
   const stats = useMemo(() => ({
     totalLeads: leads.length,
@@ -1962,7 +2023,7 @@ function App() {
               </div>
             </div>
 
-            <CommandCenter stats={stats} filteredLeads={filteredLeads} smartView={smartView} setSmartView={setSmartView} />
+            <CommandCenter stats={stats} filteredLeads={filteredLeads} smartView={smartView} setSmartView={setSmartView} setKpiFocus={setKpiFocus} />
 
             <div className="filter-bar">
               <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
@@ -1977,15 +2038,20 @@ function App() {
                 <option value="all">Kündigungsfenster: Alle</option>
                 <option value="open">Fenster offen</option><option value="closed">Fenster geschlossen</option>
               </select>
+              {kpiFocus !== "all" && (
+                <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>
+                  KPI-Fokus zurücksetzen
+                </button>
+              )}
               <span className="filter-result-count">{filteredLeads.length} von {leads.length} Leads</span>
             </div>
 
             <div className="kpi-strip">
-              <div className="kpi-item kpi-warning"><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></div>
-              <div className="kpi-item kpi-today"><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></div>
-              <div className="kpi-item kpi-alert"><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></div>
-              <div className="kpi-item kpi-prio"><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Priorität A</span></div>
-              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></div>
+              <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
+              <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
+              <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
+              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Priorität A</span></button>
+              <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
               <div className="kpi-item"><span className="kpi-val">{stats.closingRate}%</span><span className="kpi-label">Abschlussquote</span></div>
               <div className="kpi-item kpi-umsatz"><span className="kpi-val">€{stats.totalUmsatzPotential.toFixed(0)}</span><span className="kpi-label">Umsatzpotential</span></div>
             </div>
