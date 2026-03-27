@@ -894,7 +894,7 @@ textarea:focus {
 }
 
 .compact-grid {
-  gap: 10px;
+  gap: 8px;
 }
 
 .mobile-sheet {
@@ -992,18 +992,18 @@ textarea:focus {
 .command-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .command-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.86);
   border: 1px solid var(--line-soft);
-  border-radius: 20px;
-  padding: 18px 18px 16px;
-  box-shadow: var(--shadow-soft);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 6px 14px rgba(16, 23, 38, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .command-card.emphasize {
@@ -1014,7 +1014,7 @@ textarea:focus {
 
 .command-card-label,
 .command-card-meta {
-  font-size: 12px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 800;
@@ -1027,12 +1027,13 @@ textarea:focus {
 }
 
 .command-card strong {
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .command-card p {
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.35;
+  font-size: 13px;
 }
 
 .command-card.emphasize .command-card-label,
@@ -1135,9 +1136,10 @@ textarea:focus {
 }
 
 .kpi-action-btn.create {
-  border-color: #bfe5cf;
-  color: #0f6a3c;
-  background: linear-gradient(135deg, #e8f8ef 0%, #f5fcf8 100%);
+  border-color: #43b975;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1f9f5d 0%, #147c45 100%);
+  box-shadow: 0 8px 18px rgba(20, 124, 69, 0.25);
 }
 
 .kpi-action-btn:hover {
