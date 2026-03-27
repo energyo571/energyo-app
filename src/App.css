@@ -781,21 +781,22 @@ textarea:focus {
 .filter-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .filter-select-inline {
-  min-width: 180px;
-  padding: 12px 14px;
-  border-radius: 12px;
+  min-width: 148px;
+  padding: 8px 10px;
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--surface);
+  font-size: 13px;
 }
 
 .filter-select-inline.compact {
-  min-width: 220px;
+  min-width: 180px;
 }
 
 .command-center {
@@ -1223,11 +1224,11 @@ textarea:focus {
 }
 
 .leads-table-wrap {
-  background: rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--line-soft);
-  border-radius: 22px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
   backdrop-filter: blur(14px);
 }
 
@@ -1236,14 +1237,14 @@ textarea:focus {
   display: grid;
   grid-template-columns: 30px 26px minmax(250px, 2.2fr) 110px minmax(220px, 1.6fr) 140px 120px minmax(0, 130px) 90px;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .leads-table-header {
-  padding: 14px 16px;
+  padding: 10px 14px;
   background: #f7f9fd;
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1254,7 +1255,7 @@ textarea:focus {
 }
 
 .lead-row {
-  padding: 11px 16px;
+  padding: 7px 14px;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
   transition: background 150ms ease;
@@ -1265,7 +1266,7 @@ textarea:focus {
 }
 
 .lead-row:hover {
-  background: #f8fbff;
+  background: #fbfdff;
 }
 
 .lead-row.selected {
@@ -1313,19 +1314,20 @@ textarea:focus {
 
 .lead-row-company {
   font-weight: 800;
+  font-size: 13px;
   color: var(--text);
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .lead-row-sub,
 .no-company {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-soft);
 }
 
 .lead-row-owner {
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: 1px;
+  font-size: 10px;
   color: #8a94a8;
 }
 
@@ -1341,9 +1343,9 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 7px;
+  padding: 2px 6px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -1377,7 +1379,7 @@ textarea:focus {
 .lead-row-health {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .health-pill,
@@ -1385,14 +1387,15 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
-  padding: 5px 8px;
+  padding: 3px 7px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .health-pill.hot { background: #ffe3d8; color: #c2410c; }
@@ -1421,16 +1424,16 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 8px;
+  padding: 4px 7px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
 }
 
 .lead-row-umsatz,
 .lead-row-followup,
 .lead-row-activity {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -1453,14 +1456,14 @@ textarea:focus {
 .followup-chip {
   display: inline-block;
   max-width: 100%;
-  padding: 4px 7px;
+  padding: 3px 6px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   line-height: 1.15;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   hyphens: auto;
 }
 
