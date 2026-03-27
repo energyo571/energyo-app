@@ -88,8 +88,8 @@ const getClosingRateClass = (rate) => {
   if (rate < 25) return 'kpi-warning';
   return 'kpi-success';
 };
-const USER_CALENDLY_LINKS = {
-  yasin: "https://calendly.com/yasin-oezdemir-energyo",
+const USER_CALENDLY_LINKS_BY_EMAIL = {
+  "y.oezdemir@energyo.de": "https://calendly.com/yasin-oezdemir-energyo",
 };
 const normalizeCalendlyBaseUrl = (value) => {
   const raw = String(value || "").trim();
@@ -102,7 +102,7 @@ const resolveUserCalendlyBaseUrl = (currentUserEmail, ownerEmail) => {
     .filter(Boolean);
 
   for (const email of emailCandidates) {
-    if (email.includes("yasin")) return USER_CALENDLY_LINKS.yasin;
+    if (USER_CALENDLY_LINKS_BY_EMAIL[email]) return USER_CALENDLY_LINKS_BY_EMAIL[email];
   }
 
   return normalizeCalendlyBaseUrl(process.env.REACT_APP_CALENDLY_URL || "");
