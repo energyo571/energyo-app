@@ -15,8 +15,8 @@
   --danger: #c92a2a;
   --warning: #d97706;
   --today: #7c3aed;
-  --shadow: 0 24px 48px rgba(16, 23, 38, 0.08);
-  --shadow-soft: 0 12px 32px rgba(16, 23, 38, 0.06);
+  --shadow: none;
+  --shadow-soft: none;
 }
 
 * {
@@ -78,7 +78,35 @@ button {
   width: 164px;
   height: auto;
   object-fit: contain;
-  filter: brightness(1.1) drop-shadow(0 8px 24px rgba(15, 111, 255, 0.3));
+  filter: brightness(1.06);
+}
+
+/* Flat platform look: remove decorative elevation shadows globally. */
+.lead-count-badge,
+.new-lead-btn,
+.primary-btn-modal,
+.primary-btn-sm,
+.primary-btn,
+.command-summary-bar,
+.summary-metric-card,
+.smart-view-chip.active,
+.command-card,
+.kpi-item,
+.kpi-action-btn,
+.kpi-action-btn.create,
+.bulk-action-bar,
+.leads-table-wrap,
+.card,
+.kanban-col,
+.kanban-card,
+.kanban-card:hover,
+.drawer,
+.modal,
+.new-lead-modal,
+.preview-modal,
+.confirm-modal,
+.lead-loading-content {
+  box-shadow: none !important;
 }
 
 .sidebar-nav {
