@@ -716,32 +716,64 @@ function ActivityItem({ item, onEdit, onDelete, canEdit }) {
 }
 
 function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFocus }) {
+  const [isMobileViewport, setIsMobileViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 820px)").matches : false
+  );
+  const [showInsights, setShowInsights] = useState(() =>
+    typeof window !== "undefined" ? !window.matchMedia("(max-width: 820px)").matches : true
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 820px)");
+    const applyViewportState = (matches) => {
+      setIsMobileViewport(matches);
+      setShowInsights(!matches);
+    };
+
+    applyViewportState(mediaQuery.matches);
+    const onViewportChange = (event) => applyViewportState(event.matches);
+    mediaQuery.addEventListener("change", onViewportChange);
+    return () => mediaQuery.removeEventListener("change", onViewportChange);
+  }, []);
+
   const hotLead = filteredLeads.find((lead) => getLeadTemperature(lead).tone === "hot");
   const urgentLead = filteredLeads.find((lead) => isOverdue(lead.followUp) || isTodayDue(lead.followUp));
+  const smartViewLabel = {
+    all: "Alle Leads",
+    mine: "Meine Leads",
+    action: "Action Queue",
+    hot: "Hot Deals",
+    won: "Gewonnen",
+  }[smartView] || "Alle Leads";
+
   return (
-    <section className="command-center">
-      <div className="command-hero">
-        <div>
+    <section className="command-center compact">
+      <div className="command-summary-bar">
+        <div className="command-summary-head">
           <span className="eyebrow">Sales cockpit</span>
-          <h2>Fokus statt Hokus-Pokus</h2>
-          <p>Klar arbeiten, sauber nachfassen, verlässlich abschließen.</p>
+          <span className="command-summary-focus">Fokus: {smartViewLabel}</span>
         </div>
-        <div className="command-hero-metrics">
-          <div className="hero-metric-card">
+        <div className="command-summary-metrics">
+          <div className="summary-metric-card">
             <strong>{stats.overdue + stats.dueToday}</strong>
-            <span>Action Queue</span>
+            <span>Action</span>
           </div>
-          <div className="hero-metric-card">
+          <div className="summary-metric-card">
+            <strong>{stats.priorityA}</strong>
+            <span>Hot</span>
+          </div>
+          <div className="summary-metric-card">
             <strong className="kpi-success">{formatEuro(stats.totalUmsatzPotential)}</strong>
-            <span>Offenes Potenzial</span>
+            <span>Potenzial</span>
           </div>
-          <div className="hero-metric-card">
-            <strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong>
-            <span>Closing rate</span>
-          </div>
+          <button className="command-insights-toggle" onClick={() => setShowInsights((v) => !v)}>
+            {showInsights ? "Insights ausblenden" : "Mehr Insights"}
+          </button>
         </div>
       </div>
-      <div className="smart-view-bar">
+
+      <div className="smart-view-bar sticky-smart-view">
         {[
           { id: "all", label: "Alle Leads" },
           { id: "mine", label: "Meine Leads" },
@@ -758,7 +790,9 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
           </button>
         ))}
       </div>
-      <div className="command-grid">
+
+      {showInsights && (
+      <div className={`command-grid compact-grid ${isMobileViewport ? "mobile-sheet" : ""}`}>
         <div className="command-card">
           <span className="command-card-label">Nächster kritischer Lead</span>
           {urgentLead ? (
@@ -786,6 +820,7 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
           <span className="command-card-meta">Arbeite diese zuerst, bevor du neue Kaltleads ansprichst.</span>
         </div>
       </div>
+      )}
     </section>
   );
 }
