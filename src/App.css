@@ -502,18 +502,19 @@ button {
 }
 
 .lead-count-badge {
-  min-width: 36px;
-  height: 36px;
-  padding: 0 12px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: var(--shadow-soft);
+  background: linear-gradient(135deg, #0f6fff 0%, #084cbb 100%);
+  border: 1px solid rgba(15, 111, 255, 0.35);
+  font-size: 15px;
+  font-weight: 900;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(15, 111, 255, 0.28);
 }
 
 .delete-mode-link {
@@ -561,13 +562,13 @@ button {
 }
 
 .toolbar-search {
-  width: min(420px, 42vw);
-  padding: 10px 12px;
-  border-radius: 11px;
+  width: 180px;
+  padding: 8px 10px;
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.8);
   box-shadow: none;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .eyebrow {
