@@ -505,6 +505,7 @@ button {
   min-width: 42px;
   height: 42px;
   padding: 0 14px;
+  margin-left: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -514,7 +515,7 @@ button {
   font-size: 15px;
   font-weight: 900;
   color: #ffffff;
-  box-shadow: 0 10px 20px rgba(15, 111, 255, 0.28);
+  box-shadow: 0 4px 10px rgba(15, 111, 255, 0.16);
 }
 
 .delete-mode-link {
