@@ -32,12 +32,8 @@ const initialForm = {
   bundleInquiry: false, followUp: "", attachments: [],
   energyType: "strom",
   energy: {
-    strom: [
-      { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }
-    ],
-    gas: [
-      { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }
-    ],
+    strom: [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
+    gas:   [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
   },
 };
 
@@ -92,22 +88,17 @@ const getClosingRateClass = (rate) => {
   if (rate < 25) return 'kpi-warning';
   return 'kpi-success';
 };
-
 const getLeadOwnerEmail = (lead) => lead.ownerEmail || lead.createdBy?.email || "Nicht zugewiesen";
-
 const getEnergyMeters = (lead, energyType) => {
   const raw = lead?.energy?.[energyType];
   if (Array.isArray(raw)) return raw.filter((m) => m?.zählernummer);
   if (raw?.zählernummer) return [raw];
   return [];
 };
-
 const getEnergyMeterCount = (lead, energyType) => getEnergyMeters(lead, energyType).length;
 const getTotalDeliveryPoints = (lead) => getEnergyMeterCount(lead, "strom") + getEnergyMeterCount(lead, "gas");
-
 const getLeadActivityCount = (lead) =>
   (lead.comments?.length || 0) + (lead.callLogs?.length || 0) + (lead.statusHistory?.length || 0);
-
 const getLastActivityTimestamp = (lead) => {
   const timestamps = [lead.createdAt];
   (lead.comments || []).forEach((item) => timestamps.push(item.timestamp));
@@ -115,7 +106,6 @@ const getLastActivityTimestamp = (lead) => {
   (lead.statusHistory || []).forEach((item) => timestamps.push(item.timestamp));
   return timestamps.filter(Boolean).sort((a, b) => new Date(b) - new Date(a))[0] || null;
 };
-
 const getLeadTemperature = (lead) => {
   if (lead.status === "Gewonnen") return { label: "Won", tone: "won" };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost" };
@@ -124,7 +114,6 @@ const getLeadTemperature = (lead) => {
   if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "Warm", tone: "warm" };
   return { label: "Cold", tone: "cold" };
 };
-
 const getNextAction = (lead) => {
   if (lead.status === "Gewonnen") return { label: "Abschluss sichern", tone: "success" };
   if (lead.status === "Verloren") return { label: "Archiv prüfen", tone: "muted" };
@@ -135,15 +124,10 @@ const getNextAction = (lead) => {
   if (lead.status === "Angebot") return { label: "Angebot nachhalten", tone: "warm" };
   return { label: "Nächsten Touchpoint planen", tone: "default" };
 };
-
 const sortLeads = (items, sortMode) => {
   const sorted = [...items];
-  if (sortMode === "potential") {
-    return sorted.sort((a, b) => calculateUmsatzPotential(b.consumption) - calculateUmsatzPotential(a.consumption));
-  }
-  if (sortMode === "activity") {
-    return sorted.sort((a, b) => new Date(getLastActivityTimestamp(b) || 0) - new Date(getLastActivityTimestamp(a) || 0));
-  }
+  if (sortMode === "potential") return sorted.sort((a, b) => calculateUmsatzPotential(b.consumption) - calculateUmsatzPotential(a.consumption));
+  if (sortMode === "activity") return sorted.sort((a, b) => new Date(getLastActivityTimestamp(b) || 0) - new Date(getLastActivityTimestamp(a) || 0));
   if (sortMode === "followUp") {
     return sorted.sort((a, b) => {
       if (!a.followUp && !b.followUp) return 0;
@@ -163,117 +147,48 @@ const sortLeads = (items, sortMode) => {
   });
 };
 
-// ─── CSV Import Helpers ──────────────────────────────────────────────────────
-const normalizeText = (val) => String(val || "")
-  .toLowerCase()
-  .trim()
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "");
-
+// ─── CSV Import Helpers ───────────────────────────────────────────────────────
+const normalizeText = (val) => String(val || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const findHeaderIndex = (headers, predicates) => {
   const normalized = headers.map(normalizeText);
   return normalized.findIndex((h) => predicates.some((p) => p(h)));
 };
-
 const parseConsumptionNumber = (value) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
-  const digitsOnly = raw.replace(/[^\d]/g, "");
-  return digitsOnly || "";
+  return raw.replace(/[^\d]/g, "") || "";
 };
-
 const looksLikeCompanyName = (value) => {
   const text = String(value || "").trim();
   if (!text) return false;
   const n = normalizeText(text);
-  return (
-    n.startsWith("firma ") ||
-    /(\bgmbh\b|\bag\b|\bug\b|\bkg\b|\bohg\b|\bgbr\b|\be\.?k\b|\bltd\b|\bllc\b|\binc\b)/.test(n)
-  );
+  return n.startsWith("firma ") || /(\bgmbh\b|\bag\b|\bug\b|\bkg\b|\bohg\b|\bgbr\b|\be\.?k\b|\bltd\b|\bllc\b|\binc\b)/.test(n);
 };
-
 const parseZaehlerInfo = (value) => {
   const text = String(value || "").trim();
   if (!text) return { zaehlernummer: "", maloId: "" };
-  const maloMatch = text.match(/malo\s*[:=\-]?\s*([a-z0-9\-]+)/i);
+  const maloMatch = text.match(/malo\s*[:-=]?\s*([a-z0-9-]+)/i);
   const zaehlerMatch = text.match(/zaehler|zahler|zaehlernummer|zahlernummer/i)
-    ? text.match(/(?:zaehler|zahler|zaehlernummer|zahlernummer)\s*[:=\-]?\s*([a-z0-9\-\/]+)/i)
-    : text.match(/([a-z0-9\-\/]{6,})/i);
-  return {
-    zaehlernummer: zaehlerMatch?.[1] || text,
-    maloId: maloMatch?.[1] || "",
-  };
+    ? text.match(/(?:zaehler|zahler|zaehlernummer|zahlernummer)\s*[:-=]?\s*([a-z0-9-/]+)/i)
+    : text.match(/([a-z0-9-/]{6,})/i);
+  return { zaehlernummer: zaehlerMatch?.[1] || text, maloId: maloMatch?.[1] || "" };
 };
-
 const detectColumnHeaders = (headers) => ({
-  name: findHeaderIndex(headers, [
-    (h) => h.includes("name"),
-    (h) => h.includes("kontakt"),
-    (h) => h.includes("ansprechpartner"),
-    (h) => h.includes("person"),
-  ]),
-  firma: findHeaderIndex(headers, [
-    (h) => h.includes("firma"),
-    (h) => h.includes("company"),
-    (h) => h.includes("unternehmen"),
-  ]),
-  phone: findHeaderIndex(headers, [
-    (h) => h.includes("telefon"),
-    (h) => h.includes("phone"),
-    (h) => h === "tel",
-    (h) => h.includes("mobil"),
-  ]),
-  email: findHeaderIndex(headers, [
-    (h) => h.includes("email"),
-    (h) => h.includes("e-mail"),
-    (h) => h.includes("mail"),
-  ]),
-  plz: findHeaderIndex(headers, [
-    (h) => h.includes("plz"),
-    (h) => h.includes("postleitzahl"),
-    (h) => h.includes("zip"),
-  ]),
-  verbrauch: findHeaderIndex(headers, [
-    (h) => h.includes("verbrauch"),
-    (h) => h.includes("kwh"),
-    (h) => h.includes("consumption"),
-  ]),
-  stromZaehler: findHeaderIndex(headers, [
-    (h) => h.includes("strom") && (h.includes("zahler") || h.includes("zaehler")),
-  ]),
-  stromMalo: findHeaderIndex(headers, [
-    (h) => h.includes("strom") && h.includes("malo"),
-  ]),
-  gasZaehler: findHeaderIndex(headers, [
-    (h) => h.includes("gas") && (h.includes("zahler") || h.includes("zaehler")),
-  ]),
-  gasMalo: findHeaderIndex(headers, [
-    (h) => h.includes("gas") && h.includes("malo"),
-  ]),
-  energyType: findHeaderIndex(headers, [
-    (h) => h.includes("strom / gas"),
-    (h) => h.includes("energietyp"),
-    (h) => h.includes("energieart"),
-  ]),
-  zaehlerInfos: findHeaderIndex(headers, [
-    (h) => h.includes("zahlerinfo"),
-    (h) => h.includes("zaehlerinfo"),
-    (h) => h.includes("zahlerinfos"),
-    (h) => h.includes("zaehlerinfos"),
-  ]),
-  lieferanschrift: findHeaderIndex(headers, [
-    (h) => h.includes("lieferanschrift"),
-    (h) => h.includes("adresse"),
-    (h) => h.includes("address"),
-  ]),
-  owner: findHeaderIndex(headers, [
-    (h) => h.includes("owner"),
-    (h) => h.includes("agent"),
-    (h) => h.includes("zustandig"),
-    (h) => h.includes("zuständig"),
-  ]),
+  name: findHeaderIndex(headers, [(h) => h.includes("name"), (h) => h.includes("kontakt"), (h) => h.includes("ansprechpartner"), (h) => h.includes("person")]),
+  firma: findHeaderIndex(headers, [(h) => h.includes("firma"), (h) => h.includes("company"), (h) => h.includes("unternehmen")]),
+  phone: findHeaderIndex(headers, [(h) => h.includes("telefon"), (h) => h.includes("phone"), (h) => h === "tel", (h) => h.includes("mobil")]),
+  email: findHeaderIndex(headers, [(h) => h.includes("email"), (h) => h.includes("e-mail"), (h) => h.includes("mail")]),
+  plz: findHeaderIndex(headers, [(h) => h.includes("plz"), (h) => h.includes("postleitzahl"), (h) => h.includes("zip")]),
+  verbrauch: findHeaderIndex(headers, [(h) => h.includes("verbrauch"), (h) => h.includes("kwh"), (h) => h.includes("consumption")]),
+  stromZaehler: findHeaderIndex(headers, [(h) => h.includes("strom") && (h.includes("zahler") || h.includes("zaehler"))]),
+  stromMalo: findHeaderIndex(headers, [(h) => h.includes("strom") && h.includes("malo")]),
+  gasZaehler: findHeaderIndex(headers, [(h) => h.includes("gas") && (h.includes("zahler") || h.includes("zaehler"))]),
+  gasMalo: findHeaderIndex(headers, [(h) => h.includes("gas") && h.includes("malo")]),
+  energyType: findHeaderIndex(headers, [(h) => h.includes("strom / gas"), (h) => h.includes("energietyp"), (h) => h.includes("energieart")]),
+  zaehlerInfos: findHeaderIndex(headers, [(h) => h.includes("zahlerinfo"), (h) => h.includes("zaehlerinfo"), (h) => h.includes("zahlerinfos"), (h) => h.includes("zaehlerinfos")]),
+  lieferanschrift: findHeaderIndex(headers, [(h) => h.includes("lieferanschrift"), (h) => h.includes("adresse"), (h) => h.includes("address")]),
+  owner: findHeaderIndex(headers, [(h) => h.includes("owner"), (h) => h.includes("agent"), (h) => h.includes("zustandig"), (h) => h.includes("zuständig")]),
 });
-
 const buildLeadMergeKey = (lead) => {
   const phone = String(lead.phone || "").replace(/\D/g, "");
   if (phone) return `phone:${phone}`;
@@ -283,14 +198,9 @@ const buildLeadMergeKey = (lead) => {
   if (email && person) return `emailperson:${email}|${person}`;
   return `personcompany:${person}|${company}`;
 };
-
 const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
-  const getValue = (idx) => {
-    if (idx < 0 || idx >= row.length) return "";
-    return String(row[idx] ?? "").trim();
-  };
+  const getValue = (idx) => { if (idx < 0 || idx >= row.length) return ""; return String(row[idx] ?? "").trim(); };
   const extras = {};
-
   const rawName = getValue(cols.name);
   const rawFirma = getValue(cols.firma);
   const inferredCompany = !rawFirma && looksLikeCompanyName(rawName) ? rawName : "";
@@ -303,22 +213,13 @@ const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
   const ownerEmail = getValue(cols.owner);
   const lieferanschrift = getValue(cols.lieferanschrift);
   const energyType = normalizeText(getValue(cols.energyType));
-
   const energy = { strom: [], gas: [] };
-
   const addMeter = (target, zaehlernummer, maloId = "") => {
     if (!zaehlernummer) return;
-    energy[target].push({
-      zählernummer: zaehlernummer,
-      maloId: maloId || "",
-      lieferanschrift: lieferanschrift || "",
-      kontaktanschrift: "",
-    });
+    energy[target].push({ zählernummer: zaehlernummer, maloId: maloId || "", lieferanschrift: lieferanschrift || "", kontaktanschrift: "" });
   };
-
   addMeter("strom", getValue(cols.stromZaehler), getValue(cols.stromMalo));
   addMeter("gas", getValue(cols.gasZaehler), getValue(cols.gasMalo));
-
   const genericZaehler = getValue(cols.zaehlerInfos);
   if (genericZaehler) {
     const parsed = parseZaehlerInfo(genericZaehler);
@@ -326,7 +227,6 @@ const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
     else if (energyType.includes("gas")) addMeter("gas", parsed.zaehlernummer, parsed.maloId);
     else extras["zaehlerInfos"] = genericZaehler;
   }
-
   const mappedIndexes = new Set(Object.values(cols).filter((i) => i >= 0));
   for (let i = 0; i < row.length; i++) {
     if (!mappedIndexes.has(i) && String(row[i] || "").trim()) {
@@ -334,24 +234,13 @@ const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
       extras[key] = String(row[i]).trim();
     }
   }
-
   return {
-    person: name,
-    company: firma,
-    phone,
-    email,
-    postalCode: plz,
-    consumption: verbrauch,
-    energy,
-    status: "Neu",
-    createdBy: {
-      email: ownerEmail && allUsers.find((u) => u.email === ownerEmail) ? ownerEmail : currentUserEmail,
-      timestamp: new Date().toISOString(),
-    },
+    person: name, company: firma, phone, email, postalCode: plz, consumption: verbrauch,
+    energy, status: "Neu",
+    createdBy: { email: ownerEmail && allUsers.find((u) => u.email === ownerEmail) ? ownerEmail : currentUserEmail, timestamp: new Date().toISOString() },
     extras: Object.keys(extras).length > 0 ? extras : null,
   };
 };
-
 const mergeImportedLeads = (rowsWithLead) => {
   const map = new Map();
   rowsWithLead.forEach(({ row, lead }) => {
@@ -368,7 +257,6 @@ const mergeImportedLeads = (rowsWithLead) => {
   });
   return Array.from(map.values()).map((entry) => ({ row: entry.rows.join(", "), lead: entry.lead }));
 };
-
 const detectDuplicates = (newLead, existingLeads) => {
   const phone = String(newLead.phone || "").replace(/\D/g, "");
   if (phone) {
@@ -382,6 +270,292 @@ const detectDuplicates = (newLead, existingLeads) => {
   }
   return null;
 };
+
+// ─── NEW: KI-Assistent Panel ─────────────────────────────────────────────────
+function AIAssistantPanel({ lead, userRole }) {
+  const [mode, setMode] = useState(null); // 'prepare' | 'analyze' | 'nextSteps' | 'email'
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+
+  const modes = [
+    { id: "prepare",   icon: "🎯", label: "Gesprächsvorbereitung" },
+    { id: "analyze",   icon: "🔍", label: "Lead analysieren" },
+    { id: "nextSteps", icon: "📋", label: "Nächste Schritte" },
+    { id: "email",     icon: "✉️",  label: "E-Mail-Entwurf" },
+  ];
+
+  const buildPrompt = (m) => {
+    const ctx = `
+Lead-Informationen:
+- Firma: ${lead.company || "—"}
+- Ansprechpartner: ${lead.person || "—"}
+- Status: ${lead.status}
+- Priorität: ${calculatePriority(lead)}
+- Verbrauch: ${lead.consumption ? lead.consumption + " kWh" : "unbekannt"}
+- Jahreskosten: ${lead.annualCosts ? "€" + lead.annualCosts : "unbekannt"}
+- Aktueller Anbieter: ${lead.currentProvider || "unbekannt"}
+- Vertragsende: ${formatDate(lead.contractEnd)}
+- Kündigungsfenster: ${isOpenCancellationWindow(lead.contractEnd) ? "JA – DRINGEND" : "nein"}
+- Nachfassdatum: ${formatDate(lead.followUp)}
+- Temperatur: ${getLeadTemperature(lead).label}
+- Letzte Aktivitäten: ${(lead.callLogs || []).slice(-2).map(c => `${c.outcome} (${formatDate(c.timestamp)})`).join(", ") || "keine"}
+- Notizen: ${(lead.comments || []).slice(-3).map(c => c.text).join(" | ") || "keine"}
+    `.trim();
+
+    if (m === "prepare") return `${ctx}\n\nErstelle eine prägnante Gesprächsvorbereitung für das nächste Kundengespräch auf Deutsch. Fokus: Einstieg, wichtigste Argumente für einen Wechsel, potenzielle Einwände und wie man sie entkräftet. Max. 200 Wörter, klar strukturiert.`;
+    if (m === "analyze") return `${ctx}\n\nAnalysiere diesen Lead auf Deutsch. Bewerte: Abschlusswahrscheinlichkeit (%), stärkste Signale, größte Risiken, Timing-Empfehlung. Sei direkt und konkret. Max. 200 Wörter.`;
+    if (m === "nextSteps") return `${ctx}\n\nGib 3–5 konkrete, priorisierte nächste Schritte für diesen Lead auf Deutsch. Jeder Schritt: klare Handlung + Zeitrahmen. Format: nummerierte Liste.`;
+    if (m === "email") return `${ctx}\n\nSchreibe einen professionellen, kurzen E-Mail-Entwurf auf Deutsch für die nächste Kontaktaufnahme. Ton: freundlich-professionell, fokussiert auf Mehrwert für den Kunden. Betreff + E-Mail-Text. Max. 150 Wörter.`;
+    return ctx;
+  };
+
+  const runAI = async (m) => {
+    setMode(m);
+    setLoading(true);
+    setResult(null);
+    setError(null);
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: buildPrompt(m) }],
+        }),
+      });
+      const data = await response.json();
+      if (data.content?.[0]?.text) {
+        setResult(data.content[0].text);
+      } else {
+        setError("Keine Antwort vom KI-System erhalten.");
+      }
+    } catch (e) {
+      setError("Verbindungsfehler. Bitte erneut versuchen.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="ai-panel">
+      <div className="ai-panel-header">
+        <span className="ai-panel-icon">🤖</span>
+        <span className="ai-panel-title">KI-Assistent</span>
+      </div>
+      <div className="ai-mode-grid">
+        {modes.map((m) => (
+          <button
+            key={m.id}
+            className={`ai-mode-btn ${mode === m.id ? "active" : ""}`}
+            onClick={() => runAI(m.id)}
+            disabled={loading}
+          >
+            <span>{m.icon}</span>
+            <span>{m.label}</span>
+          </button>
+        ))}
+      </div>
+      {loading && (
+        <div className="ai-loading">
+          <div className="ai-spinner" />
+          <span>KI analysiert Lead...</span>
+        </div>
+      )}
+      {error && <div className="ai-error">{error}</div>}
+      {result && !loading && (
+        <div className="ai-result">
+          <div className="ai-result-header">
+            <span>{modes.find(m => m.id === mode)?.icon} {modes.find(m => m.id === mode)?.label}</span>
+            <button className="ai-copy-btn" onClick={() => navigator.clipboard.writeText(result)} title="Kopieren">📋</button>
+          </div>
+          <div className="ai-result-text">{result}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── NEW: Terminierungs-Modal mit Kalender-Sync ───────────────────────────────
+function AppointmentModal({ lead, onClose, onSave }) {
+  const [date, setDate] = useState(lead.appointmentDate || "");
+  const [time, setTime] = useState(lead.appointmentTime || "10:00");
+  const [title, setTitle] = useState(`Kundengespräch – ${lead.company || lead.person}`);
+  const [notes, setNotes] = useState(lead.appointmentNotes || "");
+  const [calendarSync, setCalendarSync] = useState(null); // null | 'google' | 'ical'
+  const [syncConfirmed, setSyncConfirmed] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async () => {
+    await onSave({ appointmentDate: date, appointmentTime: time, appointmentNotes: notes, appointmentTitle: title });
+    setSaved(true);
+  };
+
+  const buildGoogleCalendarUrl = () => {
+    if (!date) return null;
+    const start = `${date.replace(/-/g, "")}T${time.replace(":", "")}00`;
+    const endHour = String(parseInt(time.split(":")[0]) + 1).padStart(2, "0");
+    const end = `${date.replace(/-/g, "")}T${endHour}${time.split(":")[1]}00`;
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: title,
+      dates: `${start}/${end}`,
+      details: notes || `Lead: ${lead.person}, ${lead.company || ""}`,
+    });
+    return `https://calendar.google.com/calendar/render?${params}`;
+  };
+
+  const buildIcalContent = () => {
+    if (!date) return null;
+    const start = `${date.replace(/-/g, "")}T${time.replace(":", "")}00`;
+    const endHour = String(parseInt(time.split(":")[0]) + 1).padStart(2, "0");
+    const end = `${date.replace(/-/g, "")}T${endHour}${time.split(":")[1]}00`;
+    return [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "BEGIN:VEVENT",
+      `DTSTART:${start}`,
+      `DTEND:${end}`,
+      `SUMMARY:${title}`,
+      `DESCRIPTION:${notes || ""}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+  };
+
+  const buildCalendlyUrl = () => {
+    const base = (process.env.REACT_APP_CALENDLY_URL || "").trim();
+    if (!base) return null;
+    const params = new URLSearchParams();
+    if (lead.person) params.set("name", lead.person);
+    if (lead.email) params.set("email", lead.email);
+    if (notes) params.set("a1", notes);
+    if (date) params.set("a2", `${date}${time ? ` ${time}` : ""}`);
+    if (lead.id) params.set("utm_content", lead.id);
+    params.set("utm_campaign", "energyo-crm");
+    const suffix = params.toString();
+    if (!suffix) return base;
+    return `${base}${base.includes("?") ? "&" : "?"}${suffix}`;
+  };
+
+  const handleCalendarExport = (type) => {
+    if (!syncConfirmed) {
+      setCalendarSync(type);
+      return;
+    }
+    executeCalendarExport(type);
+  };
+
+  const executeCalendarExport = (type) => {
+    if (type === "google") {
+      const url = buildGoogleCalendarUrl();
+      if (url) window.open(url, "_blank");
+    } else if (type === "ical") {
+      const content = buildIcalContent();
+      if (content) {
+        const blob = new Blob([content], { type: "text/calendar" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `termin-${lead.person || "lead"}.ics`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } else if (type === "calendly") {
+      const url = buildCalendlyUrl();
+      if (!url) {
+        alert("Calendly-Link fehlt. Bitte REACT_APP_CALENDLY_URL in .env setzen.");
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+    setSyncConfirmed(false);
+    setCalendarSync(null);
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal appointment-modal">
+        <div className="modal-header">
+          <h2>📅 Termin vereinbaren</h2>
+          <button className="drawer-close-btn" onClick={onClose}>✕</button>
+        </div>
+
+        {saved ? (
+          <div className="appointment-saved">
+            <div className="appointment-saved-icon">✅</div>
+            <h3>Termin gespeichert</h3>
+            <p>{formatDate(date)} um {time} Uhr</p>
+            <div className="calendar-export-section">
+              <p className="cal-export-hint">Termin in Kalender exportieren:</p>
+              <div className="cal-export-btns">
+                <button className="cal-btn google" onClick={() => handleCalendarExport("google")}>
+                  📅 Google Calendar
+                </button>
+                <button className="cal-btn ical" onClick={() => handleCalendarExport("ical")}>
+                  📆 iCal / Outlook
+                </button>
+                <button className="cal-btn calendly" onClick={() => handleCalendarExport("calendly")}>
+                  🔗 Calendly
+                </button>
+              </div>
+            </div>
+            {calendarSync && !syncConfirmed && (
+              <div className="cal-confirm-box">
+                <p>⚠️ Termin wirklich in <strong>{calendarSync === "google" ? "Google Calendar" : calendarSync === "ical" ? "iCal/Outlook" : "Calendly"}</strong> öffnen?</p>
+                <p className="cal-confirm-sub">Dieser Termin wird nur für dich erstellt, nicht automatisch für den Kunden.</p>
+                <div className="cal-confirm-actions">
+                  <button className="ghost-btn" onClick={() => setCalendarSync(null)}>Abbrechen</button>
+                  <button className="primary-btn-modal" onClick={() => { setSyncConfirmed(true); executeCalendarExport(calendarSync); }}>
+                    Ja, eintragen
+                  </button>
+                </div>
+              </div>
+            )}
+            <button className="ghost-btn" style={{ marginTop: 16 }} onClick={onClose}>Schließen</button>
+          </div>
+        ) : (
+          <div className="appointment-form">
+            <div className="form-group">
+              <label>Titel</label>
+              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Gesprächstitel" />
+            </div>
+            <div className="appt-date-row">
+              <div className="form-group">
+                <label>Datum *</label>
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} />
+              </div>
+              <div className="form-group">
+                <label>Uhrzeit</label>
+                <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Notizen</label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Gesprächsagenda, Themen..."
+                rows={3}
+              />
+            </div>
+            {lead.appointmentDate && (
+              <div className="existing-appointment">
+                <span>📅 Bestehender Termin: {formatDate(lead.appointmentDate)} {lead.appointmentTime && `um ${lead.appointmentTime} Uhr`}</span>
+              </div>
+            )}
+            <div className="modal-footer">
+              <button className="ghost-btn" onClick={onClose}>Abbrechen</button>
+              <button className="primary-btn-modal" onClick={handleSave} disabled={!date}>
+                Termin speichern
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ─── LeadLoadingOverlay ───────────────────────────────────────────────────────
 function LeadLoadingOverlay() {
@@ -435,14 +609,23 @@ function InlineField({ label, value, onSave, type = "text", options = null, rend
   );
 }
 
-// ─── ActivityItem ─────────────────────────────────────────────────────────────
-function ActivityItem({ item, currentUser, onEditComment, onDeleteComment }) {
+// ─── UPDATED: ActivityItem (editable comments) ────────────────────────────────
+function ActivityItem({ item, onEdit, onDelete, canEdit }) {
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(item.text || "");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   const cfg = {
     comment: { icon: "💬", cls: "act-comment" },
     call:    { icon: "📞", cls: "act-call" },
     status:  { icon: "🔄", cls: "act-status" },
   }[item.type] || { icon: "📝", cls: "act-comment" };
-  const isOwnComment = currentUser?.email === item.author && item.type === "comment";
+
+  const saveEdit = () => {
+    if (editText.trim() && onEdit) onEdit(editText.trim());
+    setEditing(false);
+  };
+
   return (
     <div className={`activity-item ${cfg.cls}`}>
       <div className="activity-icon-wrap"><span>{cfg.icon}</span></div>
@@ -450,18 +633,43 @@ function ActivityItem({ item, currentUser, onEditComment, onDeleteComment }) {
         <div className="activity-meta">
           <span className="activity-author">{item.author || "System"}</span>
           <span className="activity-time">{formatDateTime(item.timestamp)}</span>
-          {isOwnComment && (
+          {item.edited && <span className="activity-edited-badge">bearbeitet</span>}
+          {canEdit && item.type === "comment" && (
             <div className="activity-actions">
-              <button className="activity-action-btn edit" onClick={() => onEditComment(item)} title="Bearbeiten">✎</button>
-              <button className="activity-action-btn delete" onClick={() => onDeleteComment(item)} title="Löschen">🗑️</button>
+              <button
+                className="act-edit-btn"
+                onClick={() => { setEditing(true); setEditText(item.text || ""); }}
+                title="Bearbeiten"
+              >✎</button>
+              <button
+                className="act-delete-btn"
+                onClick={() => setConfirmDelete(true)}
+                title="Löschen"
+              >✕</button>
             </div>
           )}
         </div>
+
         {item.type === "comment" && (
-          <p className="activity-text activity-text-clickable" onClick={() => isOwnComment && onEditComment(item)}>
-            {item.text}
-          </p>
+          editing ? (
+            <div className="activity-edit-area">
+              <textarea
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditing(false); }}
+                rows={3}
+                autoFocus
+              />
+              <div className="activity-edit-actions">
+                <button className="primary-btn-sm" onClick={saveEdit}>Speichern</button>
+                <button className="ghost-btn-sm" onClick={() => setEditing(false)}>Abbrechen</button>
+              </div>
+            </div>
+          ) : (
+            <p className="activity-text">{item.text}</p>
+          )
         )}
+
         {item.type === "call" && (
           <div className="call-log-display">
             <span className="call-outcome-badge">{item.outcome}</span>
@@ -475,6 +683,14 @@ function ActivityItem({ item, currentUser, onEditComment, onDeleteComment }) {
           </p>
         )}
       </div>
+
+      {confirmDelete && (
+        <div className="activity-delete-confirm">
+          <span>Kommentar löschen?</span>
+          <button className="danger-btn-xs" onClick={() => { if (onDelete) onDelete(); setConfirmDelete(false); }}>Löschen</button>
+          <button className="ghost-btn-xs" onClick={() => setConfirmDelete(false)}>Abbrechen</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -482,16 +698,13 @@ function ActivityItem({ item, currentUser, onEditComment, onDeleteComment }) {
 function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFocus }) {
   const hotLead = filteredLeads.find((lead) => getLeadTemperature(lead).tone === "hot");
   const urgentLead = filteredLeads.find((lead) => isOverdue(lead.followUp) || isTodayDue(lead.followUp));
-
   return (
     <section className="command-center">
       <div className="command-hero">
         <div>
           <span className="eyebrow">Sales cockpit</span>
           <h2>Fokus statt Hokus-Pokus</h2>
-          <p>
-            Klar arbeiten, sauber nachfassen, verlässlich abschließen.
-          </p>
+          <p>Klar arbeiten, sauber nachfassen, verlässlich abschließen.</p>
         </div>
         <div className="command-hero-metrics">
           <div className="hero-metric-card">
@@ -508,7 +721,6 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
           </div>
         </div>
       </div>
-
       <div className="smart-view-bar">
         {[
           { id: "all", label: "Alle Leads" },
@@ -520,16 +732,12 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
           <button
             key={item.id}
             className={`smart-view-chip ${smartView === item.id ? "active" : ""}`}
-            onClick={() => {
-              setSmartView(item.id);
-              setKpiFocus("all");
-            }}
+            onClick={() => { setSmartView(item.id); setKpiFocus("all"); }}
           >
             {item.label}
           </button>
         ))}
       </div>
-
       <div className="command-grid">
         <div className="command-card">
           <span className="command-card-label">Nächster kritischer Lead</span>
@@ -539,9 +747,7 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
               <p>{getNextAction(urgentLead).label}</p>
               <span className="command-card-meta">Follow-up: {formatDate(urgentLead.followUp)}</span>
             </>
-          ) : (
-            <p>Keine kritischen Follow-ups offen.</p>
-          )}
+          ) : (<p>Keine kritischen Follow-ups offen.</p>)}
         </div>
         <div className="command-card">
           <span className="command-card-label">Heißester Deal</span>
@@ -551,9 +757,7 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
               <p>{getNextAction(hotLead).label}</p>
               <span className="command-card-meta">Potenzial: {formatEuro(calculateUmsatzPotential(hotLead.consumption))}</span>
             </>
-          ) : (
-            <p>Aktuell kein Deal mit Hot-Signal.</p>
-          )}
+          ) : (<p>Aktuell kein Deal mit Hot-Signal.</p>)}
         </div>
         <div className="command-card emphasize">
           <span className="command-card-label">Pipeline Fokus</span>
@@ -566,8 +770,8 @@ function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFo
   );
 }
 
-// ─── LeadDetailDrawer ─────────────────────────────────────────────────────────
-function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment }) {
+// ─── UPDATED: LeadDetailDrawer ────────────────────────────────────────────────
+function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment }) {
   const [drawerTab, setDrawerTab] = useState("activity");
   const [noteText, setNoteText] = useState("");
   const [showCallForm, setShowCallForm] = useState(false);
@@ -575,8 +779,7 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
   const [saving, setSaving] = useState(false);
   const [previewAttachment, setPreviewAttachment] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [editCommentId, setEditCommentId] = useState(null);
-  const [editCommentText, setEditCommentText] = useState("");
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
   const priority = calculatePriority(lead);
   const umsatz = calculateUmsatzPotential(lead.consumption);
@@ -586,9 +789,9 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
 
   const timeline = useMemo(() => {
     const items = [];
-    (lead.comments || []).forEach(c => items.push({ type: "comment", ...c }));
-    (lead.callLogs || []).forEach(c => items.push({ type: "call", ...c }));
-    (lead.statusHistory || []).forEach(c => items.push({ type: "status", ...c }));
+    (lead.comments || []).forEach((c, idx) => items.push({ type: "comment", ...c, _idx: idx }));
+    (lead.callLogs || []).forEach((c, idx) => items.push({ type: "call", ...c, _idx: idx }));
+    (lead.statusHistory || []).forEach((c, idx) => items.push({ type: "status", ...c, _idx: idx }));
     return items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }, [lead.comments, lead.callLogs, lead.statusHistory]);
 
@@ -609,11 +812,39 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
     setSaving(false);
   };
 
+  // UPDATED: edit comment by index
+  const editComment = async (idx, newText) => {
+    const updated = (lead.comments || []).map((c, i) =>
+      i === idx ? { ...c, text: newText, edited: true, editedAt: new Date().toISOString(), editedBy: user.email } : c
+    );
+    await onUpdateField(lead.id, "comments", updated);
+  };
+
+  // UPDATED: delete comment by index
+  const deleteComment = async (idx) => {
+    const updated = (lead.comments || []).filter((_, i) => i !== idx);
+    await onUpdateField(lead.id, "comments", updated);
+  };
+
   const handleDelete = async () => {
     if (!window.confirm(`Lead "${lead.company || lead.person}" wirklich löschen?`)) return;
     await onDelete(lead.id);
     onClose();
   };
+
+  const handleSaveAppointment = async (data) => {
+    await onUpdateField(lead.id, "appointmentDate", data.appointmentDate);
+    await onUpdateField(lead.id, "appointmentTime", data.appointmentTime);
+    await onUpdateField(lead.id, "appointmentNotes", data.appointmentNotes);
+    await onUpdateField(lead.id, "appointmentTitle", data.appointmentTitle);
+  };
+
+  const tabs = [
+    { id: "activity",    label: "Aktivität" },
+    { id: "details",     label: "Details" },
+    { id: "ai",          label: "🤖 KI" },
+    { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
+  ];
 
   return (
     <div className="drawer-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -631,6 +862,11 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
               {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
               {lead.bundleInquiry && <span className="drawer-badge info">📦 Bündelanfrage</span>}
+              {lead.appointmentDate && (
+                <span className="drawer-badge appointment" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
+                  📅 Termin: {formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` ${lead.appointmentTime}` : ""}
+                </span>
+              )}
             </div>
           </div>
           <button className="drawer-close-btn" onClick={onClose} aria-label="Schließen">✕</button>
@@ -642,8 +878,7 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
           <span className="drawer-umsatz-value">{formatEuro(umsatz)}</span>
           <span className="drawer-umsatz-hint">
             {lead.consumption && parseInt(lead.consumption) >= 50000
-              ? `(${parseInt(lead.consumption).toLocaleString("de-DE")} kWh × 0,01 €)`
-              : "(Pauschale)"}
+              ? `(${parseInt(lead.consumption).toLocaleString("de-DE")} kWh × 0,01 €)` : "(Pauschale)"}
           </span>
         </div>
 
@@ -720,6 +955,12 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
             <span>Nächste Aktion</span>
             <strong>{getNextAction(lead).label}</strong>
           </div>
+          {lead.appointmentDate && (
+            <div className="drawer-signal-card appointment-signal" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
+              <span>Nächster Termin</span>
+              <strong>{formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}</strong>
+            </div>
+          )}
         </div>
 
         <div className="quick-action-row">
@@ -730,18 +971,15 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
             onUpdateField(lead.id, "followUp", tomorrow.toISOString().split("T")[0]);
           }}>Morgen nachfassen</button>
           <button className="quick-action-btn" onClick={() => onUpdateStatus(lead.id, "Angebot")}>Zu Angebot ziehen</button>
+          <button className="quick-action-btn appointment" onClick={() => setShowAppointmentModal(true)}>📅 Termin planen</button>
         </div>
 
         {/* Tabs */}
         <div className="drawer-tabs">
-          {[
-            { id: "activity", label: "Aktivität" },
-            { id: "details", label: "Details" },
-            { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
-          ].map(t => (
+          {tabs.map(t => (
             <button
               key={t.id}
-              className={`drawer-tab-btn ${drawerTab === t.id ? "active" : ""}`}
+              className={`drawer-tab-btn ${t.id === "ai" ? "ai-tab" : ""} ${drawerTab === t.id ? "active" : ""}`}
               onClick={() => setDrawerTab(t.id)}
             >
               {t.label}
@@ -806,20 +1044,12 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
                 <p className="empty-timeline">Noch keine Aktivitäten. Füge eine Notiz hinzu oder protokolliere einen Anruf.</p>
               ) : (
                 timeline.map((item, idx) => (
-                  <ActivityItem 
-                    key={idx} 
+                  <ActivityItem
+                    key={idx}
                     item={item}
-                    currentUser={user}
-                    onEditComment={(cmt) => {
-                      setEditCommentId(cmt.timestamp);
-                      setEditCommentText(cmt.text);
-                    }}
-                    onDeleteComment={(cmt) => {
-                      if (window.confirm("Kommentar löschen?")) {
-                        const updated = lead.comments.filter((c) => c.timestamp !== cmt.timestamp);
-                        onUpdateField(lead.id, "comments", updated);
-                      }
-                    }}
+                    canEdit={item.type === "comment" && (item.author === user.email || userRole === "admin")}
+                    onEdit={item.type === "comment" ? (newText) => editComment(item._idx, newText) : null}
+                    onDelete={item.type === "comment" ? () => deleteComment(item._idx) : null}
                   />
                 ))
               )}
@@ -839,28 +1069,22 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
               <InlineField label="Kundentyp" value={lead.customerType} onSave={v => onUpdateField(lead.id, "customerType", v)} options={["Privat", "Gewerbe", "Großkunde"]} />
               <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
               <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
-              <InlineField
-                label="Jahreskosten (€)" value={lead.annualCosts}
-                onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number"
-                render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null}
-              />
-              <InlineField
-                label="Vertragsende"
-                value={lead.contractEnd === "unknown" ? "" : lead.contractEnd}
-                onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")}
-                type="date"
-                render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)}
-              />
-              <InlineField
-                label="Nachfass-Datum" value={lead.followUp}
-                onSave={v => onUpdateField(lead.id, "followUp", v)} type="date"
-                render={v => v ? formatDate(v) : null}
-              />
-              <InlineField
-                label="Geburtsdatum" value={lead.geburtsdatum}
-                onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date"
-                render={v => v ? formatDate(v) : null}
-              />
+              <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
+              <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
+              <InlineField label="Nachfass-Datum" value={lead.followUp} onSave={v => onUpdateField(lead.id, "followUp", v)} type="date" render={v => v ? formatDate(v) : null} />
+              <InlineField label="Geburtsdatum" value={lead.geburtsdatum} onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date" render={v => v ? formatDate(v) : null} />
+              {/* NEW: Termin inline */}
+              <div className="inline-field">
+                <label className="inline-label">Nächster Termin</label>
+                <div className="inline-value-row" onClick={() => setShowAppointmentModal(true)}>
+                  <span className="inline-value">
+                    {lead.appointmentDate
+                      ? `${formatDate(lead.appointmentDate)}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`
+                      : <em className="inline-empty">Klicken zum Planen</em>}
+                  </span>
+                  <span className="inline-edit-icon">📅</span>
+                </div>
+              </div>
             </div>
 
             <div className="details-energy-section">
@@ -871,61 +1095,23 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
                     {lead.energy?.strom?.filter(m => m.zählernummer).map((meter, idx) => (
                       <div key={idx} className="energy-detail-card strom">
                         <div className="energy-detail-label">🔌 Strom {idx + 1}</div>
-                        <div className="energy-detail-item">
-                          <span className="energy-detail-key">Zählernummer:</span>
-                          <span className="energy-detail-value">{meter.zählernummer}</span>
-                        </div>
-                        {meter.maloId && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">MALO-ID:</span>
-                            <span className="energy-detail-value">{meter.maloId}</span>
-                          </div>
-                        )}
-                        {meter.lieferanschrift && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">Lieferanschrift:</span>
-                            <span className="energy-detail-value">{meter.lieferanschrift}</span>
-                          </div>
-                        )}
-                        {meter.kontaktanschrift && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">Kontaktanschrift:</span>
-                            <span className="energy-detail-value">{meter.kontaktanschrift}</span>
-                          </div>
-                        )}
+                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
+                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
+                        {meter.lieferanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Lieferanschrift:</span><span className="energy-detail-value">{meter.lieferanschrift}</span></div>}
+                        {meter.kontaktanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Kontaktanschrift:</span><span className="energy-detail-value">{meter.kontaktanschrift}</span></div>}
                       </div>
                     ))}
                     {lead.energy?.gas?.filter(m => m.zählernummer).map((meter, idx) => (
                       <div key={idx} className="energy-detail-card gas">
                         <div className="energy-detail-label">🔥 Gas {idx + 1}</div>
-                        <div className="energy-detail-item">
-                          <span className="energy-detail-key">Zählernummer:</span>
-                          <span className="energy-detail-value">{meter.zählernummer}</span>
-                        </div>
-                        {meter.maloId && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">MALO-ID:</span>
-                            <span className="energy-detail-value">{meter.maloId}</span>
-                          </div>
-                        )}
-                        {meter.lieferanschrift && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">Lieferanschrift:</span>
-                            <span className="energy-detail-value">{meter.lieferanschrift}</span>
-                          </div>
-                        )}
-                        {meter.kontaktanschrift && (
-                          <div className="energy-detail-item">
-                            <span className="energy-detail-key">Kontaktanschrift:</span>
-                            <span className="energy-detail-value">{meter.kontaktanschrift}</span>
-                          </div>
-                        )}
+                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
+                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
+                        {meter.lieferanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Lieferanschrift:</span><span className="energy-detail-value">{meter.lieferanschrift}</span></div>}
+                        {meter.kontaktanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Kontaktanschrift:</span><span className="energy-detail-value">{meter.kontaktanschrift}</span></div>}
                       </div>
                     ))}
                   </>
-                ) : (
-                  <p className="empty-energy-info">Keine Energieinformationen erfasst</p>
-                )}
+                ) : (<p className="empty-energy-info">Keine Energieinformationen erfasst</p>)}
               </div>
             </div>
             {lead.createdBy && (
@@ -936,6 +1122,13 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
           </div>
         )}
 
+        {/* Tab: KI-Assistent */}
+        {drawerTab === "ai" && (
+          <div className="drawer-tab-content">
+            <AIAssistantPanel lead={lead} userRole={userRole} />
+          </div>
+        )}
+
         {/* Tab: Anhänge */}
         {drawerTab === "attachments" && (
           <div className="drawer-tab-content">
@@ -943,10 +1136,7 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
               <label htmlFor={`drawer-file-${lead.id}`} className="attachment-upload-label">
                 📎 Dateien hochladen (max 10 MB)
               </label>
-              <input
-                id={`drawer-file-${lead.id}`} type="file" multiple className="file-input"
-                onChange={e => onAddAttachment(lead.id, e.target.files)}
-              />
+              <input id={`drawer-file-${lead.id}`} type="file" multiple className="file-input" onChange={e => onAddAttachment(lead.id, e.target.files)} />
             </div>
             {lead.attachments && lead.attachments.length > 0 ? (
               <div className="attachments-list-drawer">
@@ -964,47 +1154,7 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="empty-timeline">Keine Anhänge vorhanden.</p>
-            )}
-          </div>
-        )}
-
-        {/* Edit Comment Modal */}
-        {editCommentId && (
-          <div className="modal-backdrop" onClick={() => setEditCommentId(null)}>
-            <div className="modal" onClick={e => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Kommentar bearbeiten</h2>
-                <button className="drawer-close-btn" onClick={() => setEditCommentId(null)}>✕</button>
-              </div>
-              <div className="modal-body">
-                <textarea
-                  value={editCommentText}
-                  onChange={(e) => setEditCommentText(e.target.value)}
-                  rows={4}
-                  placeholder="Kommentartext..."
-                  className="comment-edit-textarea"
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="primary-btn"
-                  onClick={() => {
-                    const updated = lead.comments.map((c) =>
-                      c.timestamp === editCommentId ? { ...c, text: editCommentText } : c
-                    );
-                    onUpdateField(lead.id, "comments", updated);
-                    setEditCommentId(null);
-                    setEditCommentText("");
-                  }}
-                  disabled={!editCommentText.trim()}
-                >
-                  Speichern
-                </button>
-                <button className="ghost-btn" onClick={() => setEditCommentId(null)}>Abbrechen</button>
-              </div>
-            </div>
+            ) : (<p className="empty-timeline">Keine Anhänge vorhanden.</p>)}
           </div>
         )}
 
@@ -1040,7 +1190,6 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
         {deleteConfirmId && (
           <div className="modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
             <div className="confirm-modal" onClick={e => e.stopPropagation()}>
@@ -1049,19 +1198,27 @@ function LeadDetailDrawer({ lead, onClose, user, onUpdateField, onUpdateStatus, 
               <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
               <div className="confirm-actions">
                 <button className="ghost-btn" onClick={() => setDeleteConfirmId(null)}>Abbrechen</button>
-                <button className="danger-btn" onClick={() => {
-                  onRemoveAttachment(lead.id, deleteConfirmId);
-                  setDeleteConfirmId(null);
-                }}>Löschen</button>
+                <button className="danger-btn" onClick={() => { onRemoveAttachment(lead.id, deleteConfirmId); setDeleteConfirmId(null); }}>Löschen</button>
               </div>
             </div>
           </div>
         )}
 
         <div className="drawer-footer">
-          <button className="danger-btn-sm" onClick={handleDelete}>Lead löschen</button>
+          {userRole === "admin" && (
+            <button className="danger-btn-sm" onClick={handleDelete}>Lead löschen</button>
+          )}
         </div>
       </div>
+
+      {/* Termin Modal */}
+      {showAppointmentModal && (
+        <AppointmentModal
+          lead={lead}
+          onClose={() => setShowAppointmentModal(false)}
+          onSave={handleSaveAppointment}
+        />
+      )}
     </div>
   );
 }
@@ -1079,10 +1236,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
       const reader = new FileReader();
       reader.onload = ev => setForm(prev => ({
         ...prev,
-        attachments: [...prev.attachments, {
-          id: Date.now() + Math.random(), name: file.name,
-          size: file.size, type: file.type, data: ev.target.result, uploadedAt: new Date().toISOString(),
-        }],
+        attachments: [...prev.attachments, { id: Date.now() + Math.random(), name: file.name, size: file.size, type: file.type, data: ev.target.result, uploadedAt: new Date().toISOString() }],
       }));
       reader.readAsDataURL(file);
     });
@@ -1100,111 +1254,42 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
         </div>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-form-grid">
-            <div className="form-group">
-              <label>Firma</label>
-              <input name="company" placeholder="Firmenname" value={form.company} onChange={handleChange} disabled={loading} />
-            </div>
-            <div className="form-group">
-              <label>Ansprechpartner *</label>
-              <input name="person" placeholder="Name" value={form.person} onChange={handleChange} disabled={loading} required />
-            </div>
-            <div className="form-group">
-              <label>Geburtsdatum</label>
-              <input type="date" name="geburtsdatum" value={form.geburtsdatum} onChange={handleChange} disabled={loading} />
-            </div>
-            <div className="form-group">
-              <label>Telefon *</label>
-              <input name="phone" type="tel" placeholder="+49..." value={form.phone} onChange={handleChange} disabled={loading} required />
-            </div>
-            <div className="form-group">
-              <label>E-Mail *</label>
-              <input name="email" type="email" placeholder="name@firma.de" value={form.email} onChange={handleChange} disabled={loading} required />
-            </div>
-            <div className="form-group">
-              <label>PLZ *</label>
-              <input name="postalCode" placeholder="12345" value={form.postalCode} onChange={handleChange} disabled={loading} required />
-            </div>
-            <div className="form-group">
-              <label>Kundentyp</label>
-              <select name="customerType" value={form.customerType} onChange={handleChange} disabled={loading}>
-                <option>Privat</option><option>Gewerbe</option><option>Großkunde</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Aktueller Anbieter</label>
-              <input name="currentProvider" placeholder="z.B. E.ON" value={form.currentProvider} onChange={handleChange} disabled={loading} />
-            </div>
-            <div className="form-group">
-              <label>Verbrauch (kWh)</label>
-              <input name="consumption" type="number" placeholder="50000" value={form.consumption} onChange={handleChange} disabled={loading} />
-            </div>
-            <div className="form-group">
-              <label>Jahreskosten (€)</label>
-              <input name="annualCosts" type="number" placeholder="3500" value={form.annualCosts} onChange={handleChange} disabled={loading} />
-            </div>
+            <div className="form-group"><label>Firma</label><input name="company" placeholder="Firmenname" value={form.company} onChange={handleChange} disabled={loading} /></div>
+            <div className="form-group"><label>Ansprechpartner *</label><input name="person" placeholder="Name" value={form.person} onChange={handleChange} disabled={loading} required /></div>
+            <div className="form-group"><label>Geburtsdatum</label><input type="date" name="geburtsdatum" value={form.geburtsdatum} onChange={handleChange} disabled={loading} /></div>
+            <div className="form-group"><label>Telefon *</label><input name="phone" type="tel" placeholder="+49..." value={form.phone} onChange={handleChange} disabled={loading} required /></div>
+            <div className="form-group"><label>E-Mail *</label><input name="email" type="email" placeholder="name@firma.de" value={form.email} onChange={handleChange} disabled={loading} required /></div>
+            <div className="form-group"><label>PLZ *</label><input name="postalCode" placeholder="12345" value={form.postalCode} onChange={handleChange} disabled={loading} required /></div>
+            <div className="form-group"><label>Kundentyp</label><select name="customerType" value={form.customerType} onChange={handleChange} disabled={loading}><option>Privat</option><option>Gewerbe</option><option>Großkunde</option></select></div>
+            <div className="form-group"><label>Aktueller Anbieter</label><input name="currentProvider" placeholder="z.B. E.ON" value={form.currentProvider} onChange={handleChange} disabled={loading} /></div>
+            <div className="form-group"><label>Verbrauch (kWh)</label><input name="consumption" type="number" placeholder="50000" value={form.consumption} onChange={handleChange} disabled={loading} /></div>
+            <div className="form-group"><label>Jahreskosten (€)</label><input name="annualCosts" type="number" placeholder="3500" value={form.annualCosts} onChange={handleChange} disabled={loading} /></div>
             <div className="form-group">
               <label>Vertragsende</label>
               <select name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading}>
                 <option value="unknown">Unbekannt</option>
                 <option value="">Datum eingeben...</option>
               </select>
-              {form.contractEnd !== "unknown" && (
-                <input type="date" name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading} style={{ marginTop: 6 }} />
-              )}
+              {form.contractEnd !== "unknown" && (<input type="date" name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading} style={{ marginTop: 6 }} />)}
             </div>
-            <div className="form-group">
-              <label>Nachfass-Datum</label>
-              <input type="date" name="followUp" value={form.followUp} onChange={handleChange} disabled={loading} />
-            </div>
+            <div className="form-group"><label>Nachfass-Datum</label><input type="date" name="followUp" value={form.followUp} onChange={handleChange} disabled={loading} /></div>
 
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>⚡ Stromzähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({
-                  ...p,
-                  energy: { ...p.energy, strom: [...p.energy.strom, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] }
-                }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.strom.map((meter, idx) => (
                 <div key={idx} className="meter-card strom">
                   <div className="meter-card-header">
                     <span className="meter-index">Stromzähler {idx + 1}</span>
-                    {form.energy.strom.length > 1 && (
-                      <button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, strom: p.energy.strom.filter((_, i) => i !== idx) }
-                      }))} disabled={loading}>✕ Entfernen</button>
-                    )}
+                    {form.energy.strom.length > 1 && (<button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.filter((_, i) => i !== idx) } }))} disabled={loading}>✕ Entfernen</button>)}
                   </div>
                   <div className="meter-grid">
-                    <div className="form-group">
-                      <label>Zählernummer</label>
-                      <input type="text" placeholder="z.B. 123456789" value={meter.zählernummer} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>MALO-ID</label>
-                      <input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>Lieferanschrift</label>
-                      <input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>Kontaktanschrift</label>
-                      <input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
+                    <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 123456789" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Lieferanschrift</label><input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Kontaktanschrift</label><input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
                 </div>
               ))}
@@ -1213,51 +1298,19 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>🔥 Gaszähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({
-                  ...p,
-                  energy: { ...p.energy, gas: [...p.energy.gas, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] }
-                }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.gas.map((meter, idx) => (
                 <div key={idx} className="meter-card gas">
                   <div className="meter-card-header">
                     <span className="meter-index">Gaszähler {idx + 1}</span>
-                    {form.energy.gas.length > 1 && (
-                      <button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, gas: p.energy.gas.filter((_, i) => i !== idx) }
-                      }))} disabled={loading}>✕ Entfernen</button>
-                    )}
+                    {form.energy.gas.length > 1 && (<button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.filter((_, i) => i !== idx) } }))} disabled={loading}>✕ Entfernen</button>)}
                   </div>
                   <div className="meter-grid">
-                    <div className="form-group">
-                      <label>Zählernummer</label>
-                      <input type="text" placeholder="z.B. 987654321" value={meter.zählernummer} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>MALO-ID</label>
-                      <input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>Lieferanschrift</label>
-                      <input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
-                    <div className="form-group">
-                      <label>Kontaktanschrift</label>
-                      <input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({
-                        ...p,
-                        energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) }
-                      }))} disabled={loading} />
-                    </div>
+                    <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 987654321" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Lieferanschrift</label><input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Kontaktanschrift</label><input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
                 </div>
               ))}
@@ -1297,8 +1350,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
   );
 }
 
-// ─── LeadRow ──────────────────────────────────────────────────────────────────
-function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiSelectMode }) {
+// ─── UPDATED: LeadRow (with multiselect checkbox) ─────────────────────────────
+function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggleCheck }) {
   const priority = calculatePriority(lead);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
@@ -1313,21 +1366,23 @@ function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiS
   const stromCount = getEnergyMeterCount(lead, "strom");
   const gasCount = getEnergyMeterCount(lead, "gas");
   const deliveryPoints = getTotalDeliveryPoints(lead);
+
   return (
-    <div className={`lead-row ${isSelected ? "selected" : ""}`} onClick={() => !multiSelectMode && onSelect(lead)}>
-      {multiSelectMode && (
-        <div className="lead-row-checkbox">
+    <div
+      className={`lead-row ${isSelected ? "selected" : ""} ${isChecked ? "bulk-checked" : ""}`}
+      onClick={() => selectionMode ? onToggleCheck(lead.id) : onSelect(lead)}
+    >
+      {selectionMode && (
+        <div className="lead-row-checkbox" onClick={e => e.stopPropagation()}>
           <input
             type="checkbox"
-            checked={isChecked || false}
-            onChange={(e) => {
-              e.stopPropagation();
-              onToggleSelect(lead.id);
-            }}
+            checked={isChecked}
+            onClick={e => e.stopPropagation()}
+            onChange={() => onToggleCheck(lead.id)}
           />
         </div>
       )}
-      {!multiSelectMode && <div className="lead-row-checkbox-placeholder" />}
+      {!selectionMode && <div className="lead-row-checkbox-placeholder" />}
       <div className="lead-row-prio">
         <span className={`prio-dot prio-${priority}`} title={`Priorität ${priority}`} />
       </div>
@@ -1336,14 +1391,7 @@ function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiS
         <div className="lead-row-sub">
           {lead.person}
           {lead.phone ? (
-            <>
-              {" · "}
-              <a
-                className="lead-phone-link"
-                href={`tel:${lead.phone}`}
-                onClick={e => e.stopPropagation()}
-              >{lead.phone}</a>
-            </>
+            <>{" · "}<a className="lead-phone-link" href={`tel:${lead.phone}`} onClick={e => e.stopPropagation()}>{lead.phone}</a></>
           ) : ""}
         </div>
         <div className="lead-row-owner">Owner: {owner}</div>
@@ -1351,11 +1399,7 @@ function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiS
       <div className="lead-row-energy">
         {stromCount > 0 && <span className="energy-badge strom">🔌 Strom x{stromCount}</span>}
         {gasCount > 0 && <span className="energy-badge gas">🔥 Gas x{gasCount}</span>}
-        {deliveryPoints > 0 && (
-          <span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>
-            📍 {deliveryPoints} Lieferstellen
-          </span>
-        )}
+        {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints} Lieferstellen</span>)}
       </div>
       <div className="lead-row-health">
         <span className={`health-pill ${temperature.tone}`}>{temperature.label}</span>
@@ -1367,13 +1411,9 @@ function LeadRow({ lead, onSelect, isSelected, onToggleSelect, isChecked, multiS
       <div className="lead-row-umsatz">{formatEuro(umsatz)}</div>
       <div className="lead-row-followup">
         {lead.followUp ? (
-          <span className={isOverdueNow ? "date-overdue" : isTodayNow ? "date-today" : ""}>
-            {formatDate(lead.followUp)}
-          </span>
+          <span className={isOverdueNow ? "date-overdue" : isTodayNow ? "date-today" : ""}>{formatDate(lead.followUp)}</span>
         ) : hasCancellationWindow ? (
-          <span className="followup-chip cancellation" title="Kündigungsfenster offen">
-            Künd.-Fenster
-          </span>
+          <span className="followup-chip cancellation" title="Kündigungsfenster offen">Künd.-Fenster</span>
         ) : "—"}
       </div>
       <div className="lead-row-activity">
@@ -1414,14 +1454,13 @@ function KanbanBoard({ leads, onSelectLead }) {
                       <span className={`prio-dot prio-${p}`} />
                     </div>
                     <div className="kanban-person">{lead.person}</div>
+                    {lead.appointmentDate && (
+                      <div className="kanban-appointment">📅 {formatDate(lead.appointmentDate)}</div>
+                    )}
                     <div className="kanban-energy">
                       {stromCount > 0 && <span className="energy-badge strom">🔌 x{stromCount}</span>}
                       {gasCount > 0 && <span className="energy-badge gas">🔥 x{gasCount}</span>}
-                      {deliveryPoints > 0 && (
-                        <span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>
-                          📍 {deliveryPoints}
-                        </span>
-                      )}
+                      {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints}</span>)}
                     </div>
                     <div className="kanban-card-footer">
                       <span className="kanban-umsatz-chip">{formatEuro(calculateUmsatzPotential(lead.consumption))}</span>
@@ -1448,11 +1487,7 @@ function Dashboard({ leads, teamMembers }) {
     const byStatus = STATUS_OPTIONS.map(s => ({ label: s, count: leads.filter(l => l.status === s).length }));
     const topPerformer = teamMembers.map(m => {
       const ml = leads.filter(l => l.createdBy?.email === m.email);
-      return {
-        email: m.email, role: m.role, total: ml.length,
-        won: ml.filter(l => l.status === "Gewonnen").length,
-        umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0),
-      };
+      return { email: m.email, role: m.role, total: ml.length, won: ml.filter(l => l.status === "Gewonnen").length, umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0) };
     }).sort((a, b) => b.won - a.won);
     const totalUmsatz = leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0);
     const wonLeads = leads.filter(l => l.status === "Gewonnen").length;
@@ -1471,9 +1506,7 @@ function Dashboard({ leads, teamMembers }) {
           {stats.byStatus.map(s => (
             <div key={s.label} className="bar-row">
               <span className="bar-label">{s.label}</span>
-              <div className="bar-track">
-                <div className="bar-fill" style={{ width: `${(s.count / maxCount) * 100}%`, background: statusColors[s.label] || "#0d6efd" }} />
-              </div>
+              <div className="bar-track"><div className="bar-fill" style={{ width: `${(s.count / maxCount) * 100}%`, background: statusColors[s.label] || "#0d6efd" }} /></div>
               <span className="bar-count">{s.count}</span>
             </div>
           ))}
@@ -1511,35 +1544,159 @@ function Dashboard({ leads, teamMembers }) {
   );
 }
 
+// ─── Calendar View ───────────────────────────────────────────────────────────
+function CalendarView({ leads, onOpenLead }) {
+  const [monthOffset, setMonthOffset] = useState(0);
+
+  const baseDate = useMemo(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+  }, [monthOffset]);
+
+  const monthLabel = baseDate.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+  const monthStart = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+  const monthEnd = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
+  const gridStart = new Date(monthStart);
+  gridStart.setDate(monthStart.getDate() - ((monthStart.getDay() + 6) % 7));
+  const gridEnd = new Date(monthEnd);
+  gridEnd.setDate(monthEnd.getDate() + (6 - ((monthEnd.getDay() + 6) % 7)));
+
+  const eventsByDate = useMemo(() => {
+    const map = new Map();
+    leads.forEach((lead) => {
+      if (!lead.appointmentDate) return;
+      const bucket = map.get(lead.appointmentDate) || [];
+      bucket.push(lead);
+      map.set(lead.appointmentDate, bucket);
+    });
+    return map;
+  }, [leads]);
+
+  const upcomingAppointments = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return leads
+      .filter((lead) => !!lead.appointmentDate && lead.appointmentDate >= today)
+      .sort((a, b) => {
+        if (a.appointmentDate !== b.appointmentDate) return a.appointmentDate.localeCompare(b.appointmentDate);
+        return (a.appointmentTime || "23:59").localeCompare(b.appointmentTime || "23:59");
+      })
+      .slice(0, 8);
+  }, [leads]);
+
+  const dayCells = [];
+  const cursor = new Date(gridStart);
+  while (cursor <= gridEnd) {
+    const iso = cursor.toISOString().split("T")[0];
+    const isCurrentMonth = cursor.getMonth() === baseDate.getMonth();
+    const isToday = iso === new Date().toISOString().split("T")[0];
+    dayCells.push({
+      iso,
+      day: cursor.getDate(),
+      isCurrentMonth,
+      isToday,
+      events: eventsByDate.get(iso) || [],
+    });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return (
+    <div className="tab-page">
+      <div className="main-toolbar">
+        <div className="toolbar-left">
+          <h1 className="page-title">Kalender</h1>
+          <span className="lead-count-badge">{upcomingAppointments.length} bevorstehend</span>
+        </div>
+        <div className="toolbar-right">
+          <div className="calendar-nav-controls">
+            <button className="ghost-btn-sm" onClick={() => setMonthOffset((v) => v - 1)}>◀</button>
+            <strong className="calendar-month-label">{monthLabel}</strong>
+            <button className="ghost-btn-sm" onClick={() => setMonthOffset((v) => v + 1)}>▶</button>
+            <button className="ghost-btn-sm" onClick={() => setMonthOffset(0)}>Heute</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="calendar-layout">
+        <div className="calendar-month-board">
+          <div className="calendar-weekday-row">
+            {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((wd) => (
+              <div key={wd} className="calendar-weekday-cell">{wd}</div>
+            ))}
+          </div>
+          <div className="calendar-day-grid">
+            {dayCells.map((cell) => (
+              <div
+                key={cell.iso}
+                className={`calendar-day-cell ${cell.isCurrentMonth ? "" : "muted"} ${cell.isToday ? "today" : ""} ${cell.events.length ? "has-events" : ""}`}
+              >
+                <div className="calendar-day-header">
+                  <span>{cell.day}</span>
+                  {cell.events.length > 0 && <span className="calendar-day-dot">{cell.events.length}</span>}
+                </div>
+                <div className="calendar-day-events">
+                  {cell.events.slice(0, 2).map((lead) => (
+                    <button
+                      key={lead.id}
+                      className="calendar-event-chip"
+                      onClick={() => onOpenLead(lead.id)}
+                      title={`${lead.company || lead.person}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`}
+                    >
+                      <span className="calendar-event-time">{lead.appointmentTime || "--:--"}</span>
+                      <span className="calendar-event-title">{lead.company || lead.person}</span>
+                    </button>
+                  ))}
+                  {cell.events.length > 2 && (
+                    <span className="calendar-more-events">+{cell.events.length - 2} weitere</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="calendar-upcoming-panel">
+          <h3>Nächste Termine</h3>
+          {upcomingAppointments.length === 0 ? (
+            <p className="empty-text">Keine bevorstehenden Termine geplant.</p>
+          ) : (
+            <div className="calendar-upcoming-list">
+              {upcomingAppointments.map((lead) => (
+                <button key={`upcoming-${lead.id}`} className="calendar-upcoming-item" onClick={() => onOpenLead(lead.id)}>
+                  <div>
+                    <strong>{lead.company || lead.person}</strong>
+                    <span>{lead.person}</span>
+                  </div>
+                  <div>
+                    <strong>{formatDate(lead.appointmentDate)}</strong>
+                    <span>{lead.appointmentTime || "Ganztägig"}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  );
+}
+
 // ─── Team-Verwaltung ──────────────────────────────────────────────────────────
 function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole, canAssignAdmins }) {
-  // Tabs: "invite-email" | "add-manual" | "invite-link" | "members"
   const [activeSection, setActiveSection] = useState("members");
-
-  // Email-Einladung
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("agent");
-
-  // Manuell anlegen
   const [manualEmail, setManualEmail] = useState("");
   const [manualRole, setManualRole] = useState("agent");
-
-  // Einladungslink
   const [inviteLink, setInviteLink] = useState(null);
   const [linkCopied, setLinkCopied] = useState(false);
-  const [linkExpiry, setLinkExpiry] = useState("48"); // Stunden
-  const [linkRole, setLinkRole] = useState("agent");
-
+  const [linkExpiry, setLinkExpiry] = useState("48");
+  const linkRole = "agent";
   const [statusMsg, setStatusMsg] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // userRole prop is the authoritative source (set by onAuthStateChanged)
   const isAdmin = userRole === "admin";
   const adminCount = teamMembers.filter(m => m.role === "admin").length;
-
   const setMsg = (type, msg) => { setStatusMsg({ type, msg }); setTimeout(() => setStatusMsg(null), 5000); };
 
-  // ── 1. Per E-Mail einladen ─────────────────────────────────────────────────
   const inviteByEmail = async () => {
     if (!inviteEmail.trim()) return;
     setLoading(true);
@@ -1552,221 +1709,88 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
       const existingInvSnap = await getDocs(existingInvQ);
       if (snap.empty) {
         if (!existingInvSnap.empty) {
-          await updateDoc(existingInvSnap.docs[0].ref, {
-            teamId,
-            role: nextRole,
-            invitedBy: currentUser.email,
-            updatedAt: new Date().toISOString(),
-          });
+          await updateDoc(existingInvSnap.docs[0].ref, { teamId, role: nextRole, invitedBy: currentUser.email, updatedAt: new Date().toISOString() });
           setMsg("info", `Einladung für ${inviteEmail} aktualisiert.`);
         } else {
-          await addDoc(collection(db, "invitations"), {
-            teamId,
-            invitedBy: currentUser.email,
-            invitedEmail: normalizedEmail,
-            role: nextRole,
-            createdAt: new Date().toISOString(),
-            status: "pending",
-          });
-          setMsg("info", `Einladung für ${inviteEmail} gespeichert. Wird beim nächsten Login zugewiesen.`);
+          await addDoc(collection(db, "invitations"), { teamId, invitedBy: currentUser.email, invitedEmail: normalizedEmail, role: nextRole, createdAt: new Date().toISOString(), status: "pending" });
+          setMsg("info", `Einladung für ${inviteEmail} gespeichert.`);
         }
       } else {
         try {
           await updateDoc(doc(db, "users", snap.docs[0].id), { teamId, role: nextRole });
-          setMsg("success", `${inviteEmail} wurde als ${nextRole === "admin" ? "Admin" : "Agent"} hinzugefügt.`);
+          setMsg("success", `${inviteEmail} wurde hinzugefügt.`);
         } catch {
-          if (!existingInvSnap.empty) {
-            await updateDoc(existingInvSnap.docs[0].ref, {
-              teamId,
-              role: nextRole,
-              invitedBy: currentUser.email,
-              updatedAt: new Date().toISOString(),
-            });
-            setMsg("info", `${inviteEmail} wurde als Einladung aktualisiert.`);
-          } else {
-            await addDoc(collection(db, "invitations"), {
-              teamId,
-              invitedBy: currentUser.email,
-              invitedEmail: normalizedEmail,
-              role: nextRole,
-              createdAt: new Date().toISOString(),
-              status: "pending",
-            });
-            setMsg("info", `${inviteEmail} wurde als Einladung hinterlegt. Wird beim nächsten Login automatisch zugewiesen.`);
-          }
+          await addDoc(collection(db, "invitations"), { teamId, invitedBy: currentUser.email, invitedEmail: normalizedEmail, role: nextRole, createdAt: new Date().toISOString(), status: "pending" });
+          setMsg("info", `${inviteEmail} als Einladung hinterlegt.`);
         }
       }
-      await fetch("/api/send-invite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to: normalizedEmail, invitedBy: currentUser.email, teamId, role: nextRole }),
-      }).catch(() => {});
-      setInviteEmail("");
-      setInviteRole("agent");
-      onRefresh();
-    } catch (e) {
-      console.error("inviteByEmail error:", e?.code, e?.message, e);
-      setMsg("error", `Fehler beim Einladen (${e?.code || "unknown"}).`);
-    }
+      setInviteEmail(""); setInviteRole("agent"); onRefresh();
+    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}).`); }
     setLoading(false);
   };
 
-  // ── 2. Manuell anlegen ────────────────────────────────────────────────────
   const addManually = async () => {
     if (!manualEmail.trim()) return;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manualEmail.trim())) {
-      setMsg("error", "Bitte eine gültige E-Mail-Adresse eingeben.");
-      return;
-    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manualEmail.trim())) { setMsg("error", "Ungültige E-Mail."); return; }
     setLoading(true);
     try {
       const normalizedEmail = manualEmail.trim().toLowerCase();
       const nextRole = canAssignAdmins ? manualRole : "agent";
       const q = query(collection(db, "users"), where("email", "==", normalizedEmail));
       const snap = await getDocs(q);
-      const existingInvQ = query(collection(db, "invitations"), where("invitedEmail", "==", normalizedEmail), where("status", "==", "pending"));
-      const existingInvSnap = await getDocs(existingInvQ);
       if (!snap.empty) {
-        try {
-          await updateDoc(doc(db, "users", snap.docs[0].id), { teamId, role: nextRole });
-          setMsg("success", `${manualEmail} wurde als ${nextRole === "admin" ? "Admin" : "Agent"} hinzugefügt.`);
-        } catch {
-          if (!existingInvSnap.empty) {
-            await updateDoc(existingInvSnap.docs[0].ref, {
-              teamId,
-              role: nextRole,
-              invitedBy: currentUser.email,
-              addedManually: true,
-              updatedAt: new Date().toISOString(),
-            });
-            setMsg("info", `${manualEmail} wurde als Einladung aktualisiert.`);
-          } else {
-            await addDoc(collection(db, "invitations"), {
-              teamId,
-              invitedBy: currentUser.email,
-              invitedEmail: normalizedEmail,
-              role: nextRole,
-              createdAt: new Date().toISOString(),
-              status: "pending",
-              addedManually: true,
-            });
-            setMsg("info", `${manualEmail} wurde als Einladung hinterlegt. Beim nächsten Login erfolgt die Team-Zuweisung.`);
-          }
-        }
+        await updateDoc(doc(db, "users", snap.docs[0].id), { teamId, role: nextRole });
+        setMsg("success", `${manualEmail} hinzugefügt.`);
       } else {
-        if (!existingInvSnap.empty) {
-          await updateDoc(existingInvSnap.docs[0].ref, {
-            teamId,
-            role: nextRole,
-            invitedBy: currentUser.email,
-            addedManually: true,
-            updatedAt: new Date().toISOString(),
-          });
-          setMsg("info", `${manualEmail} wurde vorgemerkt (Einladung aktualisiert).`);
-        } else {
-          await addDoc(collection(db, "invitations"), {
-            teamId,
-            invitedBy: currentUser.email,
-            invitedEmail: normalizedEmail,
-            role: nextRole,
-            createdAt: new Date().toISOString(),
-            status: "pending",
-            addedManually: true,
-          });
-          setMsg("info", `${manualEmail} wurde vorgemerkt. Sobald sich diese Person registriert, wird sie automatisch zugewiesen.`);
-        }
+        await addDoc(collection(db, "invitations"), { teamId, invitedBy: currentUser.email, invitedEmail: normalizedEmail, role: nextRole, createdAt: new Date().toISOString(), status: "pending", addedManually: true });
+        setMsg("info", `${manualEmail} vorgemerkt.`);
       }
-      setManualEmail("");
-      setManualRole("agent");
-      onRefresh();
-    } catch (e) {
-      console.error("addManually error:", e?.code, e?.message, e);
-      setMsg("error", `Fehler beim manuellen Hinzufügen (${e?.code || "unknown"}).`);
-    }
+      setManualEmail(""); setManualRole("agent"); onRefresh();
+    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}).`); }
     setLoading(false);
   };
 
-  // ── 3. Einladungslink generieren ──────────────────────────────────────────
   const generateInviteLink = async () => {
     setLoading(true);
     try {
       const nextRole = canAssignAdmins ? linkRole : "agent";
-      const token = [...crypto.getRandomValues(new Uint8Array(24))]
-        .map(b => b.toString(16).padStart(2, "0")).join("");
+      const token = [...crypto.getRandomValues(new Uint8Array(24))].map(b => b.toString(16).padStart(2, "0")).join("");
       const expiresAt = new Date(Date.now() + parseInt(linkExpiry) * 60 * 60 * 1000).toISOString();
-      await setDoc(doc(db, "inviteLinks", token), {
-        teamId,
-        createdBy: currentUser.email,
-        role: nextRole,
-        createdAt: new Date().toISOString(),
-        expiresAt,
-        usageCount: 0,
-      });
-      const link = `${window.location.origin}?invite=${token}`;
-      setInviteLink(link);
-      setLinkRole("agent");
-      setMsg("success", "Einladungslink erstellt.");
-    } catch (e) {
-      setMsg("error", "Fehler beim Erstellen des Links.");
-    }
+      await setDoc(doc(db, "inviteLinks", token), { teamId, createdBy: currentUser.email, role: nextRole, createdAt: new Date().toISOString(), expiresAt, usageCount: 0 });
+      setInviteLink(`${window.location.origin}?invite=${token}`);
+      setMsg("success", "Link erstellt.");
+    } catch (e) { setMsg("error", "Fehler."); }
     setLoading(false);
   };
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(inviteLink).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2500);
-    });
-  };
+  const copyLink = () => { navigator.clipboard.writeText(inviteLink).then(() => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2500); }); };
 
-  // ── 4. Mitglied entfernen ─────────────────────────────────────────────────
   const removeMember = async (email) => {
     const target = teamMembers.find(m => m.email === email);
-    if (target?.role === "admin" && adminCount <= 1) {
-      setMsg("error", "Mindestens ein Admin muss im Team bleiben.");
-      return;
-    }
-    if (!window.confirm(`${email} aus dem Team entfernen?`)) return;
+    if (target?.role === "admin" && adminCount <= 1) { setMsg("error", "Letzter Admin kann nicht entfernt werden."); return; }
+    if (!window.confirm(`${email} entfernen?`)) return;
     try {
       const q = query(collection(db, "users"), where("email", "==", email));
       const snap = await getDocs(q);
-      if (!snap.empty) {
-        await updateDoc(doc(db, "users", snap.docs[0].id), {
-          teamId: `team-${snap.docs[0].id}`,
-          role: "admin",
-        });
-        onRefresh();
-      }
+      if (!snap.empty) { await updateDoc(doc(db, "users", snap.docs[0].id), { teamId: `team-${snap.docs[0].id}`, role: "admin" }); onRefresh(); }
     } catch (e) { console.error(e); }
   };
 
-  // ── 5. Rolle wechseln ─────────────────────────────────────────────────────
   const toggleRole = async (email, currentRole) => {
-    if (!canAssignAdmins) {
-      setMsg("error", "Nur freigeschaltete Top-Admins dürfen Admin-Rollen vergeben.");
-      return;
-    }
-    if (currentRole === "admin" && adminCount <= 1) {
-      setMsg("error", "Der letzte Admin kann nicht zu Agent geändert werden.");
-      return;
-    }
+    if (!canAssignAdmins) { setMsg("error", "Keine Berechtigung."); return; }
+    if (currentRole === "admin" && adminCount <= 1) { setMsg("error", "Letzter Admin."); return; }
     try {
       const q = query(collection(db, "users"), where("email", "==", email));
       const snap = await getDocs(q);
-      if (!snap.empty) {
-        await updateDoc(doc(db, "users", snap.docs[0].id), {
-          role: currentRole === "admin" ? "agent" : "admin",
-        });
-        onRefresh();
-      }
+      if (!snap.empty) { await updateDoc(doc(db, "users", snap.docs[0].id), { role: currentRole === "admin" ? "agent" : "admin" }); onRefresh(); }
     } catch (e) { console.error(e); }
   };
 
   const SECTIONS = [
-    { id: "members",      label: "Mitglieder",       icon: "👥" },
-    { id: "invite-email", label: "Per E-Mail",        icon: "✉️" },
-    { id: "add-manual",   label: "Manuell anlegen",  icon: "➕" },
-    { id: "invite-link",  label: "Einladungslink",   icon: "🔗" },
+    { id: "members", label: "Mitglieder", icon: "👥" },
+    { id: "invite-email", label: "Per E-Mail", icon: "✉️" },
+    { id: "add-manual", label: "Manuell anlegen", icon: "➕" },
+    { id: "invite-link", label: "Einladungslink", icon: "🔗" },
   ];
 
   return (
@@ -1775,72 +1799,30 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
         <div>
           <h1 className="page-title">Team-Verwaltung</h1>
           <p className="team-id-info">Team-ID: <code>{teamId}</code></p>
-          {isAdmin && !canAssignAdmins && <p className="team-role-hint">Neue Mitglieder werden standardmäßig als Agent angelegt. Admin-Rollen dürfen nur freigeschaltete Top-Admins vergeben.</p>}
         </div>
-        {!isAdmin && (
-          <p className="team-role-hint">Du bist als Agent angemeldet. Einladen und Rollen verwalten sind nur für Admins verfügbar.</p>
-        )}
+        {!isAdmin && <p className="team-role-hint">Du bist als Agent angemeldet.</p>}
       </div>
-
-      {/* Section-Tabs */}
       <div className="team-section-nav">
         {SECTIONS.map(s => (
-          <button
-            key={s.id}
-            className={`team-section-tab ${activeSection === s.id ? "active" : ""} ${!isAdmin && s.id !== "members" ? "disabled" : ""}`}
-            onClick={() => isAdmin || s.id === "members" ? setActiveSection(s.id) : setMsg("error", "Nur für Admins verfügbar.")}
-          >
+          <button key={s.id} className={`team-section-tab ${activeSection === s.id ? "active" : ""} ${!isAdmin && s.id !== "members" ? "disabled" : ""}`} onClick={() => isAdmin || s.id === "members" ? setActiveSection(s.id) : setMsg("error", "Nur für Admins.")}>
             <span>{s.icon}</span> {s.label}
             {s.id === "members" && <span className="team-tab-count">{teamMembers.length}</span>}
           </button>
         ))}
       </div>
-
       {statusMsg && <div className={`invite-status ${statusMsg.type}`}>{statusMsg.msg}</div>}
-
-      {/* ── Mitglieder-Liste ── */}
       {activeSection === "members" && (
         <div className="card team-members-card">
-          {teamMembers.length === 0 ? (
-            <p className="empty-text">Noch keine Teammitglieder. Nutze die Tabs oben, um Mitglieder hinzuzufügen.</p>
-          ) : (
+          {teamMembers.length === 0 ? (<p className="empty-text">Noch keine Teammitglieder.</p>) : (
             <table className="members-table">
-              <thead>
-                <tr>
-                  <th>E-Mail</th>
-                  <th>Rolle</th>
-                  <th>Beigetreten</th>
-                  {isAdmin && <th>Aktionen</th>}
-                </tr>
-              </thead>
+              <thead><tr><th>E-Mail</th><th>Rolle</th><th>Beigetreten</th>{isAdmin && <th>Aktionen</th>}</tr></thead>
               <tbody>
                 {teamMembers.map(m => (
                   <tr key={m.email} className={m.email === currentUser.email ? "members-table-self" : ""}>
-                    <td>
-                      <div className="member-email-cell">
-                        <div className="member-avatar-sm">{m.email[0].toUpperCase()}</div>
-                        <span>{m.email}</span>
-                        {m.email === currentUser.email && <span className="you-chip">Du</span>}
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`member-role-badge ${m.role}`}>
-                        {m.role === "admin" ? "👑 Admin" : "🧑 Agent"}
-                      </span>
-                    </td>
+                    <td><div className="member-email-cell"><div className="member-avatar-sm">{m.email[0].toUpperCase()}</div><span>{m.email}</span>{m.email === currentUser.email && <span className="you-chip">Du</span>}</div></td>
+                    <td><span className={`member-role-badge ${m.role}`}>{m.role === "admin" ? "👑 Admin" : "🧑 Agent"}</span></td>
                     <td className="member-date">{m.createdAt ? formatDate(m.createdAt) : "—"}</td>
-                    {isAdmin && (
-                      <td>
-                        {m.email !== currentUser.email ? (
-                          <div className="member-actions">
-                            {canAssignAdmins && <button className="small-btn" onClick={() => toggleRole(m.email, m.role)} title="Rolle wechseln">
-                              {m.role === "admin" ? "→ Agent" : "→ Admin"}
-                            </button>}
-                            <button className="small-btn danger" onClick={() => removeMember(m.email)} title="Entfernen">Entfernen</button>
-                          </div>
-                        ) : <span className="muted-text">—</span>}
-                      </td>
-                    )}
+                    {isAdmin && (<td>{m.email !== currentUser.email ? (<div className="member-actions">{canAssignAdmins && <button className="small-btn" onClick={() => toggleRole(m.email, m.role)}>{m.role === "admin" ? "→ Agent" : "→ Admin"}</button>}<button className="small-btn danger" onClick={() => removeMember(m.email)}>Entfernen</button></div>) : <span className="muted-text">—</span>}</td>)}
                   </tr>
                 ))}
               </tbody>
@@ -1848,178 +1830,40 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
           )}
         </div>
       )}
-
-      {/* ── Per E-Mail einladen ── */}
       {activeSection === "invite-email" && isAdmin && (
         <div className="card team-action-card">
           <h3>Mitglied per E-Mail einladen</h3>
-          <p className="action-desc">
-            Gib die E-Mail-Adresse ein. Ist die Person bereits registriert, wird sie sofort dem Team zugeordnet.
-            Andernfalls wird eine Einladung gespeichert und beim nächsten Login aktiviert.
-          </p>
           <div className="action-form">
-            <div className="form-row">
-              <label>E-Mail-Adresse</label>
-              <input
-                type="email"
-                placeholder="kollege@beispiel.de"
-                value={inviteEmail}
-                onChange={e => setInviteEmail(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && inviteByEmail()}
-                disabled={loading}
-              />
-            </div>
-            {canAssignAdmins ? (
-              <div className="form-row">
-                <label>Rolle</label>
-                <div className="role-picker">
-                  <button
-                    className={`role-pick-btn ${inviteRole === "agent" ? "active" : ""}`}
-                    onClick={() => setInviteRole("agent")}
-                  >
-                    🧑 Agent
-                    <span className="role-desc">Leads anlegen &amp; bearbeiten</span>
-                  </button>
-                  <button
-                    className={`role-pick-btn ${inviteRole === "admin" ? "active" : ""}`}
-                    onClick={() => setInviteRole("admin")}
-                  >
-                    👑 Admin
-                    <span className="role-desc">Team verwalten, alle Rechte</span>
-                  </button>
-                </div>
-              </div>
-            ) : <p className="team-inline-hint">Neue Einladungen werden in deinem Team automatisch als Agent angelegt.</p>}
-            <button className="primary-btn" onClick={inviteByEmail} disabled={loading || !inviteEmail.trim()}>
-              {loading ? "Wird gesendet..." : "Einladung senden"}
-            </button>
+            <div className="form-row"><label>E-Mail-Adresse</label><input type="email" placeholder="kollege@beispiel.de" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && inviteByEmail()} disabled={loading} /></div>
+            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${inviteRole === "agent" ? "active" : ""}`} onClick={() => setInviteRole("agent")}>🧑 Agent<span className="role-desc">Leads anlegen &amp; bearbeiten</span></button><button className={`role-pick-btn ${inviteRole === "admin" ? "active" : ""}`} onClick={() => setInviteRole("admin")}>👑 Admin<span className="role-desc">Team verwalten</span></button></div></div>)}
+            <button className="primary-btn" onClick={inviteByEmail} disabled={loading || !inviteEmail.trim()}>{loading ? "..." : "Einladung senden"}</button>
           </div>
         </div>
       )}
-
-      {/* ── Manuell anlegen ── */}
       {activeSection === "add-manual" && isAdmin && (
         <div className="card team-action-card">
           <h3>Mitglied manuell hinzufügen</h3>
-          <p className="action-desc">
-            Trage die E-Mail-Adresse direkt ein. Ist die Person bereits registriert, wird sie sofort zugeordnet.
-            Noch nicht registrierte Personen werden vorgemerkt.
-          </p>
           <div className="action-form">
-            <div className="form-row">
-              <label>E-Mail-Adresse</label>
-              <input
-                type="email"
-                placeholder="kollege@beispiel.de"
-                value={manualEmail}
-                onChange={e => setManualEmail(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && addManually()}
-                disabled={loading}
-              />
-            </div>
-            {canAssignAdmins ? (
-              <div className="form-row">
-                <label>Rolle</label>
-                <div className="role-picker">
-                  <button
-                    className={`role-pick-btn ${manualRole === "agent" ? "active" : ""}`}
-                    onClick={() => setManualRole("agent")}
-                  >
-                    🧑 Agent
-                    <span className="role-desc">Leads anlegen &amp; bearbeiten</span>
-                  </button>
-                  <button
-                    className={`role-pick-btn ${manualRole === "admin" ? "active" : ""}`}
-                    onClick={() => setManualRole("admin")}
-                  >
-                    👑 Admin
-                    <span className="role-desc">Team verwalten, alle Rechte</span>
-                  </button>
-                </div>
-              </div>
-            ) : <p className="team-inline-hint">Manuell angelegte Mitglieder werden in deinem Team automatisch als Agent geführt.</p>}
-            <button className="primary-btn" onClick={addManually} disabled={loading || !manualEmail.trim()}>
-              {loading ? "Wird gespeichert..." : "Hinzufügen"}
-            </button>
+            <div className="form-row"><label>E-Mail-Adresse</label><input type="email" placeholder="kollege@beispiel.de" value={manualEmail} onChange={e => setManualEmail(e.target.value)} disabled={loading} /></div>
+            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${manualRole === "agent" ? "active" : ""}`} onClick={() => setManualRole("agent")}>🧑 Agent</button><button className={`role-pick-btn ${manualRole === "admin" ? "active" : ""}`} onClick={() => setManualRole("admin")}>👑 Admin</button></div></div>)}
+            <button className="primary-btn" onClick={addManually} disabled={loading || !manualEmail.trim()}>{loading ? "..." : "Hinzufügen"}</button>
           </div>
         </div>
       )}
-
-      {/* ── Einladungslink ── */}
       {activeSection === "invite-link" && isAdmin && (
         <div className="card team-action-card">
           <h3>Einladungslink generieren</h3>
-          <p className="action-desc">
-            Erstelle einen Link, den du per WhatsApp, Slack oder E-Mail teilen kannst.
-            Jede Person, die den Link öffnet und sich einloggt oder registriert, wird automatisch deinem Team mit der gewählten Rolle zugewiesen.
-          </p>
           <div className="action-form">
-            {canAssignAdmins ? (
-              <div className="form-row">
-                <label>Rolle</label>
-                <div className="role-picker">
-                  <button
-                    className={`role-pick-btn ${linkRole === "agent" ? "active" : ""}`}
-                    onClick={() => setLinkRole("agent")}
-                  >
-                    🧑 Agent
-                    <span className="role-desc">Leads anlegen &amp; bearbeiten</span>
-                  </button>
-                  <button
-                    className={`role-pick-btn ${linkRole === "admin" ? "active" : ""}`}
-                    onClick={() => setLinkRole("admin")}
-                  >
-                    👑 Admin
-                    <span className="role-desc">Team verwalten, alle Rechte</span>
-                  </button>
-                </div>
-              </div>
-            ) : <p className="team-inline-hint">Einladungslinks erzeugen in deinem Team standardmäßig Agents.</p>}
-            <div className="form-row">
-              <label>Link gültig für</label>
-              <div className="expiry-picker">
-                {[["24", "24 Stunden"], ["48", "48 Stunden"], ["168", "7 Tage"], ["720", "30 Tage"]].map(([val, label]) => (
-                  <button
-                    key={val}
-                    className={`expiry-btn ${linkExpiry === val ? "active" : ""}`}
-                    onClick={() => setLinkExpiry(val)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <button className="primary-btn" onClick={generateInviteLink} disabled={loading}>
-              {loading ? "Wird erstellt..." : "Link generieren"}
-            </button>
+            <div className="form-row"><label>Gültig für</label><div className="expiry-picker">{[["24", "24h"], ["48", "48h"], ["168", "7 Tage"], ["720", "30 Tage"]].map(([val, label]) => (<button key={val} className={`expiry-btn ${linkExpiry === val ? "active" : ""}`} onClick={() => setLinkExpiry(val)}>{label}</button>))}</div></div>
+            <button className="primary-btn" onClick={generateInviteLink} disabled={loading}>{loading ? "..." : "Link generieren"}</button>
           </div>
-
           {inviteLink && (
             <div className="invite-link-box">
               <div className="invite-link-url">{inviteLink}</div>
               <div className="invite-link-actions">
-                <button className={`copy-link-btn ${linkCopied ? "copied" : ""}`} onClick={copyLink}>
-                  {linkCopied ? "✓ Kopiert!" : "Kopieren"}
-                </button>
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent("Du wurdest zu unserem ENERGYO Sales-Team eingeladen: " + inviteLink)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="share-btn whatsapp"
-                >
-                  WhatsApp
-                </a>
-                <a
-                  href={`mailto:?subject=ENERGYO Team-Einladung&body=${encodeURIComponent("Hallo,\n\nbitte klicke auf folgenden Link, um unserem Team beizutreten:\n\n" + inviteLink + "\n\nViele Grüße,\n" + currentUser.email)}`}
-                  className="share-btn email"
-                >
-                  E-Mail
-                </a>
+                <button className={`copy-link-btn ${linkCopied ? "copied" : ""}`} onClick={copyLink}>{linkCopied ? "✓ Kopiert!" : "Kopieren"}</button>
+                <a href={`https://wa.me/?text=${encodeURIComponent("Einladung: " + inviteLink)}`} target="_blank" rel="noopener noreferrer" className="share-btn whatsapp">WhatsApp</a>
               </div>
-              <p className="invite-link-hint">
-                Link läuft ab am {new Date(Date.now() + parseInt(linkExpiry) * 60 * 60 * 1000).toLocaleDateString("de-DE")}.
-                Zuweisung als {(canAssignAdmins ? linkRole : "agent") === "admin" ? "Admin" : "Agent"}.
-              </p>
             </div>
           )}
         </div>
@@ -2028,63 +1872,43 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
   );
 }
 
-// ─── InviteLink-Handler (App-Level) ──────────────────────────────────────────
+// ─── InviteLink-Handler ───────────────────────────────────────────────────────
 async function acceptInviteLink(token, userId, userEmail) {
   try {
     const linkDoc = await getDoc(doc(db, "inviteLinks", token));
-    if (!linkDoc.exists()) return { ok: false, msg: "Einladungslink ungültig." };
+    if (!linkDoc.exists()) return { ok: false, msg: "Ungültig." };
     const data = linkDoc.data();
-    if (new Date(data.expiresAt) < new Date()) return { ok: false, msg: "Einladungslink abgelaufen." };
-    const userRef = doc(db, "users", userId);
-    await updateDoc(userRef, { teamId: data.teamId, role: data.role || "agent" });
+    if (new Date(data.expiresAt) < new Date()) return { ok: false, msg: "Abgelaufen." };
+    await updateDoc(doc(db, "users", userId), { teamId: data.teamId, role: data.role || "agent" });
     await updateDoc(doc(db, "inviteLinks", token), { usageCount: (data.usageCount || 0) + 1 });
     return { ok: true, teamId: data.teamId, role: data.role || "agent" };
-  } catch (e) {
-    return { ok: false, msg: "Fehler beim Verarbeiten des Einladungslinks." };
-  }
+  } catch (e) { return { ok: false, msg: "Fehler." }; }
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) {
   const navItems = [
     { id: "leads", label: "Lead-Pipeline", icon: "📋" },
+    { id: "calendar", label: "Kalender", icon: "🗓️" },
     { id: "dashboard", label: "Dashboard", icon: "📊" },
     { id: "team", label: "Team", icon: "👥" },
   ];
   return (
     <aside className="sidebar">
-      <div className="sidebar-header">
-        <img src={logo} alt="ENERGYO" className="sidebar-logo" />
-      </div>
+      <div className="sidebar-header"><img src={logo} alt="ENERGYO" className="sidebar-logo" /></div>
       <nav className="sidebar-nav">
         {navItems.map(item => (
-          <button
-            key={item.id}
-            className={`sidebar-nav-item ${activeTab === item.id ? "active" : ""}`}
-            onClick={() => setActiveTab(item.id)}
-          >
+          <button key={item.id} className={`sidebar-nav-item ${activeTab === item.id ? "active" : ""}`} onClick={() => setActiveTab(item.id)}>
             <span className="sidebar-item-icon">{item.icon}</span>
             <span className="sidebar-item-label">{item.label}</span>
           </button>
         ))}
       </nav>
       <div className="sidebar-kpis">
-        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}>
-          <span className="sidebar-kpi-value kpi-warning">{stats.overdue}</span>
-          <span className="sidebar-kpi-label">Überfällig</span>
-        </div>
-        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}>
-          <span className="sidebar-kpi-value kpi-alert">{stats.openCancellation}</span>
-          <span className="sidebar-kpi-label">Kündigungsfenster</span>
-        </div>
-        <div className="sidebar-kpi-item">
-          <span className="sidebar-kpi-value kpi-success">{stats.wonLeads}</span>
-          <span className="sidebar-kpi-label">Gewonnen</span>
-        </div>
-        <div className="sidebar-kpi-item">
-          <span className={`sidebar-kpi-value ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span>
-          <span className="sidebar-kpi-label">Closing rate</span>
-        </div>
+        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}><span className="sidebar-kpi-value kpi-warning">{stats.overdue}</span><span className="sidebar-kpi-label">Überfällig</span></div>
+        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}><span className="sidebar-kpi-value kpi-alert">{stats.openCancellation}</span><span className="sidebar-kpi-label">Kündigungsfenster</span></div>
+        <div className="sidebar-kpi-item"><span className="sidebar-kpi-value kpi-success">{stats.wonLeads}</span><span className="sidebar-kpi-label">Gewonnen</span></div>
+        <div className="sidebar-kpi-item"><span className={`sidebar-kpi-value ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span><span className="sidebar-kpi-label">Closing rate</span></div>
       </div>
       <div className="sidebar-footer">
         <div className="sidebar-user">
@@ -2092,9 +1916,7 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
           <div className="user-info">
             <span className="user-email-short">{user.email.split("@")[0]}</span>
             <span className="user-domain">{user.email.split("@")[1]}</span>
-            <span className={`user-role-chip ${userRole === "admin" ? "admin" : "agent"}`}>
-              {userRole === "admin" ? "Admin" : "Agent"}
-            </span>
+            <span className={`user-role-chip ${userRole === "admin" ? "admin" : "agent"}`}>{userRole === "admin" ? "Admin" : "Agent"}</span>
           </div>
         </div>
         <button className="sidebar-signout-btn" onClick={onSignOut}>Abmelden</button>
@@ -2103,29 +1925,20 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, onSignOut }) 
   );
 }
 
-// ─── Import Modal Component ────────────────────────────────────────────────────
+// ─── Import Modal ─────────────────────────────────────────────────────────────
 function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
-  const [step, setStep] = React.useState(1);
-  const [file, setFile] = React.useState(null);
-  const [csvData, setCsvData] = React.useState([]);
-  const [columns, setColumns] = React.useState(null);
-  const [parsedLeads, setParsedLeads] = React.useState([]);
-  const [duplicates, setDuplicates] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const fileInputRef = React.useRef(null);
+  const [step, setStep] = useState(1);
+  const [file, setFile] = useState(null);
+  const [parsedLeads, setParsedLeads] = useState([]);
+  const [duplicates, setDuplicates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
 
-  const processTabularData = React.useCallback((rows) => {
-    if (!rows || rows.length < 2) {
-      setError('Datei muss mindestens 1 Kopfzeile + 1 Datenzeile haben');
-      return;
-    }
-
+  const processTabularData = useCallback((rows) => {
+    if (!rows || rows.length < 2) { setError('Mindestens 1 Kopfzeile + 1 Datenzeile erforderlich'); return; }
     const headers = rows[0].map((h) => String(h || '').trim());
-    setCsvData(rows);
     const cols = detectColumnHeaders(headers);
-    setColumns(cols);
-
     const parsedRows = [];
     const dups = [];
     for (let i = 1; i < rows.length; i++) {
@@ -2133,7 +1946,6 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
       const parsed = parseImportRow(rows[i], headers, cols, users, currentUser.email);
       parsedRows.push({ row: i + 1, lead: parsed });
     }
-
     const mergedLeads = mergeImportedLeads(parsedRows);
     const newLeads = [];
     mergedLeads.forEach((entry) => {
@@ -2141,7 +1953,6 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
       if (dup) dups.push({ row: entry.row, lead: entry.lead, duplicate: dup });
       else newLeads.push(entry);
     });
-
     setParsedLeads(newLeads);
     setDuplicates(dups);
     setStep(2);
@@ -2149,164 +1960,107 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
 
   const handleFileChange = (e) => {
     const f = e.target.files?.[0];
-    if (f) {
-      setFile(f);
-      setError('');
-      const fileName = String(f.name || '').toLowerCase();
-
-      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          try {
-            const data = evt.target?.result;
-            const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheet = workbook.SheetNames[0];
-            if (!firstSheet) {
-              setError('Excel-Datei enthält kein Tabellenblatt.');
-              return;
-            }
-            const worksheet = workbook.Sheets[firstSheet];
-            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
-            processTabularData(rows);
-          } catch (err) {
-            setError(`Excel-Parse-Fehler: ${err?.message || 'Unbekannter Fehler'}`);
-          }
-        };
-        reader.onerror = () => setError('Excel-Datei konnte nicht gelesen werden.');
-        reader.readAsArrayBuffer(f);
-        return;
-      }
-
-      Papa.parse(f, {
-        header: false,
-        skipEmptyLines: true,
-        delimiter: "",
-        complete: (results) => {
-          processTabularData(results.data || []);
-        },
-        error: (error) => setError(`Parse-Fehler: ${error.message}`)
-      });
+    if (!f) return;
+    setFile(f);
+    setError('');
+    const fileName = String(f.name || '').toLowerCase();
+    if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const workbook = XLSX.read(evt.target?.result, { type: 'array' });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          processTabularData(XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }));
+        } catch (err) { setError(`Excel-Fehler: ${err?.message}`); }
+      };
+      reader.readAsArrayBuffer(f);
+      return;
     }
+    Papa.parse(f, { header: false, skipEmptyLines: true, delimiter: "", complete: (r) => processTabularData(r.data || []), error: (err) => setError(`Parse-Fehler: ${err.message}`) });
   };
 
   const handleImport = async () => {
     setLoading(true);
     try {
-      const leadsToImport = parsedLeads.map(p => p.lead);
-      await onImport(leadsToImport);
+      await onImport(parsedLeads.map(p => p.lead));
       setStep(3);
-      setTimeout(() => {
-        resetModal();
-        onClose();
-      }, 2000);
-    } catch (err) {
-      setError(`Import-Fehler: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+      setTimeout(() => { resetModal(); onClose(); }, 2000);
+    } catch (err) { setError(`Import-Fehler: ${err.message}`); }
+    setLoading(false);
   };
 
-  const resetModal = () => {
-    setStep(1);
-    setFile(null);
-    setCsvData([]);
-    setColumns(null);
-    setParsedLeads([]);
-    setDuplicates([]);
-    setError('');
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
+  const resetModal = () => { setStep(1); setFile(null); setParsedLeads([]); setDuplicates([]); setError(''); if (fileInputRef.current) fileInputRef.current.value = ''; };
 
   if (!isOpen) return null;
-
   return (
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal import-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>📥 Lead-Import</h2>
-          <button className="drawer-close-btn" onClick={onClose}>✕</button>
-        </div>
-
+        <div className="modal-header"><h2>📥 Lead-Import</h2><button className="drawer-close-btn" onClick={onClose}>✕</button></div>
         {step === 1 && (
           <div className="import-step">
-            <p className="step-desc">Lade eine CSV- oder Excel-Datei mit Kundendaten hoch</p>
+            <p className="step-desc">CSV- oder Excel-Datei hochladen</p>
             <div className="import-upload-zone" onClick={() => fileInputRef.current?.click()}>
               <span className="upload-icon">📄</span>
               <span className="upload-label">{file ? file.name : 'Datei auswählen'}</span>
-              <span className="upload-hint">CSV (; oder ,) oder Excel (.xlsx/.xls)</span>
+              <span className="upload-hint">CSV oder Excel (.xlsx/.xls)</span>
             </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
+            <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls" onChange={handleFileChange} style={{ display: 'none' }} />
             {error && <div className="import-error">{error}</div>}
           </div>
         )}
-
         {step === 2 && (
           <div className="import-step">
-            <p className="step-desc">Überprüfung: {parsedLeads.length} neue Leads, {duplicates.length} Duplikate</p>
-            
+            <p className="step-desc">{parsedLeads.length} neue Leads, {duplicates.length} Duplikate</p>
             {duplicates.length > 0 && (
               <div className="import-warning">
-                ⚠️ {duplicates.length} Zeile(n) mit existierenden Telefonnummern:
-                <div className="dup-list">
-                  {duplicates.slice(0, 3).map((d, i) => (
-                    <div key={i} className="dup-item">
-                      Zeile {d.row}: {d.lead.person} ({d.lead.phone}) existiert
-                    </div>
-                  ))}
-                  {duplicates.length > 3 && <div className="dup-item">...+ {duplicates.length - 3} weitere</div>}
-                </div>
+                ⚠️ {duplicates.length} Duplikat(e):
+                <div className="dup-list">{duplicates.slice(0, 3).map((d, i) => (<div key={i} className="dup-item">Zeile {d.row}: {d.lead.person} ({d.lead.phone})</div>))}{duplicates.length > 3 && <div className="dup-item">+{duplicates.length - 3} weitere</div>}</div>
               </div>
             )}
-
             <div className="import-preview">
-              <h4>Vorschau (erste {Math.min(3, parsedLeads.length)} Leads)</h4>
-              {parsedLeads.slice(0, 3).map((p, i) => (
-                <div key={i} className="preview-item">
-                  <strong>{p.lead.person}</strong> <br/>
-                  {p.lead.company && <span>{p.lead.company} · </span>}
-                  {p.lead.phone && <span>{p.lead.phone}</span>}
-                </div>
-              ))}
+              <h4>Vorschau</h4>
+              {parsedLeads.slice(0, 3).map((p, i) => (<div key={i} className="preview-item"><strong>{p.lead.person}</strong><br />{p.lead.company && <span>{p.lead.company} · </span>}{p.lead.phone && <span>{p.lead.phone}</span>}</div>))}
             </div>
-
             {error && <div className="import-error">{error}</div>}
           </div>
         )}
-
         {step === 3 && (
-          <div className="import-step">
-            <div className="import-success">
-              <span className="success-icon">✅</span>
-              <h3>{parsedLeads.length} Leads erfolgreich importiert!</h3>
-              <p>Alle Leads wurden als "Neu" eingestuft.</p>
-            </div>
-          </div>
+          <div className="import-step"><div className="import-success"><span className="success-icon">✅</span><h3>{parsedLeads.length} Leads importiert!</h3></div></div>
         )}
-
         <div className="modal-footer">
-          {step === 1 && (
-            <>
-              <button className="ghost-btn" onClick={onClose}>Abbrechen</button>
-            </>
-          )}
-          {step === 2 && (
-            <>
-              <button className="ghost-btn" onClick={() => setStep(1)}>Zurück</button>
-              <button className="primary-btn" onClick={handleImport} disabled={loading || parsedLeads.length === 0}>
-                {loading ? '⏳ Importiere...' : `✅ Importiere ${parsedLeads.length} Leads`}
-              </button>
-            </>
-          )}
-          {step === 3 && (
-            <button className="primary-btn" onClick={onClose}>Schließen</button>
-          )}
+          {step === 1 && <button className="ghost-btn" onClick={onClose}>Abbrechen</button>}
+          {step === 2 && (<><button className="ghost-btn" onClick={() => setStep(1)}>Zurück</button><button className="primary-btn" onClick={handleImport} disabled={loading || parsedLeads.length === 0}>{loading ? '⏳' : `✅ ${parsedLeads.length} Leads importieren`}</button></>)}
+          {step === 3 && <button className="primary-btn" onClick={onClose}>Schließen</button>}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── NEW: BulkActionBar ───────────────────────────────────────────────────────
+function BulkActionBar({ selectedCount, onDelete, onCancel, onSelectAll, totalCount }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  return (
+    <div className="bulk-action-bar">
+      <div className="bulk-action-left">
+        <span className="bulk-count">{selectedCount} Lead{selectedCount !== 1 ? "s" : ""} ausgewählt</span>
+        <button className="bulk-select-all-btn" onClick={onSelectAll}>
+          {selectedCount === totalCount ? "Alle abwählen" : "Alle auswählen"}
+        </button>
+      </div>
+      <div className="bulk-action-right">
+        {confirmDelete ? (
+          <div className="bulk-confirm-row">
+            <span className="bulk-confirm-text">⚠️ {selectedCount} Leads wirklich löschen?</span>
+            <button className="danger-btn" onClick={() => { onDelete(); setConfirmDelete(false); }}>Ja, löschen</button>
+            <button className="ghost-btn" onClick={() => setConfirmDelete(false)}>Abbrechen</button>
+          </div>
+        ) : (
+          <button className="danger-btn" onClick={() => setConfirmDelete(true)}>
+            🗑 {selectedCount} Leads löschen
+          </button>
+        )}
+        <button className="ghost-btn" onClick={onCancel}>Abbrechen</button>
       </div>
     </div>
   );
@@ -2328,8 +2082,6 @@ function App() {
   const [activeTab, setActiveTab] = useState("leads");
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
-  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -2337,23 +2089,15 @@ function App() {
   const [sortMode, setSortMode] = useState("priority");
   const [kpiFocus, setKpiFocus] = useState("all");
 
+  // NEW: multiselect state
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
+
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
-    if (focus === "overdue" || focus === "today") {
-      setSortMode("followUp");
-      setSmartView("action");
-      return;
-    }
-    if (focus === "cancellation" || focus === "priorityA") {
-      setSortMode("priority");
-      setSmartView("all");
-      return;
-    }
-    if (focus === "won") {
-      setSortMode("activity");
-      setSmartView("won");
-      return;
-    }
+    if (focus === "overdue" || focus === "today") { setSortMode("followUp"); setSmartView("action"); return; }
+    if (focus === "cancellation" || focus === "priorityA") { setSortMode("priority"); setSmartView("all"); return; }
+    if (focus === "won") { setSortMode("activity"); setSmartView("won"); return; }
     setSmartView("all");
   };
 
@@ -2362,17 +2106,18 @@ function App() {
   useEffect(() => {
     const handle = (e) => {
       if (e.key === "Escape") {
-        if (showNewLeadModal) setShowNewLeadModal(false);
+        if (selectionMode) { setSelectionMode(false); setSelectedLeadIds(new Set()); }
+        else if (showNewLeadModal) setShowNewLeadModal(false);
         else if (selectedLeadId) setSelectedLeadId(null);
       }
-      if (e.key === "n" && !showNewLeadModal && !selectedLeadId &&
+      if (e.key === "n" && !showNewLeadModal && !selectedLeadId && !selectionMode &&
         !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
         setShowNewLeadModal(true);
       }
     };
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
-  }, [showNewLeadModal, selectedLeadId]);
+  }, [showNewLeadModal, selectedLeadId, selectionMode]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -2395,30 +2140,17 @@ function App() {
           const invQ = query(collection(db, "invitations"), where("invitedEmail", "==", normalizedCurrentEmail), where("status", "==", "pending"));
           const invSnap = await getDocs(invQ);
           if (!invSnap.empty) {
-            const pendingInvites = invSnap.docs
-              .map(d => ({ id: d.id, ref: d.ref, ...d.data() }))
-              .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            const pendingInvites = invSnap.docs.map(d => ({ id: d.id, ref: d.ref, ...d.data() })).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
             const activeInvite = pendingInvites[0];
-
             await updateDoc(doc(db, "users", currentUser.uid), { teamId: activeInvite.teamId, role: activeInvite.role || "agent" });
-            for (const invitation of pendingInvites) {
-              await updateDoc(invitation.ref, { status: invitation.id === activeInvite.id ? "accepted" : "superseded" });
-            }
-
-            setTeamId(activeInvite.teamId);
-            setUserRole(activeInvite.role || "agent");
-            setCanAssignAdmins(false);
+            for (const invitation of pendingInvites) { await updateDoc(invitation.ref, { status: invitation.id === activeInvite.id ? "accepted" : "superseded" }); }
+            setTeamId(activeInvite.teamId); setUserRole(activeInvite.role || "agent"); setCanAssignAdmins(false);
           }
         }
         const urlToken = new URLSearchParams(window.location.search).get("invite");
         if (urlToken) {
           const result = await acceptInviteLink(urlToken, currentUser.uid, currentUser.email);
-          if (result.ok) {
-            setTeamId(result.teamId);
-            setUserRole(result.role);
-            setCanAssignAdmins(false);
-            window.history.replaceState({}, document.title, window.location.pathname);
-          }
+          if (result.ok) { setTeamId(result.teamId); setUserRole(result.role); setCanAssignAdmins(false); window.history.replaceState({}, document.title, window.location.pathname); }
         }
       } catch (e) { console.error(e); setTeamId(`team-${currentUser.uid}`); setCanAssignAdmins(false); }
     });
@@ -2449,27 +2181,23 @@ function App() {
     const overdueLeads = leads.filter(l => isOverdue(l.followUp));
     const cancellationLeads = leads.filter(l => isOpenCancellationWindow(l.contractEnd));
     if (overdueLeads.length > 0 || cancellationLeads.length > 0) {
-      fetch("/api/send-notification", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to: user.email, overdueCount: overdueLeads.length, cancellationCount: cancellationLeads.length }),
-      }).then(() => setNotifSent(true)).catch(() => {});
+      fetch("/api/send-notification", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ to: user.email, overdueCount: overdueLeads.length, cancellationCount: cancellationLeads.length }) })
+        .then(() => setNotifSent(true)).catch(() => {});
     }
   }, [user, leads, notifSent]);
 
   const addLead = async (form, onSuccess) => {
-    if (!form.person.trim()) return alert("Bitte mindestens Ansprechpartner eintragen.");
+    if (!form.person.trim()) return alert("Bitte Ansprechpartner eintragen.");
     if (!form.phone.trim() || !form.email.trim() || !form.postalCode.trim()) return alert("Bitte Telefon, E-Mail und PLZ ausfüllen.");
-    if (!teamId) return alert("Team-ID nicht gefunden. Bitte Seite neu laden.");
+    if (!teamId) return alert("Team-ID fehlt.");
     if (form.contractEnd !== "unknown" && isContractEndUnrealistic(form.contractEnd)) {
-      if (!window.confirm("Das Vertragsende liegt in der Vergangenheit. Fortfahren?")) return;
+      if (!window.confirm("Vertragsende liegt in der Vergangenheit. Fortfahren?")) return;
     }
     setLoading(true);
     try {
       const createdAt = new Date().toISOString();
       const docRef = await addDoc(collection(db, "leads"), {
-        ...form, teamId,
-        ownerUserId: user.uid,
-        ownerEmail: user.email,
+        ...form, teamId, ownerUserId: user.uid, ownerEmail: user.email,
         createdBy: { uid: user.uid, email: user.email, timestamp: createdAt },
         status: "Neu", createdAt, comments: [], callLogs: [],
       });
@@ -2477,8 +2205,7 @@ function App() {
       onSuccess?.();
       setSelectedLeadId(docRef.id);
     } catch (e) {
-      console.error("addLead error:", e?.code, e?.message, e);
-      alert(`Fehler beim Speichern: ${e?.code || e?.message || "Unbekannter Fehler"}`);
+      alert(`Fehler: ${e?.code || e?.message}`);
       setLoading(false);
     }
   };
@@ -2486,35 +2213,14 @@ function App() {
   const onImportLeads = async (importedLeads) => {
     if (!teamId || !user) throw new Error("Team/User nicht gefunden");
     const createdAt = new Date().toISOString();
-    let imported = 0;
-    let failed = 0;
-
     for (const lead of importedLeads) {
-      try {
-        await addDoc(collection(db, "leads"), {
-          ...lead,
-          teamId,
-          ownerUserId: lead.createdBy?.email === user.email ? user.uid : user.uid,
-          ownerEmail: lead.createdBy?.email || user.email,
-          createdBy: {
-            uid: user.uid,
-            email: lead.createdBy?.email || user.email,
-            timestamp: createdAt
-          },
-          status: lead.status || "Neu",
-          createdAt,
-          comments: lead.extras ? [{ timestamp: createdAt, text: `📥 CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
-          callLogs: [],
-        });
-        imported++;
-      } catch (error) {
-        console.error("Import row failed:", lead, error);
-        failed++;
-      }
-    }
-
-    if (failed > 0) {
-      alert(`⚠️ ${imported} importiert, ${failed} fehlgeschlagen`);
+      await addDoc(collection(db, "leads"), {
+        ...lead, teamId, ownerUserId: user.uid, ownerEmail: lead.createdBy?.email || user.email,
+        createdBy: { uid: user.uid, email: lead.createdBy?.email || user.email, timestamp: createdAt },
+        status: lead.status || "Neu", createdAt,
+        comments: lead.extras ? [{ timestamp: createdAt, text: `📥 CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
+        callLogs: [],
+      });
     }
   };
 
@@ -2524,53 +2230,49 @@ function App() {
     try {
       await updateDoc(doc(db, "leads", id), {
         status: newStatus,
-        statusHistory: [
-          ...(leadDoc.statusHistory || []),
-          {
-            from: leadDoc.status,
-            to: newStatus,
-            timestamp: new Date().toISOString(),
-            author: user.email,
-          },
-        ],
+        statusHistory: [...(leadDoc.statusHistory || []), { from: leadDoc.status, to: newStatus, timestamp: new Date().toISOString(), author: user.email }],
       });
     } catch (e) { console.error(e); }
   };
+
   const updateLeadField = async (id, field, value) => {
     try { await updateDoc(doc(db, "leads", id), { [field]: value }); } catch (e) { console.error(e); }
   };
+
   const logCall = async (leadId, callData) => {
     const leadDoc = leads.find(l => l.id === leadId);
     if (!leadDoc) return;
-    try {
-      await updateDoc(doc(db, "leads", leadId), {
-        callLogs: [...(leadDoc.callLogs || []), { ...callData, timestamp: new Date().toISOString(), author: user.email }],
-      });
-    } catch (e) { console.error(e); }
+    try { await updateDoc(doc(db, "leads", leadId), { callLogs: [...(leadDoc.callLogs || []), { ...callData, timestamp: new Date().toISOString(), author: user.email }] }); }
+    catch (e) { console.error(e); }
   };
+
   const deleteLead = async (id) => {
     try { await deleteDoc(doc(db, "leads", id)); } catch (e) { console.error(e); }
   };
-  const bulkDeleteLeads = async (ids) => {
-    if (userRole !== "admin") {
-      alert("Sie haben keine Berechtigung zum Löschen von Leads.");
-      return;
+
+  // NEW: Bulk delete (admin only)
+  const bulkDeleteLeads = async () => {
+    if (userRole !== "admin") return;
+    const ids = Array.from(selectedLeadIds);
+    for (const id of ids) {
+      try { await deleteDoc(doc(db, "leads", id)); } catch (e) { console.error(e); }
     }
-    if (!ids || ids.size === 0) return;
-    const count = ids.size;
-    if (!window.confirm(`${count} Lead(s) wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return;
-    try {
-      const promises = Array.from(ids).map(id => deleteDoc(doc(db, "leads", id)));
-      await Promise.all(promises);
-      setSelectedLeadIds(new Set());
-    } catch (e) { 
-      console.error(e);
-      alert("Fehler beim Löschen der Leads.");
-    }
+    setSelectedLeadIds(new Set());
+    setSelectionMode(false);
   };
+
+  const toggleLeadCheck = (id) => {
+    setSelectedLeadIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   const addLeadAttachment = (leadId, files) => {
     Array.from(files).forEach(file => {
-      if (file.size > 10 * 1024 * 1024) return alert(`${file.name} ist zu groß (max 10MB)`);
+      if (file.size > 10 * 1024 * 1024) return alert(`${file.name} zu groß (max 10MB)`);
       const reader = new FileReader();
       reader.onload = async ev => {
         const leadDoc = leads.find(l => l.id === leadId);
@@ -2584,6 +2286,7 @@ function App() {
       reader.readAsDataURL(file);
     });
   };
+
   const removeLeadAttachment = async (leadId, attId) => {
     const leadDoc = leads.find(l => l.id === leadId);
     if (!leadDoc) return;
@@ -2593,26 +2296,24 @@ function App() {
 
   const filteredLeads = useMemo(() => {
     const sl = searchTerm.toLowerCase();
-    const visibleLeads = leads
-      .filter(l => {
-        const match = !sl || (l.company || "").toLowerCase().includes(sl) || (l.person || "").toLowerCase().includes(sl) || (l.phone || "").includes(searchTerm) || (l.email || "").toLowerCase().includes(sl);
-        if (!match) return false;
-        if (filterPriority !== "all" && calculatePriority(l) !== filterPriority) return false;
-        if (filterStatus !== "all" && l.status !== filterStatus) return false;
-        if (filterCancellation === "open" && !isOpenCancellationWindow(l.contractEnd)) return false;
-        if (filterCancellation === "closed" && isOpenCancellationWindow(l.contractEnd)) return false;
-        if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
-        if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
-        if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
-        if (smartView === "won" && l.status !== "Gewonnen") return false;
-        if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
-        if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
-        if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
-        if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
-        if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
-        return true;
-      });
-    return sortLeads(visibleLeads, sortMode);
+    return sortLeads(leads.filter(l => {
+      const match = !sl || (l.company || "").toLowerCase().includes(sl) || (l.person || "").toLowerCase().includes(sl) || (l.phone || "").includes(searchTerm) || (l.email || "").toLowerCase().includes(sl);
+      if (!match) return false;
+      if (filterPriority !== "all" && calculatePriority(l) !== filterPriority) return false;
+      if (filterStatus !== "all" && l.status !== filterStatus) return false;
+      if (filterCancellation === "open" && !isOpenCancellationWindow(l.contractEnd)) return false;
+      if (filterCancellation === "closed" && isOpenCancellationWindow(l.contractEnd)) return false;
+      if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
+      if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
+      if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
+      if (smartView === "won" && l.status !== "Gewonnen") return false;
+      if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
+      if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
+      if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
+      if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
+      if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
+      return true;
+    }), sortMode);
   }, [leads, searchTerm, filterPriority, filterStatus, filterCancellation, smartView, sortMode, user, kpiFocus]);
 
   const stats = useMemo(() => ({
@@ -2640,42 +2341,56 @@ function App() {
               <div className="toolbar-left">
                 <h1 className="page-title">Lead-Pipeline</h1>
                 <span className="lead-count-badge">{filteredLeads.length}</span>
-                {!multiSelectMode && userRole === "admin" && (
-                  <span className="delete-mode-link" onClick={() => setMultiSelectMode(true)}>🗑️ Leads löschen</span>
-                )}
-                {multiSelectMode && (
-                  <div className="delete-mode-info">
-                    <span className="delete-mode-count">{selectedLeadIds.size} ausgewählt</span>
-                    {selectedLeadIds.size > 0 && (
-                      <button className="danger-btn-sm delete-mode-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
-                        Löschen
-                      </button>
-                    )}
-                    <button className="ghost-btn-sm delete-mode-cancel" onClick={() => {
-                      setMultiSelectMode(false);
-                      setSelectedLeadIds(new Set());
-                    }}>
-                      ✕
-                    </button>
-                  </div>
-                )}
               </div>
               <div className="toolbar-right">
                 <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
                 <select value={sortMode} onChange={e => setSortMode(e.target.value)} className="filter-select-inline compact">
                   <option value="priority">Sortiert nach Priorität</option>
-                  <option value="potential">Sortiert nach Potential</option>
-                  <option value="activity">Sortiert nach letzter Aktivität</option>
-                  <option value="followUp">Sortiert nach Follow-up</option>
+                  <option value="potential">Nach Potential</option>
+                  <option value="activity">Nach Aktivität</option>
+                  <option value="followUp">Nach Follow-up</option>
                 </select>
                 <div className="view-toggle-group">
                   <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>≡ Liste</button>
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
+                {/* NEW: Multiselect toggle (admin only) */}
+                {userRole === "admin" && (
+                  <button
+                    className={`selection-mode-btn ${selectionMode ? "active" : ""}`}
+                    onClick={() => { setSelectionMode(v => !v); setSelectedLeadIds(new Set()); }}
+                    title="Mehrfachauswahl"
+                  >
+                    {selectionMode ? "✕ Auswahl" : "☑ Auswählen"}
+                  </button>
+                )}
                 <button className="import-btn" onClick={() => setShowImportModal(true)}>📥 CSV Importieren</button>
                 <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Neuer Lead</button>
               </div>
             </div>
+
+            {/* NEW: Bulk action bar */}
+            {selectionMode && selectedLeadIds.size > 0 && (
+              <BulkActionBar
+                selectedCount={selectedLeadIds.size}
+                totalCount={filteredLeads.length}
+                onDelete={bulkDeleteLeads}
+                onCancel={() => { setSelectionMode(false); setSelectedLeadIds(new Set()); }}
+                onSelectAll={() => {
+                  if (selectedLeadIds.size === filteredLeads.length) {
+                    setSelectedLeadIds(new Set());
+                  } else {
+                    setSelectedLeadIds(new Set(filteredLeads.map(l => l.id)));
+                  }
+                }}
+              />
+            )}
+            {selectionMode && selectedLeadIds.size === 0 && (
+              <div className="bulk-hint-bar">
+                ☑ Mehrfachauswahl aktiv – Leads anklicken zum Auswählen
+                <button className="ghost-btn-sm" onClick={() => { setSelectionMode(false); setSelectedLeadIds(new Set()); }} style={{ marginLeft: 12 }}>Abbrechen</button>
+              </div>
+            )}
 
             <CommandCenter stats={stats} filteredLeads={filteredLeads} smartView={smartView} setSmartView={setSmartView} setKpiFocus={setKpiFocus} />
 
@@ -2693,9 +2408,7 @@ function App() {
                 <option value="open">Fenster offen</option><option value="closed">Fenster geschlossen</option>
               </select>
               {kpiFocus !== "all" && (
-                <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>
-                  KPI-Fokus zurücksetzen
-                </button>
+                <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>KPI-Fokus zurücksetzen</button>
               )}
               <span className="filter-result-count">{filteredLeads.length} von {leads.length} Leads</span>
             </div>
@@ -2730,20 +2443,20 @@ function App() {
                   </div>
                 ) : (
                   filteredLeads.map(lead => (
-                    <LeadRow key={lead.id} lead={lead} onSelect={l => setSelectedLeadId(l.id)} isSelected={selectedLeadId === lead.id} onToggleSelect={(id) => {
-                      const newSet = new Set(selectedLeadIds);
-                      if (newSet.has(id)) {
-                        newSet.delete(id);
-                      } else {
-                        newSet.add(id);
-                      }
-                      setSelectedLeadIds(newSet);
-                    }} isChecked={selectedLeadIds.has(lead.id)} multiSelectMode={multiSelectMode} />
+                    <LeadRow
+                      key={lead.id}
+                      lead={lead}
+                      onSelect={l => { if (!selectionMode) setSelectedLeadId(l.id); }}
+                      isSelected={selectedLeadId === lead.id}
+                      selectionMode={selectionMode}
+                      isChecked={selectedLeadIds.has(lead.id)}
+                      onToggleCheck={toggleLeadCheck}
+                    />
                   ))
                 )}
               </div>
             ) : (
-              <KanbanBoard leads={filteredLeads} onSelectLead={l => setSelectedLeadId(l.id)} onUpdateStatus={updateLeadStatus} />
+              <KanbanBoard leads={filteredLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
             )}
           </>
         )}
@@ -2753,6 +2466,13 @@ function App() {
             <div className="main-toolbar"><h1 className="page-title">Dashboard</h1></div>
             <Dashboard leads={leads} teamMembers={teamMembers} />
           </div>
+        )}
+
+        {activeTab === "calendar" && (
+          <CalendarView leads={leads} onOpenLead={(leadId) => {
+            setSelectedLeadId(leadId);
+            setActiveTab("leads");
+          }} />
         )}
 
         {activeTab === "team" && (
@@ -2767,6 +2487,7 @@ function App() {
           lead={selectedLead}
           onClose={() => setSelectedLeadId(null)}
           user={user}
+          userRole={userRole}
           onUpdateField={updateLeadField}
           onUpdateStatus={updateLeadStatus}
           onDelete={deleteLead}
@@ -2781,14 +2502,7 @@ function App() {
       )}
 
       {showImportModal && (
-        <ImportModal 
-          isOpen={showImportModal} 
-          onClose={() => setShowImportModal(false)} 
-          leads={leads}
-          users={teamMembers}
-          currentUser={user}
-          onImport={onImportLeads}
-        />
+        <ImportModal isOpen={showImportModal} onClose={() => setShowImportModal(false)} leads={leads} users={teamMembers} currentUser={user} onImport={onImportLeads} />
       )}
     </div>
   );
