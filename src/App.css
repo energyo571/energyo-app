@@ -1135,9 +1135,9 @@ textarea:focus {
 }
 
 .kpi-action-btn.create {
-  border-color: #cfe0ff;
-  color: #0b4db8;
-  background: linear-gradient(135deg, #eaf2ff 0%, #f7fbff 100%);
+  border-color: #bfe5cf;
+  color: #0f6a3c;
+  background: linear-gradient(135deg, #e8f8ef 0%, #f5fcf8 100%);
 }
 
 .kpi-action-btn:hover {
@@ -3429,6 +3429,8 @@ select {
   .kpi-action-btn {
     padding: 10px 10px;
     font-size: 12px;
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .quick-action-row,
