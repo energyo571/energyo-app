@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCP9bnFyHNm6LvKlzv-SHvrPLagWYE2MEQ",
@@ -15,15 +16,17 @@ const firebaseConfig = {
 let app;
 let auth;
 let db;
+let storage;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
   console.log("✅ Firebase initialized successfully");
 } catch (error) {
   console.error("❌ Firebase initialization error:", error);
 }
 
-export { auth, db };
+export { auth, db, storage };
 export default app;

@@ -4,7 +4,8 @@ import {
   collection, addDoc, onSnapshot, updateDoc, deleteDoc,
   doc, query, where, getDoc, setDoc, getDocs,
 } from "firebase/firestore";
-import { auth, db } from "./firebaseConfig";
+import { getDownloadURL, ref as storageRef, uploadBytes } from "firebase/storage";
+import { auth, db, storage } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
 import logo from "./logo.png";
 import Papa from "papaparse";
@@ -25,6 +26,9 @@ const CALL_OUTCOMES = [
   "Kein Kontakt", "Mailbox hinterlassen", "Kurzes Gespräch",
   "Ausführliches Gespräch", "Termin vereinbart", "Angebot besprochen", "Abschluss",
 ];
+const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024;
+const buildAttachmentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const getAttachmentHref = (attachment) => attachment?.url || attachment?.data || "";
 const initialForm = {
   company: "", person: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
@@ -832,6 +836,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
   const isTodayNow = isTodayDue(lead.followUp);
+  const previewHref = getAttachmentHref(previewAttachment);
 
   const timeline = useMemo(() => {
     const items = [];
@@ -1194,7 +1199,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                     </div>
                     <div className="attachment-row-actions">
                       <button type="button" onClick={() => setPreviewAttachment(att)} className="att-btn preview" title="Vorschau">👁</button>
-                      <a href={att.data} download={att.name} className="att-btn download" title="Herunterladen">⬇</a>
+                      <a href={getAttachmentHref(att)} download={att.name} className="att-btn download" title="Herunterladen">⬇</a>
                       <button type="button" onClick={() => setDeleteConfirmId(att.id)} className="att-btn delete" title="Löschen">✕</button>
                     </div>
                   </div>
@@ -1214,21 +1219,27 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               </div>
               <div className="preview-content">
                 {previewAttachment.type?.startsWith("image/") ? (
-                  <img src={previewAttachment.data} alt={previewAttachment.name} className="preview-image" />
+                  <img src={previewHref} alt={previewAttachment.name} className="preview-image" />
                 ) : previewAttachment.type === "application/pdf" ? (
                   <div className="preview-pdf">
                     <p>📄 PDF-Datei</p>
-                    <a href={previewAttachment.data} target="_blank" rel="noreferrer" className="primary-btn-modal">PDF öffnen</a>
+                    <a href={previewHref} target="_blank" rel="noreferrer" className="primary-btn-modal">PDF öffnen</a>
                   </div>
                 ) : previewAttachment.type?.startsWith("text/") || previewAttachment.name?.match(/\.(txt|json|csv|md)$/i) ? (
                   <div className="preview-text">
-                    <pre>{previewAttachment.data?.substring(0, 2000) || "Datei konnte nicht angezeigt werden"}</pre>
-                    {previewAttachment.data?.length > 2000 && <p className="preview-truncated">... Datei gekürzt (max 2000 Zeichen)</p>}
+                    {previewAttachment.data ? (
+                      <>
+                        <pre>{previewAttachment.data.substring(0, 2000)}</pre>
+                        {previewAttachment.data.length > 2000 && <p className="preview-truncated">... Datei gekürzt (max 2000 Zeichen)</p>}
+                      </>
+                    ) : (
+                      <a href={previewHref} target="_blank" rel="noreferrer" className="primary-btn-modal">Datei öffnen</a>
+                    )}
                   </div>
                 ) : (
                   <div className="preview-generic">
                     <p>📎 {previewAttachment.type || "Unbekannter Dateityp"}</p>
-                    <a href={previewAttachment.data} download={previewAttachment.name} className="primary-btn-modal">Datei herunterladen</a>
+                    <a href={previewHref} download={previewAttachment.name} className="primary-btn-modal">Datei herunterladen</a>
                   </div>
                 )}
               </div>
@@ -1278,15 +1289,33 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
     setForm(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
   const handleFile = (e) => {
-    Array.from(e.target.files).forEach(file => {
-      if (file.size > 10 * 1024 * 1024) return alert(`${file.name} ist zu groß (max 10MB)`);
-      const reader = new FileReader();
-      reader.onload = ev => setForm(prev => ({
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
+
+    const oversized = selectedFiles.filter((file) => file.size > MAX_ATTACHMENT_SIZE_BYTES);
+    if (oversized.length > 0) {
+      alert(`${oversized[0].name} ist zu groß (max 10MB pro Datei)`);
+    }
+
+    const validFiles = selectedFiles.filter((file) => file.size <= MAX_ATTACHMENT_SIZE_BYTES);
+    if (validFiles.length > 0) {
+      setForm((prev) => ({
         ...prev,
-        attachments: [...prev.attachments, { id: Date.now() + Math.random(), name: file.name, size: file.size, type: file.type, data: ev.target.result, uploadedAt: new Date().toISOString() }],
+        attachments: [
+          ...prev.attachments,
+          ...validFiles.map((file) => ({
+            id: buildAttachmentId(),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file,
+            uploadedAt: new Date().toISOString(),
+          })),
+        ],
       }));
-      reader.readAsDataURL(file);
-    });
+    }
+
+    e.target.value = "";
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -2233,6 +2262,27 @@ function App() {
     }
   }, [user, leads, notifSent]);
 
+  const uploadAttachmentToStorage = async (leadId, file) => {
+    if (!file) throw new Error("Datei fehlt");
+    if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+      throw new Error(`${file.name} ist größer als 10MB`);
+    }
+    const safeName = (file.name || "datei").replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `leads/${teamId}/${leadId}/${buildAttachmentId()}-${safeName}`;
+    const fileRef = storageRef(storage, path);
+    await uploadBytes(fileRef, file, { contentType: file.type || "application/octet-stream" });
+    const url = await getDownloadURL(fileRef);
+    return {
+      id: buildAttachmentId(),
+      name: file.name,
+      size: file.size,
+      type: file.type || "",
+      url,
+      storagePath: path,
+      uploadedAt: new Date().toISOString(),
+    };
+  };
+
   const addLead = async (form, onSuccess) => {
     if (!form.person.trim()) return alert("Bitte Ansprechpartner eintragen.");
     if (!form.phone.trim() || !form.email.trim() || !form.postalCode.trim()) return alert("Bitte Telefon, E-Mail und PLZ ausfüllen.");
@@ -2242,12 +2292,34 @@ function App() {
     }
     setLoading(true);
     try {
+      const { attachments: rawAttachments = [], ...formData } = form;
       const createdAt = new Date().toISOString();
       const docRef = await addDoc(collection(db, "leads"), {
-        ...form, teamId, ownerUserId: user.uid, ownerEmail: user.email,
+        ...formData,
+        attachments: [],
+        teamId,
+        ownerUserId: user.uid,
+        ownerEmail: user.email,
         createdBy: { uid: user.uid, email: user.email, timestamp: createdAt },
         status: "Neu", createdAt, comments: [], callLogs: [],
       });
+
+      const filesToUpload = rawAttachments
+        .map((attachment) => attachment?.file)
+        .filter((file) => file instanceof File);
+
+      if (filesToUpload.length > 0) {
+        try {
+          const uploadedAttachments = await Promise.all(
+            filesToUpload.map((file) => uploadAttachmentToStorage(docRef.id, file))
+          );
+          await updateDoc(doc(db, "leads", docRef.id), { attachments: uploadedAttachments });
+        } catch (uploadError) {
+          console.error(uploadError);
+          alert("Lead wurde angelegt, aber Anhänge konnten nicht vollständig hochgeladen werden.");
+        }
+      }
+
       setLoading(false);
       onSuccess?.();
       setSelectedLeadId(docRef.id);
@@ -2317,21 +2389,31 @@ function App() {
     });
   };
 
-  const addLeadAttachment = (leadId, files) => {
-    Array.from(files).forEach(file => {
-      if (file.size > 10 * 1024 * 1024) return alert(`${file.name} zu groß (max 10MB)`);
-      const reader = new FileReader();
-      reader.onload = async ev => {
-        const leadDoc = leads.find(l => l.id === leadId);
-        if (!leadDoc) return;
-        try {
-          await updateDoc(doc(db, "leads", leadId), {
-            attachments: [...(leadDoc.attachments || []), { id: Date.now() + Math.random(), name: file.name, size: file.size, type: file.type, data: ev.target.result, uploadedAt: new Date().toISOString() }],
-          });
-        } catch (e) { console.error(e); }
-      };
-      reader.readAsDataURL(file);
-    });
+  const addLeadAttachment = async (leadId, files) => {
+    const selectedFiles = Array.from(files || []);
+    if (selectedFiles.length === 0) return;
+    const oversized = selectedFiles.filter((file) => file.size > MAX_ATTACHMENT_SIZE_BYTES);
+    if (oversized.length > 0) {
+      alert(`${oversized[0].name} ist zu groß (max 10MB pro Datei)`);
+    }
+
+    const validFiles = selectedFiles.filter((file) => file.size <= MAX_ATTACHMENT_SIZE_BYTES);
+    if (validFiles.length === 0) return;
+
+    const leadDoc = leads.find((lead) => lead.id === leadId);
+    if (!leadDoc) return;
+
+    try {
+      const uploadedAttachments = await Promise.all(
+        validFiles.map((file) => uploadAttachmentToStorage(leadId, file))
+      );
+      await updateDoc(doc(db, "leads", leadId), {
+        attachments: [...(leadDoc.attachments || []), ...uploadedAttachments],
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Anhänge konnten nicht hochgeladen werden.");
+    }
   };
 
   const removeLeadAttachment = async (leadId, attId) => {
