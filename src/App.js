@@ -60,11 +60,11 @@ const calculatePriority = (lead) => {
   return "C";
 };
 const PRIORITY_META = {
-  A: { label: "Hot", code: "A" },
-  B: { label: "Warm", code: "B" },
-  C: { label: "Cold", code: "C" },
+  A: { label: "Hot" },
+  B: { label: "Warm" },
+  C: { label: "Cold" },
 };
-const getPriorityMeta = (priority) => PRIORITY_META[priority] || { label: "Cold", code: "C" };
+const getPriorityMeta = (priority) => PRIORITY_META[priority] || { label: "Cold" };
 const calculateUmsatzPotential = (consumption) => {
   if (!consumption) return 0;
   const kwh = parseInt(consumption);
