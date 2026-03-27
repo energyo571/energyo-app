@@ -1762,6 +1762,7 @@ select {
   align-items: center;
   margin-bottom: 6px;
   font-size: 12px;
+  justify-content: space-between;
 }
 
 .activity-author {
@@ -1775,6 +1776,44 @@ select {
 .activity-text {
   margin: 0;
   line-height: 1.5;
+}
+
+.activity-text-clickable {
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background 120ms ease;
+}
+
+.activity-text-clickable:hover {
+  background: rgba(15, 111, 255, 0.08);
+}
+
+.activity-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.activity-action-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 120ms ease;
+  padding: 2px 4px;
+}
+
+.activity-action-btn:hover {
+  opacity: 1;
+}
+
+.activity-action-btn.edit:hover {
+  color: var(--primary);
+}
+
+.activity-action-btn.delete:hover {
+  color: var(--danger);
 }
 
 .call-outcome-badge {
