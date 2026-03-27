@@ -338,7 +338,6 @@ button {
   padding: 0;
   font-size: 14px;
 }
-}
 
 .toolbar-search {
   width: min(420px, 42vw);
@@ -2175,16 +2174,6 @@ select {
 
 .danger-btn:hover {
   opacity: 0.9;
-}
-
-.danger-btn-outline {
-  background: transparent;
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
-.danger-btn-outline:hover {
-  background: rgba(220, 53, 69, 0.1);
 }
 
 .modal {
