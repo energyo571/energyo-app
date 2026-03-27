@@ -915,7 +915,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               {lead.person}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
             </p>
             <div className="drawer-header-badges">
-              <span className={`drawer-prio-badge prio-${priority}`}>{priorityMeta.label} · Prio {priorityMeta.code}</span>
+              <span className={`drawer-prio-badge prio-${priority}`}>{priorityMeta.label}</span>
               {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
               {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
@@ -1468,7 +1468,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
       )}
       {!selectionMode && <div className="lead-row-checkbox-placeholder" />}
       <div className="lead-row-prio">
-        <span className={`prio-dot prio-${priority}`} title={`${priorityMeta.label} (Prio ${priorityMeta.code})`} />
+        <span className={`prio-dot prio-${priority}`} title={priorityMeta.label} />
       </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
@@ -2537,7 +2537,7 @@ function App() {
             <div className="filter-bar">
               <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
                 <option value="all">Alle Heat-Level</option>
-                <option value="A">Hot (Prio A)</option><option value="B">Warm (Prio B)</option><option value="C">Cold (Prio C)</option>
+                <option value="A">Hot</option><option value="B">Warm</option><option value="C">Cold</option>
               </select>
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="filter-select-inline">
                 <option value="all">Alle Status</option>
@@ -2557,7 +2557,7 @@ function App() {
               <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
               <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
-              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot (Prio A)</span></button>
+              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
               <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
               <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
