@@ -1807,7 +1807,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
           title={`Heat-Level: ${temperature.label}`}
           aria-label={`Heat-Level: ${temperature.label}`}
         >
-          {temperature.tone === "hot" ? "🔥 HOT" : temperature.tone === "cold" ? "🧊 COLD" : temperature.tone === "critical" ? "🚨 KRIT" : temperature.tone === "warm" ? "🌤 WARM" : temperature.label}
+          {temperature.label}
         </span>
       </div>
       <div className="lead-row-main">
