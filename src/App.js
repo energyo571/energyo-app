@@ -1521,9 +1521,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           <div className="drawer-core-item"><span>E-Mail</span><strong>{lead.email || "-"}</strong></div>
           <div className="drawer-core-item"><span>Kunde</span><strong>{lead.customerType || "-"}</strong></div>
           <div className="drawer-core-item"><span>PLZ</span><strong>{lead.postalCode || "-"}</strong></div>
-          <div className="drawer-core-item"><span>Verbrauch</span><strong>{lead.consumption ? `${Number(lead.consumption).toLocaleString("de-DE")} kWh` : "-"}</strong></div>
-          <div className="drawer-core-item"><span>Jahreskosten</span><strong>{lead.annualCosts ? formatEuro(Number(lead.annualCosts)) : "-"}</strong></div>
-          <div className="drawer-core-item"><span>Anbieter</span><strong>{lead.currentProvider || "-"}</strong></div>
         </div>
 
         {/* Umsatz Banner */}
@@ -3071,26 +3068,47 @@ function SavingsCalculator({ lead }) {
   const gasMeters = Array.isArray(lead.energy?.gas) ? lead.energy.gas : [];
   const stromFromMeters = stromMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
   const gasFromMeters = gasMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
-  const fallbackConsumption = parseKwh(lead.consumption);
 
-  const stromKwh = stromFromMeters > 0 ? stromFromMeters : (gasFromMeters === 0 ? fallbackConsumption : 0);
-  const gasKwh = gasFromMeters;
-  const kWh = stromKwh + gasKwh;
-  const annualCosts = parseFloat(lead.annualCosts) || 0;
+  const stromKwh = stromFromMeters > 0 ? stromFromMeters : 0;
+  const gasKwh = gasFromMeters > 0 ? gasFromMeters : 0;
 
-  const [currentPrice, setCurrentPrice] = useState(() => {
-    if (kWh > 0 && annualCosts > 0) return ((annualCosts / kWh) * 100).toFixed(2);
-    return "";
-  });
-  const [newPrice, setNewPrice] = useState("");
+  // Separate price states for Strom and Gas
+  const [stromCurrentPrice, setStromCurrentPrice] = useState("");
+  const [stromNewPrice, setStromNewPrice] = useState("");
+  const [gasCurrentPrice, setGasCurrentPrice] = useState("");
+  const [gasNewPrice, setGasNewPrice] = useState("");
 
-  const currentCt = parseFloat(currentPrice) || 0;
-  const newCt = parseFloat(newPrice) || 0;
-  const diffCt = currentCt - newCt;
-  const annualSavings = kWh > 0 ? (diffCt / 100 * kWh) : 0;
-  const monthlySavings = annualSavings / 12;
+  // Strom calculations
+  const stromCurrentCt = parseFloat(stromCurrentPrice) || 0;
+  const stromNewCt = parseFloat(stromNewPrice) || 0;
+  const stromDiffCt = stromCurrentCt - stromNewCt;
+  const stromAnnualSavings = stromKwh > 0 && stromCurrentCt > 0 && stromNewCt > 0 ? (stromDiffCt / 100 * stromKwh) : 0;
 
-  const copyText = `⚡ Energyo Einspar-Kalkulation\n\nJahresverbrauch: ${kWh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${currentCt.toFixed(2)} ct/kWh → ${formatEuro(currentCt / 100 * kWh)}/Jahr\nNeuer Preis: ${newCt.toFixed(2)} ct/kWh → ${formatEuro(newCt / 100 * kWh)}/Jahr\n\n✅ Jahresersparnis: ${formatEuro(annualSavings)}\n✅ Monatsersparnis: ${formatEuro(monthlySavings)}`;
+  // Gas calculations
+  const gasCurrentCt = parseFloat(gasCurrentPrice) || 0;
+  const gasNewCt = parseFloat(gasNewPrice) || 0;
+  const gasDiffCt = gasCurrentCt - gasNewCt;
+  const gasAnnualSavings = gasKwh > 0 && gasCurrentCt > 0 && gasNewCt > 0 ? (gasDiffCt / 100 * gasKwh) : 0;
+
+  // Combined totals
+  const totalAnnualSavings = stromAnnualSavings + gasAnnualSavings;
+  const totalMonthlySavings = totalAnnualSavings / 12;
+
+  const buildCopyText = () => {
+    let text = "⚡ Energyo Einspar-Kalkulation\n";
+    if (stromKwh > 0) {
+      text += `\n📌 STROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${stromCurrentCt.toFixed(2)} ct/kWh → ${formatEuro(stromCurrentCt / 100 * stromKwh)}/Jahr\nNeuer Preis: ${stromNewCt.toFixed(2)} ct/kWh → ${formatEuro(stromNewCt / 100 * stromKwh)}/Jahr\n✅ Ersparnis: ${formatEuro(stromAnnualSavings)}/Jahr`;
+    }
+    if (gasKwh > 0) {
+      text += `\n\n📌 GAS\nVerbrauch: ${gasKwh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${gasCurrentCt.toFixed(2)} ct/kWh → ${formatEuro(gasCurrentCt / 100 * gasKwh)}/Jahr\nNeuer Preis: ${gasNewCt.toFixed(2)} ct/kWh → ${formatEuro(gasNewCt / 100 * gasKwh)}/Jahr\n✅ Ersparnis: ${formatEuro(gasAnnualSavings)}/Jahr`;
+    }
+    if (totalAnnualSavings > 0) {
+      text += `\n\n🎯 GESAMT ERSPARNIS\nJährlich: ${formatEuro(totalAnnualSavings)}\nMonatlich: ${formatEuro(totalMonthlySavings)}`;
+    }
+    return text;
+  };
+
+  const hasSavings = totalAnnualSavings > 0;
 
   return (
     <div className="savings-calc">
@@ -3102,87 +3120,116 @@ function SavingsCalculator({ lead }) {
         </div>
       </div>
 
-      <div className="savings-inputs">
-        <div className="savings-field">
-          <label>Stromverbrauch (kWh)</label>
-          <input
-            className="savings-input"
-            type="number"
-            readOnly
-            value={stromKwh || ""}
-            placeholder="Kein Stromverbrauch erfasst"
-          />
+      {stromKwh > 0 && (
+        <div className="savings-section">
+          <p className="savings-section-title">📌 Strom</p>
+          <div className="savings-inputs">
+            <div className="savings-field">
+              <label>Verbrauch (kWh)</label>
+              <input className="savings-input" type="number" readOnly value={stromKwh.toLocaleString("de-DE")} />
+            </div>
+            <div className="savings-field">
+              <label>Aktueller Preis (ct/kWh)</label>
+              <input
+                className="savings-input"
+                type="number"
+                step="0.01"
+                value={stromCurrentPrice}
+                onChange={e => setStromCurrentPrice(e.target.value)}
+                placeholder="z.B. 28.5"
+              />
+            </div>
+            <div className="savings-field">
+              <label>Neuer Preis ENERGYO (ct/kWh)</label>
+              <input
+                className="savings-input"
+                type="number"
+                step="0.01"
+                value={stromNewPrice}
+                onChange={e => setStromNewPrice(e.target.value)}
+                placeholder="z.B. 22.0"
+              />
+            </div>
+          </div>
+          {stromCurrentCt > 0 && stromNewCt > 0 && stromAnnualSavings > 0 && (
+            <div className="savings-carrier-result positive">
+              <span className="savings-carrier-amount">{formatEuro(stromAnnualSavings)}</span>
+              <span className="savings-carrier-period">Jahresersparnis</span>
+            </div>
+          )}
+          {stromCurrentCt > 0 && stromNewCt > 0 && stromDiffCt <= 0 && (
+            <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "8px 0" }}>⚠️ Kein Vorteil</div>
+          )}
         </div>
-        <div className="savings-field">
-          <label>Gasverbrauch (kWh)</label>
-          <input
-            className="savings-input"
-            type="number"
-            readOnly
-            value={gasKwh || ""}
-            placeholder="Kein Gasverbrauch erfasst"
-          />
+      )}
+
+      {gasKwh > 0 && (
+        <div className="savings-section">
+          <p className="savings-section-title">📌 Gas</p>
+          <div className="savings-inputs">
+            <div className="savings-field">
+              <label>Verbrauch (kWh)</label>
+              <input className="savings-input" type="number" readOnly value={gasKwh.toLocaleString("de-DE")} />
+            </div>
+            <div className="savings-field">
+              <label>Aktueller Preis (ct/kWh)</label>
+              <input
+                className="savings-input"
+                type="number"
+                step="0.01"
+                value={gasCurrentPrice}
+                onChange={e => setGasCurrentPrice(e.target.value)}
+                placeholder="z.B. 8.5"
+              />
+            </div>
+            <div className="savings-field">
+              <label>Neuer Preis ENERGYO (ct/kWh)</label>
+              <input
+                className="savings-input"
+                type="number"
+                step="0.01"
+                value={gasNewPrice}
+                onChange={e => setGasNewPrice(e.target.value)}
+                placeholder="z.B. 7.2"
+              />
+            </div>
+          </div>
+          {gasCurrentCt > 0 && gasNewCt > 0 && gasAnnualSavings > 0 && (
+            <div className="savings-carrier-result positive">
+              <span className="savings-carrier-amount">{formatEuro(gasAnnualSavings)}</span>
+              <span className="savings-carrier-period">Jahresersparnis</span>
+            </div>
+          )}
+          {gasCurrentCt > 0 && gasNewCt > 0 && gasDiffCt <= 0 && (
+            <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "8px 0" }}>⚠️ Kein Vorteil</div>
+          )}
         </div>
-        <div className="savings-field">
-          <label>Gesamtverbrauch (kWh)</label>
-          <input
-            className="savings-input"
-            type="number"
-            readOnly
-            value={kWh || ""}
-            placeholder="Im Lead eintragen"
-          />
+      )}
+
+      {stromKwh === 0 && gasKwh === 0 && (
+        <div style={{ color: "#6b7280", fontSize: "0.82rem", padding: "12px 0", textAlign: "center" }}>
+          ℹ️ Keine Verbrauchsdaten erfasst — Lead-Daten ergänzen
         </div>
-        <div className="savings-field">
-          <label>Aktueller Preis (ct/kWh)</label>
-          <input
-            className="savings-input"
-            type="number"
-            step="0.01"
-            value={currentPrice}
-            onChange={e => setCurrentPrice(e.target.value)}
-            placeholder="z.B. 28.5"
-          />
-        </div>
-        <div className="savings-field">
-          <label>Neuer Preis ENERGYO (ct/kWh)</label>
-          <input
-            className="savings-input"
-            type="number"
-            step="0.01"
-            value={newPrice}
-            onChange={e => setNewPrice(e.target.value)}
-            placeholder="z.B. 22.0"
-          />
-        </div>
-      </div>
+      )}
 
       <p className="savings-meter-hint">
         Stromzähler: {stromMeters.filter((m) => !!m?.zählernummer).length} · Gaszähler: {gasMeters.filter((m) => !!m?.zählernummer).length}
       </p>
 
-      {currentCt > 0 && newCt > 0 && annualSavings > 0 && (
+      {hasSavings && (
         <div className="savings-result positive">
           <div className="savings-result-main">
-            <span className="savings-amount">{formatEuro(annualSavings)}</span>
-            <span className="savings-period">Jahresersparnis</span>
+            <span className="savings-amount">{formatEuro(totalAnnualSavings)}</span>
+            <span className="savings-period">Gesamt-Jahresersparnis</span>
           </div>
           <div className="savings-result-details">
-            <div className="savings-detail-item"><span>Pro Monat</span><strong>{formatEuro(monthlySavings)}</strong></div>
-            <div className="savings-detail-item"><span>Differenz</span><strong>{diffCt.toFixed(2)} ct/kWh</strong></div>
-            <div className="savings-detail-item"><span>Aktuell/Jahr</span><strong>{formatEuro(currentCt / 100 * kWh)}</strong></div>
-            <div className="savings-detail-item"><span>Neu/Jahr</span><strong>{formatEuro(newCt / 100 * kWh)}</strong></div>
+            <div className="savings-detail-item"><span>Pro Monat</span><strong>{formatEuro(totalMonthlySavings)}</strong></div>
           </div>
           <div className="savings-actions">
-            <button className="savings-copy-btn" onClick={() => navigator.clipboard.writeText(copyText)}>
+            <button className="savings-copy-btn" onClick={() => navigator.clipboard.writeText(buildCopyText())}>
               📋 Kalkulation kopieren
             </button>
           </div>
-        </div>
-      )}
-      {currentCt > 0 && newCt > 0 && annualSavings <= 0 && (
-        <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "12px 0" }}>
-          ⚠️ Kein Vorteil — neuer Preis liegt nicht unterhalb des aktuellen.
         </div>
       )}
     </div>
