@@ -2319,6 +2319,7 @@ function KanbanBoard({ leads, onSelectLead }) {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ leads, teamMembers, userRole }) {
   const [trendInfo, setTrendInfo] = useState(null);
+  const [trendHistory, setTrendHistory] = useState([]);
   const [trendLoading, setTrendLoading] = useState(false);
   const [trendError, setTrendError] = useState("");
 
@@ -2338,6 +2339,7 @@ function Dashboard({ leads, teamMembers, userRole }) {
         updatedAt: data.updatedAt || "",
         cached: !!data.cached,
       });
+      setTrendHistory(Array.isArray(data.history) ? data.history : []);
     } catch (error) {
       setTrendError(error?.message || "Trend konnte nicht geladen werden");
     } finally {
@@ -2363,6 +2365,31 @@ function Dashboard({ leads, teamMembers, userRole }) {
 
   const maxCount = Math.max(...stats.byStatus.map(s => s.count), 1);
   const statusColors = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", Nachfassen: "#ffc107", Gewonnen: "#198754", Verloren: "#dc3545" };
+  const trendSparkline = useMemo(() => {
+    const points = trendHistory.filter((item) => Number.isFinite(item?.trendPct));
+    if (points.length < 2) return null;
+
+    const width = 280;
+    const height = 64;
+    const padding = 8;
+    const values = points.map((p) => p.trendPct);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = Math.max(0.001, max - min);
+
+    const svgPoints = points.map((point, idx) => {
+      const x = padding + (idx * (width - padding * 2)) / Math.max(1, points.length - 1);
+      const y = height - padding - ((point.trendPct - min) / span) * (height - padding * 2);
+      return { x, y, value: point.trendPct, asOf: point.asOf };
+    });
+
+    return {
+      width,
+      height,
+      path: svgPoints.map((p, idx) => `${idx === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" "),
+      points: svgPoints,
+    };
+  }, [trendHistory]);
 
   return (
     <div className="dashboard-grid">
@@ -2428,6 +2455,27 @@ function Dashboard({ leads, teamMembers, userRole }) {
               <span>Stand: {trendInfo?.asOf ? formatDate(trendInfo.asOf) : "--"}</span>
               <span>{trendInfo?.cached ? "Aus Snapshot" : "Frisch geladen"}</span>
             </div>
+            {trendSparkline && (
+              <div className="market-trend-sparkline-wrap">
+                <svg
+                  className="market-trend-sparkline"
+                  viewBox={`0 0 ${trendSparkline.width} ${trendSparkline.height}`}
+                  role="img"
+                  aria-label="Markttrend letzte 7 Tage"
+                >
+                  <path d={trendSparkline.path} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" />
+                  {trendSparkline.points.map((point) => (
+                    <circle key={point.asOf} cx={point.x} cy={point.y} r="2.7" fill="#1d4ed8">
+                      <title>{`${formatDate(point.asOf)}: ${point.value >= 0 ? "+" : ""}${point.value.toFixed(1)}%`}</title>
+                    </circle>
+                  ))}
+                </svg>
+                <div className="market-trend-sparkline-labels">
+                  <span>{formatDate(trendHistory[0]?.asOf)}</span>
+                  <span>{formatDate(trendHistory[trendHistory.length - 1]?.asOf)}</span>
+                </div>
+              </div>
+            )}
           </>
         )}
         <button

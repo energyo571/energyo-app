@@ -72,6 +72,28 @@ function fallbackTrend() {
   };
 }
 
+async function loadRecentHistory(db, limit = 7) {
+  if (!db) return [];
+  const snap = await db
+    .collection("marketTrendSnapshots")
+    .orderBy("asOf", "desc")
+    .limit(limit)
+    .get();
+
+  if (snap.empty) return [];
+
+  return snap.docs
+    .map((doc) => {
+      const data = doc.data() || {};
+      return {
+        asOf: data.asOf || doc.id,
+        trendPct: typeof data.trendPct === "number" ? data.trendPct : parseNumber(data.trendPct),
+      };
+    })
+    .filter((item) => Number.isFinite(item.trendPct) && !!item.asOf)
+    .sort((a, b) => a.asOf.localeCompare(b.asOf));
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
@@ -93,12 +115,14 @@ module.exports = async function handler(req, res) {
       const existingSnap = await db.collection("marketTrendSnapshots").doc(today).get();
       if (existingSnap.exists) {
         const existing = existingSnap.data() || {};
+        const history = await loadRecentHistory(db, 7);
         return res.status(200).json({
           ok: true,
           trendPct: existing.trendPct,
           source: existing.source || "snapshot",
           asOf: existing.asOf || today,
           cached: true,
+          history,
         });
       }
     }
@@ -131,10 +155,13 @@ module.exports = async function handler(req, res) {
       await db.collection("marketTrendSnapshots").doc(today).set(payload, { merge: true });
     }
 
+    const history = db ? await loadRecentHistory(db, 7) : [{ asOf: payload.asOf, trendPct: payload.trendPct }];
+
     return res.status(200).json({
       ok: true,
       ...payload,
       cached: false,
+      history,
     });
   } catch (error) {
     console.error("market-trend error", error);
