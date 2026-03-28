@@ -3144,15 +3144,40 @@ function SavingsCalculator({ lead }) {
   const gasMeters = Array.isArray(lead.energy?.gas) ? lead.energy.gas : [];
   const stromFromMeters = stromMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
   const gasFromMeters = gasMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
+  const fallbackConsumption = parseKwh(lead.consumption);
+  const annualCosts = Number.parseFloat(lead.annualCosts || 0) || 0;
+  const normalizedEnergyType = normalizeText(lead.energyType || "");
+  const hasStromMeters = stromMeters.length > 0;
+  const hasGasMeters = gasMeters.length > 0;
+  const inferFallbackCarrier = () => {
+    if (hasStromMeters && !hasGasMeters) return "strom";
+    if (hasGasMeters && !hasStromMeters) return "gas";
+    if (normalizedEnergyType.includes("strom") && !normalizedEnergyType.includes("gas")) return "strom";
+    if (normalizedEnergyType.includes("gas") && !normalizedEnergyType.includes("strom")) return "gas";
+    if (!hasGasMeters) return "strom";
+    if (!hasStromMeters) return "gas";
+    return "";
+  };
 
-  const stromKwh = stromFromMeters > 0 ? stromFromMeters : 0;
-  const gasKwh = gasFromMeters > 0 ? gasFromMeters : 0;
+  const fallbackCarrier = inferFallbackCarrier();
+  const stromKwh = stromFromMeters > 0 ? stromFromMeters : (fallbackConsumption > 0 && fallbackCarrier === "strom" ? fallbackConsumption : 0);
+  const gasKwh = gasFromMeters > 0 ? gasFromMeters : (fallbackConsumption > 0 && fallbackCarrier === "gas" ? fallbackConsumption : 0);
+  const totalKwh = stromKwh + gasKwh;
+  const singleCarrierCurrentPrice = totalKwh > 0 && annualCosts > 0 && ((stromKwh > 0 && gasKwh === 0) || (gasKwh > 0 && stromKwh === 0))
+    ? ((annualCosts / totalKwh) * 100).toFixed(2)
+    : "";
 
   // Separate price states for Strom and Gas
-  const [stromCurrentPrice, setStromCurrentPrice] = useState("");
+  const [stromCurrentPrice, setStromCurrentPrice] = useState(() => (stromKwh > 0 && gasKwh === 0 ? singleCarrierCurrentPrice : ""));
   const [stromNewPrice, setStromNewPrice] = useState("");
-  const [gasCurrentPrice, setGasCurrentPrice] = useState("");
+  const [gasCurrentPrice, setGasCurrentPrice] = useState(() => (gasKwh > 0 && stromKwh === 0 ? singleCarrierCurrentPrice : ""));
   const [gasNewPrice, setGasNewPrice] = useState("");
+
+  useEffect(() => {
+    if (!singleCarrierCurrentPrice) return;
+    if (stromKwh > 0 && gasKwh === 0 && !stromCurrentPrice) setStromCurrentPrice(singleCarrierCurrentPrice);
+    if (gasKwh > 0 && stromKwh === 0 && !gasCurrentPrice) setGasCurrentPrice(singleCarrierCurrentPrice);
+  }, [singleCarrierCurrentPrice, stromKwh, gasKwh, stromCurrentPrice, gasCurrentPrice]);
 
   // Strom calculations
   const stromCurrentCt = parseFloat(stromCurrentPrice) || 0;
