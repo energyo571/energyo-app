@@ -1264,6 +1264,43 @@ textarea:focus {
   font-weight: 700;
 }
 
+.kpi-label.two-line span {
+  display: block;
+  line-height: 1.1;
+}
+
+.lead-list-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.lead-actions-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lead-pagination-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.lead-pagination-inline select {
+  border: 1px solid var(--line-soft);
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
 .cockpit-action-card {
   border-radius: 16px;
   border: 1px solid var(--line-soft);
@@ -1288,6 +1325,18 @@ textarea:focus {
 .cockpit-action-card.success {
   background: linear-gradient(180deg, #effcf4 0%, #ffffff 100%);
   border-color: #bee9ce;
+}
+
+.cockpit-action-card.compact {
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  gap: 8px;
+  opacity: 0.92;
+}
+
+.cockpit-action-card.compact .cockpit-action-list {
+  gap: 2px;
+  font-size: 13px;
 }
 
 .cockpit-action-head {
@@ -1560,7 +1609,7 @@ textarea:focus {
 }
 
 .lead-row {
-  padding: 4px 12px;
+  padding: 3px 10px;
   --lead-row-bg: #ffffff;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
@@ -2194,15 +2243,15 @@ textarea:focus {
 .kanban-cards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px;
+  gap: 9px;
+  padding: 11px;
 }
 
 .kanban-card {
   background: white;
   border: 1px solid #dee7f5;
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 13px;
+  padding: 10px;
   box-shadow: 0 8px 18px rgba(13, 31, 61, 0.08);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
@@ -2230,8 +2279,8 @@ textarea:focus {
 }
 
 .kanban-person {
-  margin: 8px 0 12px;
-  font-size: 13px;
+  margin: 6px 0 8px;
+  font-size: 12px;
   color: var(--text-soft);
 }
 

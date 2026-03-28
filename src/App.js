@@ -3267,6 +3267,8 @@ function App() {
   const [smartView, setSmartView] = useState("all");
   const [sortMode, setSortMode] = useState("priority");
   const [kpiFocus, setKpiFocus] = useState("all");
+  const [leadsPerPage, setLeadsPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // NEW: multiselect state
   const [selectionMode, setSelectionMode] = useState(false);
@@ -3646,6 +3648,21 @@ function App() {
     [filteredLeads],
   );
 
+  const totalPipelinePages = Math.max(1, Math.ceil(activePipelineLeads.length / leadsPerPage));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterPriority, filterStatus, smartView, sortMode, kpiFocus, leadsPerPage, viewMode]);
+
+  useEffect(() => {
+    if (currentPage > totalPipelinePages) setCurrentPage(totalPipelinePages);
+  }, [currentPage, totalPipelinePages]);
+
+  const paginatedActiveLeads = useMemo(() => {
+    const start = (currentPage - 1) * leadsPerPage;
+    return activePipelineLeads.slice(start, start + leadsPerPage);
+  }, [activePipelineLeads, currentPage, leadsPerPage]);
+
   const wonBundleLeads = useMemo(() => {
     const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
@@ -3825,21 +3842,21 @@ function App() {
               <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
               <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "inactive48" ? "active" : ""}`} onClick={() => applyKpiFocus("inactive48")}><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">>48h ohne Aktivität</span></button>
-              <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
+              <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}>
+                <span className="kpi-val">{stats.openCancellation}</span>
+                <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
+              </button>
               <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
-              <button type="button" className="kpi-action-btn dialer" onClick={() => setShowPowerDialer(true)}>⚡ Power Dialer</button>
-              <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
-              <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
             </div>
 
-            <div className={`cockpit-action-card ${closingRateCoach.tone}`}>
+            <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
               <div className="cockpit-action-head">
                 <strong>{closingRateCoach.title}</strong>
                 <span>Closing Rate: {stats.closingRate}%</span>
               </div>
               <ul className="cockpit-action-list">
-                {closingRateCoach.tips.map((tip) => <li key={tip}>{tip}</li>)}
+                {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
               </ul>
               {stats.inactive48 > 0 && (
                 <div className="cockpit-action-queue">
@@ -3848,7 +3865,7 @@ function App() {
                     <button type="button" className="ghost-btn-sm" onClick={() => applyKpiFocus("inactive48")}>Jetzt priorisieren</button>
                   </div>
                   <div className="cockpit-action-queue-list">
-                    {actionQueueLeads.map((lead) => (
+                    {actionQueueLeads.slice(0, 3).map((lead) => (
                       <button key={lead.id} type="button" className="cockpit-action-lead" onClick={() => setSelectedLeadId(lead.id)}>
                         <span>{lead.company || lead.person || "Lead"}</span>
                         <small>Letzte Aktivität vor {Math.round(getHoursSince(getLastActivityTimestamp(lead)))}h</small>
@@ -3857,6 +3874,25 @@ function App() {
                   </div>
                 </div>
               )}
+            </div>
+
+            <div className="lead-list-controls">
+              <div className="lead-actions-inline">
+                <button type="button" className="kpi-action-btn dialer" onClick={() => setShowPowerDialer(true)}>⚡ Power Dialer</button>
+                <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
+                <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
+              </div>
+              <div className="lead-pagination-inline">
+                <label htmlFor="lead-page-size">Leads pro Seite</label>
+                <select id="lead-page-size" value={leadsPerPage} onChange={(e) => setLeadsPerPage(Number(e.target.value))}>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <button type="button" className="ghost-btn-sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>Zurück</button>
+                <span>Seite {currentPage} / {totalPipelinePages}</span>
+                <button type="button" className="ghost-btn-sm" disabled={currentPage >= totalPipelinePages} onClick={() => setCurrentPage((p) => Math.min(totalPipelinePages, p + 1))}>Weiter</button>
+              </div>
             </div>
 
             {viewMode === "list" ? (
@@ -3878,7 +3914,7 @@ function App() {
                     <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Ersten Lead anlegen</button>
                   </div>
                 ) : (
-                  activePipelineLeads.map(lead => (
+                  paginatedActiveLeads.map(lead => (
                     <LeadRow
                       key={lead.id}
                       lead={lead}
@@ -3892,7 +3928,7 @@ function App() {
                 )}
               </div>
             ) : (
-              <KanbanBoard leads={activePipelineLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
+              <KanbanBoard leads={paginatedActiveLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
             )}
 
             {wonBundleLeads.length > 0 && (
