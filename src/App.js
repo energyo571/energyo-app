@@ -31,7 +31,7 @@ const RENEWAL_RESURFACE_MONTHS = 6;
 const buildAttachmentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const getAttachmentHref = (attachment) => attachment?.url || attachment?.data || "";
 const initialForm = {
-  company: "", person: "", geburtsdatum: "", phone: "", email: "",
+  company: "", person: "", anrede: "", titel: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
   customerType: "Privat", postalCode: "", currentProvider: "",
   bundleInquiry: false, energyAuditEligible: false, followUp: "", attachments: [],
@@ -1434,6 +1434,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
 
   const tabs = [
     { id: "activity",    label: "Aktivität" },
+    { id: "planung",     label: "📋 Planung" },
     { id: "details",     label: "Details" },
     { id: "calc",        label: "🧮 Kalkulator" },
     { id: "wechsel",     label: "🔄 Wechsel" },
@@ -1449,7 +1450,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           <div className="drawer-header-info">
             <h2 className="drawer-company">{lead.company || <em>Kein Firmenname</em>}</h2>
             <p className="drawer-person">
-              {lead.person}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
+              {[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ")}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
             </p>
             <div className="drawer-header-badges">
               {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
@@ -1537,129 +1538,13 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           })}
         </div>
 
-        {/* Deal progress bar: Cold → Warm → Hot */}
-        <div className="deal-progress-bar">
-          {[{label:"❄️ Cold",tone:"cold",s:1},{label:"🌤 Warm",tone:"warm",s:2},{label:"🔥 Hot",tone:"hot",s:3}].map(({label,tone,s}) => (
-            <div key={tone} className={`deal-progress-step ${temperature.step >= s ? tone : "inactive"} ${temperature.step === s ? "current" : ""}`}>
-              <span>{label}</span>
-            </div>
-          ))}
-          <div className="deal-progress-hint">{temperature.step < 3 ? (temperature.step === 1 ? "Aktivität auslösen → wird Warm" : "Kontakt intensivieren → wird Hot") : "Jetzt closing starten!"}</div>
-        </div>
-
-        <div className="drawer-signal-grid">
-          <div className="drawer-signal-card">
-            <span>Owner</span>
-            <strong>{getLeadOwnerEmail(lead)}</strong>
-          </div>
-          <div className={`drawer-signal-card readiness-card ${readiness.tone}`}>
-            <span>Abschlussampel</span>
-            <strong>{readiness.label}</strong>
-            <small>{readiness.reason}</small>
-          </div>
-          <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
-            <span>Deal Score</span>
-            <strong>{leadScore}/100</strong>
-          </div>
-          <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
-            <span>Abschlusschance</span>
-            <strong>{closeProbability}%</strong>
-          </div>
-          <div className="drawer-signal-card">
-            <span>Letzte Aktivität</span>
-            <strong>{formatDateTime(getLastActivityTimestamp(lead)) || "Noch keine"}</strong>
-          </div>
-          <div className="drawer-signal-card">
-            <span>Nächste Aktion</span>
-            <strong>{nextAction.label}</strong>
-          </div>
-          {lead.appointmentDate && (
-            <div className="drawer-signal-card appointment-signal" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
-              <span>Nächster Termin</span>
-              <strong>{formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}</strong>
-            </div>
-          )}
-        </div>
-
-        <div className="quick-action-row">
-          <button className="quick-action-btn" onClick={() => onUpdateField(lead.id, "followUp", new Date().toISOString().split("T")[0])}>Heute setzen</button>
-          <button className="quick-action-btn" onClick={() => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            onUpdateField(lead.id, "followUp", tomorrow.toISOString().split("T")[0]);
-          }}>Morgen nachfassen</button>
-          <button className="quick-action-btn" onClick={() => onUpdateStatus(lead.id, "Angebot")}>Zu Angebot ziehen</button>
-          <button className="quick-action-btn appointment" onClick={() => setShowAppointmentModal(true)}>📅 Termin planen</button>
-        </div>
-
-        <div className="next-action-playbook">
-          <div className="next-action-playbook-head">
-            <span>Next Best Action</span>
-            <strong className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</strong>
-          </div>
-          <div className="next-action-playbook-grid">
-            <div>
-              <span>Kanal</span>
-              <strong>{nextAction.channel}</strong>
-            </div>
-            <div>
-              <span>Timing</span>
-              <strong>{nextAction.when}</strong>
-            </div>
-            <div>
-              <span>Grund</span>
-              <strong>{nextAction.reason}</strong>
-            </div>
-          </div>
-
-          <div className="sequence-playbook-head">
-            <span>{sequencePlan.title}</span>
-          </div>
-          <div className="sequence-playbook-list">
-            {sequencePlan.steps.map((step, idx) => {
-              const outcome = getSequenceOutcome(step.id);
-              return (
-                <div key={step.id} className="sequence-step-card">
-                  <div className="sequence-step-main">
-                    <strong>{idx + 1}. {step.title}</strong>
-                    <p>{step.purpose}</p>
-                    <div className="sequence-step-meta">
-                      <span>Kanal: {step.channel}</span>
-                      <span>Timing: {step.dueInDays === 0 ? "Heute" : `+${step.dueInDays} Tage`}</span>
-                      {outcome && <span className={`sequence-outcome-chip ${outcome === "erfolg" ? "success" : "neutral"}`}>Outcome: {outcome}</span>}
-                    </div>
-                  </div>
-                  <div className="sequence-step-actions">
-                    <button
-                      type="button"
-                      className="sequence-btn apply"
-                      onClick={() => applySequenceStep(step)}
-                      disabled={!!sequenceBusyId}
-                    >
-                      {sequenceBusyId === step.id ? "..." : "Übernehmen"}
-                    </button>
-                    <button
-                      type="button"
-                      className="sequence-btn success"
-                      onClick={() => trackSequenceOutcome(step, "erfolg")}
-                      disabled={!!sequenceBusyId}
-                    >
-                      Erfolg
-                    </button>
-                    <button
-                      type="button"
-                      className="sequence-btn neutral"
-                      onClick={() => trackSequenceOutcome(step, "kein-kontakt")}
-                      disabled={!!sequenceBusyId}
-                    >
-                      Kein Kontakt
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          {sequenceMsg && <p className="sequence-msg">{sequenceMsg}</p>}
+        {/* Compact meta strip */}
+        <div className="drawer-meta-strip">
+          <span className={`drawer-meta-chip temp-${temperature.tone}`}>{temperature.label}</span>
+          <span className={`drawer-meta-chip score-${scoreTone}`}>★ {leadScore}/100</span>
+          <span className="drawer-meta-chip">{closeProbability}% Chance</span>
+          <span className={`drawer-meta-chip readiness-${readiness.tone}`}>{readiness.label}</span>
+          {lead.followUp && <span className={`drawer-meta-chip${isOverdueNow ? " overdue" : ""}`}>{isOverdueNow ? "⏰" : "📅"} {formatDate(lead.followUp)}</span>}
         </div>
 
         {/* Tabs */}
@@ -1692,6 +1577,12 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Aktivität */}
         {drawerTab === "activity" && (
           <div className="drawer-tab-content">
+            <div className="quick-action-row">
+              <button className="quick-action-btn" onClick={() => onUpdateField(lead.id, "followUp", new Date().toISOString().split("T")[0])}>Heute setzen</button>
+              <button className="quick-action-btn" onClick={() => { const t = new Date(); t.setDate(t.getDate() + 1); onUpdateField(lead.id, "followUp", t.toISOString().split("T")[0]); }}>Morgen nachfassen</button>
+              <button className="quick-action-btn" onClick={() => onUpdateStatus(lead.id, "Angebot")}>Zu Angebot ziehen</button>
+              <button className="quick-action-btn appointment" onClick={() => setShowAppointmentModal(true)}>📅 Termin planen</button>
+            </div>
             <div className="activity-compose-bar">
               <button
                 className={`compose-action-btn ${showCallForm ? "active" : ""}`}
@@ -1759,11 +1650,96 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           </div>
         )}
 
+        {/* Tab: Planung */}
+        {drawerTab === "planung" && (
+          <div className="drawer-tab-content">
+            <div className="deal-progress-bar">
+              {[{label:"❄️ Cold",tone:"cold",s:1},{label:"🌤 Warm",tone:"warm",s:2},{label:"🔥 Hot",tone:"hot",s:3}].map(({label,tone,s}) => (
+                <div key={tone} className={`deal-progress-step ${temperature.step >= s ? tone : "inactive"} ${temperature.step === s ? "current" : ""}`}>
+                  <span>{label}</span>
+                </div>
+              ))}
+              <div className="deal-progress-hint">{temperature.step < 3 ? (temperature.step === 1 ? "Aktivität auslösen → wird Warm" : "Kontakt intensivieren → wird Hot") : "Jetzt closing starten!"}</div>
+            </div>
+            <div className="drawer-signal-grid">
+              <div className="drawer-signal-card">
+                <span>Owner</span>
+                <strong>{getLeadOwnerEmail(lead)}</strong>
+              </div>
+              <div className={`drawer-signal-card readiness-card ${readiness.tone}`}>
+                <span>Abschlussampel</span>
+                <strong>{readiness.label}</strong>
+                <small>{readiness.reason}</small>
+              </div>
+              <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
+                <span>Deal Score</span>
+                <strong>{leadScore}/100</strong>
+              </div>
+              <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
+                <span>Abschlusschance</span>
+                <strong>{closeProbability}%</strong>
+              </div>
+              <div className="drawer-signal-card">
+                <span>Letzte Aktivität</span>
+                <strong>{formatDateTime(getLastActivityTimestamp(lead)) || "Noch keine"}</strong>
+              </div>
+              <div className="drawer-signal-card">
+                <span>Nächste Aktion</span>
+                <strong>{nextAction.label}</strong>
+              </div>
+              {lead.appointmentDate && (
+                <div className="drawer-signal-card appointment-signal" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
+                  <span>Nächster Termin</span>
+                  <strong>{formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}</strong>
+                </div>
+              )}
+            </div>
+            <div className="next-action-playbook">
+              <div className="next-action-playbook-head">
+                <span>Next Best Action</span>
+                <strong className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</strong>
+              </div>
+              <div className="next-action-playbook-grid">
+                <div><span>Kanal</span><strong>{nextAction.channel}</strong></div>
+                <div><span>Timing</span><strong>{nextAction.when}</strong></div>
+                <div><span>Grund</span><strong>{nextAction.reason}</strong></div>
+              </div>
+              <div className="sequence-playbook-head"><span>{sequencePlan.title}</span></div>
+              <div className="sequence-playbook-list">
+                {sequencePlan.steps.map((step, idx) => {
+                  const outcome = getSequenceOutcome(step.id);
+                  return (
+                    <div key={step.id} className="sequence-step-card">
+                      <div className="sequence-step-main">
+                        <strong>{idx + 1}. {step.title}</strong>
+                        <p>{step.purpose}</p>
+                        <div className="sequence-step-meta">
+                          <span>Kanal: {step.channel}</span>
+                          <span>Timing: {step.dueInDays === 0 ? "Heute" : `+${step.dueInDays} Tage`}</span>
+                          {outcome && <span className={`sequence-outcome-chip ${outcome === "erfolg" ? "success" : "neutral"}`}>Outcome: {outcome}</span>}
+                        </div>
+                      </div>
+                      <div className="sequence-step-actions">
+                        <button type="button" className="sequence-btn apply" onClick={() => applySequenceStep(step)} disabled={!!sequenceBusyId}>{sequenceBusyId === step.id ? "..." : "Übernehmen"}</button>
+                        <button type="button" className="sequence-btn success" onClick={() => trackSequenceOutcome(step, "erfolg")} disabled={!!sequenceBusyId}>Erfolg</button>
+                        <button type="button" className="sequence-btn neutral" onClick={() => trackSequenceOutcome(step, "kein-kontakt")} disabled={!!sequenceBusyId}>Kein Kontakt</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {sequenceMsg && <p className="sequence-msg">{sequenceMsg}</p>}
+            </div>
+          </div>
+        )}
+
         {/* Tab: Details */}
         {drawerTab === "details" && (
           <div className="drawer-tab-content">
             <div className="details-grid">
               <InlineField label="Firma" value={lead.company} onSave={v => onUpdateField(lead.id, "company", v)} />
+              <InlineField label="Anrede" value={lead.anrede} onSave={v => onUpdateField(lead.id, "anrede", v)} options={["", "Herr", "Frau", "Divers"]} />
+              <InlineField label="Titel" value={lead.titel} onSave={v => onUpdateField(lead.id, "titel", v)} options={["", "Dr.", "Prof.", "Prof. Dr."]} />
               <InlineField label="Ansprechpartner" value={lead.person} onSave={v => onUpdateField(lead.id, "person", v)} />
               <InlineField label="Telefon" value={lead.phone} onSave={v => onUpdateField(lead.id, "phone", v)} type="tel" />
               <InlineField label="E-Mail" value={lead.email} onSave={v => onUpdateField(lead.id, "email", v)} type="email" />
@@ -2048,6 +2024,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-form-grid">
             <div className="form-group"><label>Firma</label><input name="company" placeholder="Firmenname" value={form.company} onChange={handleChange} disabled={loading} /></div>
+            <div className="form-group"><label>Anrede</label><select name="anrede" value={form.anrede} onChange={handleChange} disabled={loading}><option value="">–</option><option value="Herr">Herr</option><option value="Frau">Frau</option><option value="Divers">Divers</option></select></div>
+            <div className="form-group"><label>Titel</label><select name="titel" value={form.titel} onChange={handleChange} disabled={loading}><option value="">–</option><option value="Dr.">Dr.</option><option value="Prof.">Prof.</option><option value="Prof. Dr.">Prof. Dr.</option></select></div>
             <div className="form-group"><label>Ansprechpartner *</label><input name="person" placeholder="Name" value={form.person} onChange={handleChange} disabled={loading} required /></div>
             <div className="form-group"><label>Geburtsdatum</label><input type="date" name="geburtsdatum" value={form.geburtsdatum} onChange={handleChange} disabled={loading} /></div>
             <div className="form-group"><label>Telefon *</label><input name="phone" type="tel" placeholder="+49..." value={form.phone} onChange={handleChange} disabled={loading} required /></div>

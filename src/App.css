@@ -1435,6 +1435,71 @@ textarea:focus {
   outline-offset: 1px;
 }
 
+/* ── Drawer meta strip ─────────────────────────────────────────────────────── */
+.drawer-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.drawer-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f0f4fb;
+  color: #374151;
+  border: 1px solid #e5eaf3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+.drawer-meta-chip.temp-hot    { background: #fff0f0; color: #c92a2a; border-color: #fecaca; }
+.drawer-meta-chip.temp-warm   { background: #fff9ef; color: #b45309; border-color: #fed7aa; }
+.drawer-meta-chip.temp-cold   { background: #eff8ff; color: #1d4ed8; border-color: #bfdbfe; }
+.drawer-meta-chip.temp-critical { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+.drawer-meta-chip.score-high  { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.drawer-meta-chip.score-mid   { background: #fff9ef; color: #92400e; border-color: #fed7aa; }
+.drawer-meta-chip.score-low   { background: #f7f8fa; color: #6b7280; border-color: #e5e7eb; }
+.drawer-meta-chip.readiness-green { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.drawer-meta-chip.readiness-red   { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+.drawer-meta-chip.overdue     { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
+
+/* ── Text overflow fixes ────────────────────────────────────────────────────── */
+.drawer-company {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drawer-person {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drawer-signal-card strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.contact-btn-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+.inline-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drawer-tabs {
+  flex-wrap: wrap;
+}
+
 .cockpit-action-head {
   display: flex;
   justify-content: space-between;
@@ -2543,20 +2608,24 @@ textarea:focus {
 }
 
 .drawer-header {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .drawer-header-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .drawer-company,
 .modal h2 {
   margin: 0;
-  font-size: 28px;
-  letter-spacing: -0.03em;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drawer-person {
