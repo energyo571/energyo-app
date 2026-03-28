@@ -59,12 +59,6 @@ const calculatePriority = (lead) => {
   if ((consumption >= 20000 && consumption < 50000) || (laufzeit && laufzeit >= 1 && laufzeit <= 2)) return "B";
   return "C";
 };
-const PRIORITY_META = {
-  A: { label: "Hot" },
-  B: { label: "Warm" },
-  C: { label: "Cold" },
-};
-const getPriorityMeta = (priority) => PRIORITY_META[priority] || { label: "Cold" };
 const calculateUmsatzPotential = (consumption) => {
   if (!consumption) return 0;
   const kwh = parseInt(consumption);
@@ -526,11 +520,12 @@ Lead-Informationen:
     setResult(null);
     setError(null);
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      // API key is server-side only — see api/ai-proxy.js
+      const response = await fetch("/api/ai-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-5",
           max_tokens: 1000,
           messages: [{ role: "user", content: buildPrompt(m) }],
         }),
@@ -538,6 +533,8 @@ Lead-Informationen:
       const data = await response.json();
       if (data.content?.[0]?.text) {
         setResult(data.content[0].text);
+      } else if (data.error) {
+        setError(`KI-Fehler: ${data.error.message || data.error}`);
       } else {
         setError("Keine Antwort vom KI-System erhalten.");
       }
@@ -914,107 +911,6 @@ function ActivityItem({ item, onEdit, onDelete, canEdit }) {
   );
 }
 
-function CommandCenter({ stats, filteredLeads, smartView, setSmartView, setKpiFocus }) {
-  const [isMobileViewport, setIsMobileViewport] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 820px)").matches : false
-  );
-  const [showInsights, setShowInsights] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(max-width: 820px)");
-    const applyViewportState = (matches) => setIsMobileViewport(matches);
-
-    applyViewportState(mediaQuery.matches);
-    const onViewportChange = (event) => applyViewportState(event.matches);
-    mediaQuery.addEventListener("change", onViewportChange);
-    return () => mediaQuery.removeEventListener("change", onViewportChange);
-  }, []);
-
-  const hotLead = filteredLeads.find((lead) => getLeadTemperature(lead).tone === "hot");
-  const urgentLead = filteredLeads.find((lead) => isOverdue(lead.followUp) || isTodayDue(lead.followUp));
-
-  return (
-    <section className="command-center compact">
-      <div className="command-summary-bar">
-        <div className="command-summary-head">
-          <span className="eyebrow">Sales cockpit</span>
-        </div>
-        <div className="command-summary-metrics">
-          <div className="summary-metric-card">
-            <strong>{stats.overdue + stats.dueToday}</strong>
-            <span>Action</span>
-          </div>
-          <div className="summary-metric-card">
-            <strong>{stats.priorityA}</strong>
-            <span>Hot</span>
-          </div>
-          <div className="summary-metric-card">
-            <strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong>
-            <span>Closing</span>
-          </div>
-          <div className="summary-metric-card">
-            <strong className="kpi-success">{formatEuro(stats.totalUmsatzPotential)}</strong>
-            <span>Potenzial</span>
-          </div>
-          <button className="command-insights-toggle" onClick={() => setShowInsights((v) => !v)}>
-            {showInsights ? "Insights ausblenden" : "Mehr Insights"}
-          </button>
-        </div>
-      </div>
-
-      <div className="smart-view-bar sticky-smart-view">
-        {[
-          { id: "all", label: "Alle Leads" },
-          { id: "mine", label: "Meine Leads" },
-          { id: "action", label: "Action Queue" },
-          { id: "hot", label: "Hot Deals" },
-          { id: "won", label: "Gewonnen" },
-        ].map((item) => (
-          <button
-            key={item.id}
-            className={`smart-view-chip ${smartView === item.id ? "active" : ""}`}
-            onClick={() => { setSmartView(item.id); setKpiFocus("all"); }}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {showInsights && (
-      <div className={`command-grid compact-grid ${isMobileViewport ? "mobile-sheet" : ""}`}>
-        <div className="command-card">
-          <span className="command-card-label">Nächster kritischer Lead</span>
-          {urgentLead ? (
-            <>
-              <strong>{urgentLead.company || urgentLead.person}</strong>
-              <p>{getNextAction(urgentLead).label}</p>
-              <span className="command-card-meta">Follow-up: {formatDate(urgentLead.followUp)}</span>
-            </>
-          ) : (<p>Keine kritischen Follow-ups offen.</p>)}
-        </div>
-        <div className="command-card">
-          <span className="command-card-label">Heißester Deal</span>
-          {hotLead ? (
-            <>
-              <strong>{hotLead.company || hotLead.person}</strong>
-              <p>{getNextAction(hotLead).label}</p>
-              <span className="command-card-meta">Potenzial: {formatEuro(calculateUmsatzPotential(hotLead.consumption))}</span>
-            </>
-          ) : (<p>Aktuell kein Deal mit Hot-Signal.</p>)}
-        </div>
-        <div className="command-card emphasize">
-          <span className="command-card-label">Pipeline Fokus</span>
-          <strong>{stats.priorityA} Hot-Leads</strong>
-          <p>{stats.openCancellation} Leads im Kündigungsfenster</p>
-          <span className="command-card-meta">Arbeite diese zuerst, bevor du neue Kaltleads ansprichst.</span>
-        </div>
-      </div>
-      )}
-    </section>
-  );
-}
-
 // ─── UPDATED: LeadDetailDrawer ────────────────────────────────────────────────
 function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment }) {
   const [drawerTab, setDrawerTab] = useState("activity");
@@ -1027,9 +923,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [sequenceBusyId, setSequenceBusyId] = useState(null);
   const [sequenceMsg, setSequenceMsg] = useState("");
-
-  const priority = calculatePriority(lead);
-  const priorityMeta = getPriorityMeta(priority);
   const umsatz = calculateUmsatzPotential(lead.consumption);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
@@ -1159,6 +1052,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const tabs = [
     { id: "activity",    label: "Aktivität" },
     { id: "details",     label: "Details" },
+    { id: "calc",        label: "🧮 Kalkulator" },
+    { id: "wechsel",     label: "🔄 Wechsel" },
     { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
     { id: "ai",          label: "KI Bot" },
   ];
@@ -1174,7 +1069,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               {lead.person}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
             </p>
             <div className="drawer-header-badges">
-              <span className={`drawer-prio-badge prio-${priority}`}>{priorityMeta.label}</span>
               {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
               {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
@@ -1531,6 +1425,31 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           </div>
         )}
 
+        {/* Tab: Kalkulator */}
+        {drawerTab === "calc" && (
+          <div className="drawer-tab-content">
+            <SavingsCalculator lead={lead} />
+          </div>
+        )}
+
+        {/* Tab: Wechsel & Provision */}
+        {drawerTab === "wechsel" && (
+          <div className="drawer-tab-content">
+            {lead.status === "Gewonnen" ? (
+              <>
+                <WechselprozessTracker lead={lead} user={user} onUpdateField={onUpdateField} />
+                <div style={{ marginTop: 20 }}>
+                  <ProvisionsTracker lead={lead} onUpdateField={onUpdateField} />
+                </div>
+              </>
+            ) : (
+              <div className="wechsel-locked">
+                🔒 Wechselprozess und Provision sind für gewonnene Leads (Status "Gewonnen") verfügbar.
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Tab: KI-Assistent */}
         {drawerTab === "ai" && (
           <div className="drawer-tab-content">
@@ -1786,8 +1705,6 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 
 // ─── UPDATED: LeadRow (with multiselect checkbox) ─────────────────────────────
 function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggleCheck }) {
-  const priority = calculatePriority(lead);
-  const priorityMeta = getPriorityMeta(priority);
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
   const isTodayNow = isTodayDue(lead.followUp);
@@ -1820,9 +1737,6 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         </div>
       )}
       {!selectionMode && <div className="lead-row-checkbox-placeholder" />}
-      <div className="lead-row-prio">
-        <span className={`prio-dot prio-${priority}`} title={priorityMeta.label} />
-      </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
         <div className="lead-row-sub">
@@ -2526,6 +2440,385 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   );
 }
 
+// ─── SavingsCalculator ───────────────────────────────────────────────────────
+function SavingsCalculator({ lead }) {
+  const kWh = parseInt(lead.consumption) || 0;
+  const annualCosts = parseFloat(lead.annualCosts) || 0;
+
+  const [currentPrice, setCurrentPrice] = useState(() => {
+    if (kWh > 0 && annualCosts > 0) return ((annualCosts / kWh) * 100).toFixed(2);
+    return "";
+  });
+  const [newPrice, setNewPrice] = useState("");
+
+  const currentCt = parseFloat(currentPrice) || 0;
+  const newCt = parseFloat(newPrice) || 0;
+  const diffCt = currentCt - newCt;
+  const annualSavings = kWh > 0 ? (diffCt / 100 * kWh) : 0;
+  const monthlySavings = annualSavings / 12;
+
+  const copyText = `⚡ Energyo Einspar-Kalkulation\n\nJahresverbrauch: ${kWh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${currentCt.toFixed(2)} ct/kWh → ${formatEuro(currentCt / 100 * kWh)}/Jahr\nNeuer Preis: ${newCt.toFixed(2)} ct/kWh → ${formatEuro(newCt / 100 * kWh)}/Jahr\n\n✅ Jahresersparnis: ${formatEuro(annualSavings)}\n✅ Monatsersparnis: ${formatEuro(monthlySavings)}`;
+
+  return (
+    <div className="savings-calc">
+      <div className="savings-header">
+        <span>⚡</span>
+        <div>
+          <p className="savings-title">Einspar-Kalkulator</p>
+          <p className="savings-sub">Live am Telefon ausrechnen — Abschluss sichern</p>
+        </div>
+      </div>
+
+      <div className="savings-inputs">
+        <div className="savings-field">
+          <label>Jahresverbrauch (kWh)</label>
+          <input
+            className="savings-input"
+            type="number"
+            readOnly
+            value={kWh || ""}
+            placeholder="Im Lead eintragen"
+          />
+        </div>
+        <div className="savings-field">
+          <label>Aktueller Preis (ct/kWh)</label>
+          <input
+            className="savings-input"
+            type="number"
+            step="0.01"
+            value={currentPrice}
+            onChange={e => setCurrentPrice(e.target.value)}
+            placeholder="z.B. 28.5"
+          />
+        </div>
+        <div className="savings-field">
+          <label>Neuer Preis ENERGYO (ct/kWh)</label>
+          <input
+            className="savings-input"
+            type="number"
+            step="0.01"
+            value={newPrice}
+            onChange={e => setNewPrice(e.target.value)}
+            placeholder="z.B. 22.0"
+          />
+        </div>
+      </div>
+
+      {currentCt > 0 && newCt > 0 && annualSavings > 0 && (
+        <div className="savings-result positive">
+          <div className="savings-result-main">
+            <span className="savings-amount">{formatEuro(annualSavings)}</span>
+            <span className="savings-period">Jahresersparnis</span>
+          </div>
+          <div className="savings-result-details">
+            <div className="savings-detail-item"><span>Pro Monat</span><strong>{formatEuro(monthlySavings)}</strong></div>
+            <div className="savings-detail-item"><span>Differenz</span><strong>{diffCt.toFixed(2)} ct/kWh</strong></div>
+            <div className="savings-detail-item"><span>Aktuell/Jahr</span><strong>{formatEuro(currentCt / 100 * kWh)}</strong></div>
+            <div className="savings-detail-item"><span>Neu/Jahr</span><strong>{formatEuro(newCt / 100 * kWh)}</strong></div>
+          </div>
+          <div className="savings-actions">
+            <button className="savings-copy-btn" onClick={() => navigator.clipboard.writeText(copyText)}>
+              📋 Kalkulation kopieren
+            </button>
+          </div>
+        </div>
+      )}
+      {currentCt > 0 && newCt > 0 && annualSavings <= 0 && (
+        <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "12px 0" }}>
+          ⚠️ Kein Vorteil — neuer Preis liegt nicht unterhalb des aktuellen.
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── WechselprozessTracker ───────────────────────────────────────────────────
+const WECHSEL_STEPS = [
+  { id: "antrag",        label: "Wechselantrag gestellt",       desc: "Antrag bei ENERGYO eingereicht" },
+  { id: "kuendigung",    label: "Kündigung beim Altanbieter",   desc: "Kündigung versendet & bestätigt" },
+  { id: "netzanmeldung", label: "Netzanmeldung bestätigt",      desc: "Netzbetreiber-Rückmeldung erhalten" },
+  { id: "liefertag",     label: "Erster Liefertag",             desc: "Energielieferung startet" },
+  { id: "abschluss",     label: "Abgeschlossen",                desc: "Wechsel erfolgreich — Empfehlung anfragen" },
+];
+
+function WechselprozessTracker({ lead, user, onUpdateField }) {
+  const [editingStep, setEditingStep] = useState(null);
+  const [editDate, setEditDate] = useState("");
+  const [editNote, setEditNote] = useState("");
+
+  const process = lead.wechselProcess || {};
+  const steps = process.steps || {};
+  const completedCount = WECHSEL_STEPS.filter(s => !!steps[s.id]?.completedAt).length;
+  const progress = Math.round((completedCount / WECHSEL_STEPS.length) * 100);
+  const allDone = completedCount === WECHSEL_STEPS.length;
+
+  const completeStep = async (stepId) => {
+    const date = editDate || new Date().toISOString().split("T")[0];
+    await onUpdateField(lead.id, "wechselProcess", {
+      ...process,
+      steps: { ...steps, [stepId]: { completedAt: date, completedBy: user.email, note: editNote } },
+    });
+    setEditingStep(null);
+    setEditDate("");
+    setEditNote("");
+  };
+
+  const resetStep = async (stepId) => {
+    const updated = { ...steps };
+    delete updated[stepId];
+    await onUpdateField(lead.id, "wechselProcess", { ...process, steps: updated });
+  };
+
+  return (
+    <div className="wechsel-tracker">
+      <div className="wechsel-header">
+        <div>
+          <p className="wechsel-title">🔄 Wechselprozess</p>
+          <p className="wechsel-sub">{completedCount} von {WECHSEL_STEPS.length} Schritten abgeschlossen</p>
+        </div>
+        {allDone && <span className="wechsel-done-badge">✅</span>}
+      </div>
+      <div className="wechsel-progress-track">
+        <div className="wechsel-progress-fill" style={{ width: `${progress}%` }} />
+      </div>
+      <div className="wechsel-steps">
+        {WECHSEL_STEPS.map((step, idx) => {
+          const done = !!steps[step.id]?.completedAt;
+          const isNext = !done && idx === completedCount;
+          const cls = done ? "done" : isNext ? "active" : "future";
+          return (
+            <div key={step.id} className={`wechsel-step ${cls}`}>
+              <div className="wechsel-step-icon">{done ? "✓" : idx + 1}</div>
+              <div className="wechsel-step-body">
+                <div className="wechsel-step-label">
+                  <strong>{step.label}</strong>
+                  {done && steps[step.id]?.completedAt && (
+                    <span className="wechsel-step-date">{formatDate(steps[step.id].completedAt)}</span>
+                  )}
+                </div>
+                <p className="wechsel-step-desc">{step.desc}</p>
+                {done && steps[step.id]?.note && (
+                  <p className="wechsel-step-note">{steps[step.id].note}</p>
+                )}
+                {editingStep === step.id ? (
+                  <div className="wechsel-edit-form">
+                    <input type="date" className="wechsel-date-input" value={editDate} onChange={e => setEditDate(e.target.value)} />
+                    <input type="text" className="wechsel-note-input" placeholder="Notiz (optional)" value={editNote} onChange={e => setEditNote(e.target.value)} />
+                    <div className="wechsel-edit-actions">
+                      <button className="wechsel-confirm-btn" onClick={() => completeStep(step.id)}>Bestätigen</button>
+                      <button className="wechsel-cancel-btn" onClick={() => setEditingStep(null)}>Abbrechen</button>
+                    </div>
+                  </div>
+                ) : (
+                  !done && isNext && (
+                    <button className="wechsel-complete-btn" onClick={() => { setEditingStep(step.id); setEditDate(""); setEditNote(""); }}>
+                      Abschließen
+                    </button>
+                  )
+                )}
+                {done && (
+                  <button className="wechsel-reset-btn" onClick={() => resetStep(step.id)}>Rückgängig</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {allDone && (
+        <div style={{ padding: "12px 16px", background: "#f0fdf4", color: "#16a34a", fontSize: "0.82rem", fontWeight: 700, borderTop: "1px solid #dcfce7" }}>
+          🏆 Wechsel abgeschlossen! Jetzt Empfehlung anfragen.
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── ProvisionsTracker ───────────────────────────────────────────────────────
+const PROVISION_STATUS = [
+  { id: "offen",      label: "Offen",      icon: "⏳" },
+  { id: "gebucht",    label: "Gebucht",    icon: "📋" },
+  { id: "ausgezahlt", label: "Ausgezahlt", icon: "✅" },
+];
+
+function ProvisionsTracker({ lead, onUpdateField }) {
+  const provision = lead.provision || {};
+
+  const save = async (updates) => {
+    await onUpdateField(lead.id, "provision", { ...provision, ...updates });
+  };
+
+  return (
+    <div className="provisions-tracker">
+      <h3 style={{ margin: "0 0 12px", fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>💶 Provisions-Tracker</h3>
+      <div className="provision-grid">
+        <div className="provision-field">
+          <label>Provisionsbetrag (€)</label>
+          <input type="number" step="0.01" min="0" placeholder="z.B. 250" value={provision.amount || ""} onChange={e => save({ amount: e.target.value })} />
+        </div>
+        <div className="provision-field">
+          <label>Erwartete Auszahlung</label>
+          <input type="date" value={provision.expectedDate || ""} onChange={e => save({ expectedDate: e.target.value })} />
+        </div>
+        <div className="provision-field">
+          <label>Tatsächliche Auszahlung</label>
+          <input type="date" value={provision.actualDate || ""} onChange={e => save({ actualDate: e.target.value })} />
+        </div>
+        <div className="provision-field">
+          <label>Notiz</label>
+          <input type="text" placeholder="z.B. Maklervertrag #12345" value={provision.note || ""} onChange={e => save({ note: e.target.value })} />
+        </div>
+      </div>
+      <div className="provision-status-row">
+        {PROVISION_STATUS.map(s => (
+          <button key={s.id} className={`provision-status-btn ${provision.status === s.id ? "active" : ""}`} onClick={() => save({ status: s.id })}>
+            {s.icon} {s.label}
+          </button>
+        ))}
+      </div>
+      {provision.status === "ausgezahlt" && provision.amount && (
+        <div className="provision-confirmed">
+          ✅ {formatEuro(parseFloat(provision.amount))} ausgezahlt{provision.actualDate ? ` am ${formatDate(provision.actualDate)}` : ""}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── PowerDialer ─────────────────────────────────────────────────────────────
+function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose }) {
+  const queue = useMemo(() => {
+    return leads
+      .filter(l => l.phone && l.status !== "Verloren")
+      .sort((a, b) => {
+        const s = l => (isOverdue(l.followUp) ? 100 : 0) + (isTodayDue(l.followUp) ? 50 : 0) + calculateLeadScore(l);
+        return s(b) - s(a);
+      });
+  }, [leads]);
+
+  const [idx, setIdx] = useState(0);
+  const [stats, setStats] = useState({ called: 0, reached: 0, appointments: 0 });
+  const [showLog, setShowLog] = useState(false);
+  const [logOutcome, setLogOutcome] = useState(CALL_OUTCOMES[0]);
+  const [logNote, setLogNote] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const current = queue[idx] || null;
+  const progress = queue.length > 0 ? Math.round((idx / queue.length) * 100) : 100;
+
+  const advance = () => {
+    setIdx(i => i + 1);
+    setShowLog(false);
+    setLogNote("");
+    setLogOutcome(CALL_OUTCOMES[0]);
+  };
+
+  const logAndAdvance = async (outcome, note = "") => {
+    if (!current) return;
+    setSaving(true);
+    await onLogCall(current.id, { outcome, notes: note, duration: "" });
+    const reached = !["Kein Kontakt", "Mailbox hinterlassen"].includes(outcome);
+    const appt = outcome === "Termin vereinbart";
+    if (appt) await onUpdateField(current.id, "followUp", new Date().toISOString().split("T")[0]);
+    setStats(prev => ({ called: prev.called + 1, reached: prev.reached + (reached ? 1 : 0), appointments: prev.appointments + (appt ? 1 : 0) }));
+    setSaving(false);
+    advance();
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal power-dialer-modal">
+        {idx >= queue.length || queue.length === 0 ? (
+          <div className="dialer-done">
+            <div style={{ fontSize: "2.5rem" }}>🏁</div>
+            <h3 style={{ color: "#f1f5f9", margin: "8px 0" }}>Session abgeschlossen</h3>
+            <div style={{ display: "flex", gap: 20, margin: "16px 0" }}>
+              {[["📞", stats.called, "Anrufe"], ["✅", stats.reached, "Erreicht"], ["📅", stats.appointments, "Termine"]].map(([icon, val, label]) => (
+                <div key={label} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "#f1f5f9" }}>{icon} {val}</div>
+                  <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{label}</div>
+                </div>
+              ))}
+            </div>
+            <button className="dialer-close-btn" onClick={onClose}>Schließen</button>
+          </div>
+        ) : (
+          <div className="power-dialer">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <strong style={{ color: "#f1f5f9", fontSize: "1rem" }}>⚡ Power Dialer</strong>
+                <span style={{ color: "#64748b", marginLeft: 10, fontSize: "0.8rem" }}>Anruf {idx + 1} / {queue.length}</span>
+              </div>
+              <div style={{ display: "flex", gap: 12, alignItems: "center", fontSize: "0.8rem", color: "#64748b" }}>
+                <span title="Anrufe">📞 {stats.called}</span>
+                <span title="Erreicht">✅ {stats.reached}</span>
+                <span title="Termine">📅 {stats.appointments}</span>
+                <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>
+              </div>
+            </div>
+            <div className="dialer-progress">
+              <div className="dialer-progress-bar"><div className="dialer-progress-fill" style={{ width: `${progress}%` }} /></div>
+              <span className="dialer-progress-label">{progress}%</span>
+            </div>
+            <div className="dialer-card">
+              <div className="dialer-context">
+                <span className={`health-pill ${getLeadTemperature(current).tone}`}>{getLeadTemperature(current).label}</span>
+                {isOverdue(current.followUp) && <span className="dialer-chip hot">⏰ Überfällig</span>}
+                {isOpenCancellationWindow(current.contractEnd) && <span className="dialer-chip hot">🔔 Kündigungsfenster</span>}
+              </div>
+              <p className="dialer-company">{current.company || current.person}</p>
+              <p className="dialer-person">{current.person}</p>
+              <a className="dialer-call-btn" href={`tel:${current.phone}`}>📞 {current.phone}</a>
+              {current.phone && (
+                <a className="dialer-wa-btn" href={`https://wa.me/${formatWaPhone(current.phone)}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>
+              )}
+              <div className="dialer-context" style={{ marginTop: 6 }}>
+                {current.currentProvider && <span className="dialer-chip">Aktuell: {current.currentProvider}</span>}
+                {current.consumption && <span className="dialer-chip">{parseInt(current.consumption).toLocaleString("de-DE")} kWh</span>}
+                {current.annualCosts && <span className="dialer-chip">€{parseInt(current.annualCosts).toLocaleString("de-DE")}/Jahr</span>}
+                {current.followUp && <span className="dialer-chip">Follow-up: {formatDate(current.followUp)}</span>}
+              </div>
+              {(current.callLogs || []).length > 0 && (
+                <p className="dialer-last-note">
+                  Letzter Anruf: {current.callLogs[current.callLogs.length - 1].outcome}
+                  {current.callLogs[current.callLogs.length - 1].notes ? ` — ${current.callLogs[current.callLogs.length - 1].notes}` : ""}
+                </p>
+              )}
+            </div>
+            {showLog ? (
+              <div className="dialer-log">
+                <select className="dialer-outcome-select" value={logOutcome} onChange={e => setLogOutcome(e.target.value)}>
+                  {CALL_OUTCOMES.map(o => <option key={o}>{o}</option>)}
+                </select>
+                <textarea className="dialer-note" placeholder="Gesprächsnotiz (optional)..." value={logNote} onChange={e => setLogNote(e.target.value)} rows={2} />
+                <div className="dialer-actions">
+                  <button className="dialer-skip-btn" onClick={() => setShowLog(false)}>Abbrechen</button>
+                  <button className="dialer-next-btn logged" onClick={() => logAndAdvance(logOutcome, logNote)} disabled={saving}>
+                    {saving ? "..." : "Speichern & Weiter"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="dialer-log">
+                <div className="dialer-log-row" style={{ flexWrap: "wrap", gap: 7 }}>
+                  {[["❌ Kein Kontakt", "Kein Kontakt"], ["📱 Mailbox", "Mailbox hinterlassen"], ["📅 Termin", "Termin vereinbart"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
+                    <button key={outcome} className="dialer-next-btn" style={{ flex: "1 1 45%", fontSize: "0.82rem" }} onClick={() => logAndAdvance(outcome)} disabled={saving}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="dialer-actions">
+                  <button className="dialer-skip-btn" onClick={() => setShowLog(true)}>📝 Gespräch protokollieren</button>
+                  <button className="dialer-skip-btn" onClick={advance}>Überspringen →</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── NEW: BulkActionBar ───────────────────────────────────────────────────────
 function BulkActionBar({ selectedCount, onDelete, onCancel, onSelectAll, totalCount }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -2568,15 +2861,14 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPriority, setFilterPriority] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterCancellation, setFilterCancellation] = useState("all");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("leads");
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [viewMode, setViewMode] = useState("list");
-  const [densityMode, setDensityMode] = useState("dense");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showPowerDialer, setShowPowerDialer] = useState(false);
   const [smartView, setSmartView] = useState("all");
   const [sortMode, setSortMode] = useState("priority");
   const [kpiFocus, setKpiFocus] = useState("all");
@@ -2897,8 +3189,6 @@ function App() {
       if (!match) return false;
       if (filterPriority !== "all" && calculatePriority(l) !== filterPriority) return false;
       if (filterStatus !== "all" && l.status !== filterStatus) return false;
-      if (filterCancellation === "open" && !isOpenCancellationWindow(l.contractEnd)) return false;
-      if (filterCancellation === "closed" && isOpenCancellationWindow(l.contractEnd)) return false;
       if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
       if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
       if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
@@ -2910,7 +3200,7 @@ function App() {
       if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
       return true;
     }), sortMode);
-  }, [leads, searchTerm, filterPriority, filterStatus, filterCancellation, smartView, sortMode, user, kpiFocus]);
+  }, [leads, searchTerm, filterPriority, filterStatus, smartView, sortMode, user, kpiFocus]);
 
   const stats = useMemo(() => ({
     totalLeads: leads.length,
@@ -2960,10 +3250,6 @@ function App() {
                   <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>≡ Liste</button>
                   <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
                 </div>
-                <div className="density-toggle-group">
-                  <button className={`density-toggle-btn ${densityMode === "dense" ? "active" : ""}`} onClick={() => setDensityMode("dense")}>Kompakt</button>
-                  <button className={`density-toggle-btn ${densityMode === "comfort" ? "active" : ""}`} onClick={() => setDensityMode("comfort")}>Komfort</button>
-                </div>
                 {/* NEW: Multiselect toggle (admin only) */}
                 {userRole === "admin" && (
                   <button
@@ -3000,7 +3286,24 @@ function App() {
               </div>
             )}
 
-            <CommandCenter stats={stats} filteredLeads={filteredLeads} smartView={smartView} setSmartView={setSmartView} setKpiFocus={setKpiFocus} />
+            {/* Smart-View Chips — replaces the removed CommandCenter */}
+            <div className="smart-view-bar">
+              {[
+                { id: "all",    label: "Alle Leads" },
+                { id: "mine",   label: "Meine Leads" },
+                { id: "action", label: "Action Queue" },
+                { id: "hot",    label: "Hot Deals" },
+                { id: "won",    label: "Gewonnen" },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  className={`smart-view-chip ${smartView === item.id ? "active" : ""}`}
+                  onClick={() => { setSmartView(item.id); setKpiFocus("all"); }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
 
             <div className="filter-bar">
               <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
@@ -3010,10 +3313,6 @@ function App() {
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="filter-select-inline">
                 <option value="all">Alle Status</option>
                 {STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}
-              </select>
-              <select value={filterCancellation} onChange={e => setFilterCancellation(e.target.value)} className="filter-select-inline">
-                <option value="all">Kündigungsfenster: Alle</option>
-                <option value="open">Fenster offen</option><option value="closed">Fenster geschlossen</option>
               </select>
               {kpiFocus !== "all" && (
                 <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>KPI-Fokus zurücksetzen</button>
@@ -3027,12 +3326,13 @@ function App() {
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
               <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
+              <button type="button" className="kpi-action-btn dialer" onClick={() => setShowPowerDialer(true)}>⚡ Power Dialer</button>
               <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
               <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
             </div>
 
             {viewMode === "list" ? (
-              <div className={`leads-table-wrap density-${densityMode}`}>
+              <div className="leads-table-wrap">
                 <div className="leads-table-header">
                   <div className="lth-checkbox" />
                   <div className="lth-prio" />
@@ -3111,6 +3411,16 @@ function App() {
 
       {showImportModal && (
         <ImportModal isOpen={showImportModal} onClose={() => setShowImportModal(false)} leads={leads} users={teamMembers} currentUser={user} onImport={onImportLeads} />
+      )}
+
+      {showPowerDialer && (
+        <PowerDialer
+          leads={filteredLeads.length > 0 ? filteredLeads : leads}
+          user={user}
+          onLogCall={logCall}
+          onUpdateField={updateLeadField}
+          onClose={() => setShowPowerDialer(false)}
+        />
       )}
     </div>
   );

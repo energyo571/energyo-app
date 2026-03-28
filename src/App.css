@@ -4691,3 +4691,21 @@ select {
 
 /* ─── ENERGY BADGE KWH in lead row ──────────────────────────────────────── */
 .energy-badge.kwh { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 700; border-radius: 20px; padding: 2px 8px; }
+
+/* --- POWER DIALER MODAL ---------------------------------------------------- */
+.power-dialer-modal { background: #0f172a; max-width: 500px; width: 95%; border-radius: 16px; overflow: hidden; }
+.power-dialer-modal .drawer-close-btn { color: #64748b; background: transparent; border: none; cursor: pointer; font-size: 1rem; }
+
+/* --- PROVISIONS TRACKER ---------------------------------------------------- */
+.provisions-tracker { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 4px; }
+.provision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+@media(max-width:480px){ .provision-grid { grid-template-columns: 1fr; } }
+.provision-field { display: flex; flex-direction: column; gap: 4px; }
+.provision-field label { font-size: 0.68rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+.provision-field input { padding: 8px 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; color: #0f172a; background: #f8fafc; }
+.provision-field input:focus { border-color: #3b82f6; outline: none; background: #fff; }
+.provision-status-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.provision-status-btn { flex: 1; padding: 8px 12px; background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 8px; color: #475569; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.provision-status-btn.active { background: #dbeafe; border-color: #3b82f6; color: #1d4ed8; }
+.provision-confirmed { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; font-weight: 700; color: #16a34a; }
+
