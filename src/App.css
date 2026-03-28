@@ -1430,6 +1430,10 @@ textarea:focus {
   border-color: #d9e1ec;
   background: #f4f7fb;
 }
+.cockpit-cta-card.active {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 1px;
+}
 
 .cockpit-action-head {
   display: flex;

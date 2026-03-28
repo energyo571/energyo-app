@@ -3583,6 +3583,15 @@ function App() {
     }
     if (preset === "overdue" || preset === "today" || preset === "inactive48" || preset === "cancellation") {
       applyKpiFocus(preset);
+      return;
+    }
+    if (preset === "stalledOffers") {
+      setSmartView("all");
+      setKpiFocus("all");
+      setFilterStatus("Angebot");
+      setFilterPriority("all");
+      setSortMode("activity");
+      return;
     }
   };
 
@@ -4120,35 +4129,24 @@ function App() {
     marketTrendPct,
   }), [activePipelineLeads, marketTrendPct]);
 
+  const CTA_ACTION_PRESET = {
+    inactive48: "inactive48",
+    overdue: "overdue",
+    cancellation: "cancellation",
+    hot: "hot",
+    uncontacted: "uncontacted",
+    stalledOffers: "stalledOffers",
+  };
+
   const runCockpitCtaAction = (cta) => {
     if (!cta) return;
-    if (cta.action === "inactive48") {
-      applyKpiFocus("inactive48");
-    } else if (cta.action === "overdue") {
-      applyKpiFocus("overdue");
-    } else if (cta.action === "cancellation") {
-      applyKpiFocus("cancellation");
-    } else if (cta.action === "hot") {
-      setSmartView("hot");
-      setKpiFocus("all");
-      setFilterStatus("all");
-      setFilterPriority("all");
-    } else if (cta.action === "uncontacted") {
-      setSmartView("all");
-      setKpiFocus("all");
-      setFilterStatus("Neu");
-      setFilterPriority("all");
-      setSearchTerm("");
-      setSortMode("activity");
-      setSelectedLeadId(null);
-    } else if (cta.action === "stalledOffers") {
-      setSmartView("all");
-      setKpiFocus("all");
-      setFilterStatus("Angebot");
-      setFilterPriority("all");
-      setSortMode("activity");
+    const targetPreset = CTA_ACTION_PRESET[cta.action];
+    if (!targetPreset) return;
+    if (focusPreset === targetPreset) {
+      applyFocusPreset("all");
+    } else {
+      applyFocusPreset(targetPreset);
     }
-    if (cta.action !== "uncontacted" && cta.leadId) setSelectedLeadId(cta.leadId);
   };
 
   const closeLeadDrawer = () => {
@@ -4246,11 +4244,6 @@ function App() {
               <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
                 {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
               </button>
-              {isFocusedView && (
-                <button type="button" className="ghost-btn-sm" onClick={() => applyFocusPreset("all")}>
-                  Zurück zur Standardansicht
-                </button>
-              )}
               <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} gewonnen gebündelt</span>
             </div>
 
@@ -4323,35 +4316,21 @@ function App() {
                 {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
               </ul>
               <div className="cockpit-cta-grid">
-                {cockpitCtas.map((cta) => (
-                  <div key={cta.id} className={`cockpit-cta-card ${cta.tone}`}>
-                    <strong>{cta.title}</strong>
-                    <p>{cta.message}</p>
-                    <button type="button" className="ghost-btn-sm" onClick={() => runCockpitCtaAction(cta)}>{cta.actionLabel}</button>
-                  </div>
-                ))}
-              </div>
-              {stats.inactive48 > 0 && (
-                <div className="cockpit-action-queue">
-                  <div className="cockpit-action-queue-head">
-                    <strong>{stats.inactive48} Leads seit mehr als 48h ohne Aktivität</strong>
-                    <div className="cockpit-action-queue-controls">
-                      <button type="button" className="ghost-btn-sm" onClick={() => applyKpiFocus("inactive48")}>Jetzt priorisieren</button>
-                      {kpiFocus === "inactive48" && (
-                        <button type="button" className="ghost-btn-sm" onClick={() => applyFocusPreset("all")}>Priorisierung beenden</button>
-                      )}
-                    </div>
-                  </div>
-                  <div className="cockpit-action-queue-list">
-                    {actionQueueLeads.slice(0, 3).map((lead) => (
-                      <button key={lead.id} type="button" className="cockpit-action-lead" onClick={() => setSelectedLeadId(lead.id)}>
-                        <span>{lead.company || lead.person || "Lead"}</span>
-                        <small>Letzte Aktivität vor {Math.round(getHoursSince(getLastActivityTimestamp(lead)))}h</small>
+                {cockpitCtas.map((cta) => {
+                  const ctaPreset = CTA_ACTION_PRESET[cta.action];
+                  const isCtaActive = ctaPreset && focusPreset === ctaPreset;
+                  return (
+                    <div key={cta.id} className={`cockpit-cta-card ${cta.tone}${isCtaActive ? " active" : ""}`}>
+                      <strong>{cta.title}</strong>
+                      <p>{cta.message}</p>
+                      <button type="button" className="ghost-btn-sm" onClick={() => runCockpitCtaAction(cta)}>
+                        {isCtaActive ? "Ansicht schließen" : cta.actionLabel}
                       </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    </div>
+                  );
+                })}
+              </div>
+
             </div>
 
             <div className="lead-list-controls">
