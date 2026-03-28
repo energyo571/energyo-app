@@ -17,6 +17,7 @@
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
+  "proxy": "http://localhost:3002",
   "scripts": {
     "start": "react-scripts start",
     "start:full": "npx vercel dev --yes",

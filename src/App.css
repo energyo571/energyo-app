@@ -2633,6 +2633,13 @@ textarea:focus {
   color: var(--text-soft);
 }
 
+.drawer-address {
+  margin: 2px 0 0;
+  font-size: 0.85em;
+  color: var(--text-soft);
+  opacity: 0.8;
+}
+
 .drawer-header-badges {
   display: flex;
   gap: 8px;

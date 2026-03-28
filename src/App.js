@@ -30,6 +30,7 @@ const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024;
 const RENEWAL_RESURFACE_MONTHS = 6;
 const buildAttachmentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const getAttachmentHref = (attachment) => attachment?.url || attachment?.data || "";
+const EMPTY_METER = { zählernummer: "", maloId: "", verbrauchKwh: "", jahreskosten: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" };
 const initialForm = {
   company: "", person: "", anrede: "", titel: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
@@ -37,8 +38,8 @@ const initialForm = {
   bundleInquiry: false, energyAuditEligible: false, followUp: "", attachments: [],
   energyType: "strom",
   energy: {
-    strom: [{ zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }],
-    gas:   [{ zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }],
+    strom: [{ ...EMPTY_METER }],
+    gas:   [{ ...EMPTY_METER }],
   },
   // Adressierung
   deliveryAddress: { straße: "", hausnummer: "", plz: "", ort: "" },
@@ -1492,9 +1493,9 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   };
 
   const tabs = [
+    { id: "details",     label: "Details" },
     { id: "activity",    label: "Aktivität" },
     { id: "planung",     label: "📋 Planung" },
-    { id: "details",     label: "Details" },
     { id: "wechsel",     label: "🔄 Wechsel" },
     { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
     { id: "ai",          label: "KI Bot" },
@@ -1510,6 +1511,13 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             <p className="drawer-person">
               {[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ")}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
             </p>
+            {(() => {
+              const addr = lead.deliveryAddress || {};
+              const street = [addr.straße, addr.hausnummer].filter(Boolean).join(" ");
+              const city = [addr.plz || lead.postalCode, addr.ort].filter(Boolean).join(" ");
+              const full = [street, city].filter(Boolean).join(", ");
+              return full ? <p className="drawer-address">{full}</p> : null;
+            })()}
             <div className="drawer-header-badges">
               {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
@@ -1524,14 +1532,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             </div>
           </div>
           <button className="drawer-close-btn" onClick={onClose} aria-label="Schließen">✕</button>
-        </div>
-
-        <div className="drawer-customer-core">
-          <div className="drawer-core-item"><span>Kontakt</span><strong>{[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ") || "-"}</strong></div>
-          <div className="drawer-core-item"><span>Telefon</span><strong>{lead.phone || "-"}</strong></div>
-          <div className="drawer-core-item"><span>E-Mail</span><strong>{lead.email || "-"}</strong></div>
-          <div className="drawer-core-item"><span>Kunde</span><strong>{lead.customerType || "-"}</strong></div>
-          <div className="drawer-core-item"><span>PLZ</span><strong>{lead.postalCode || "-"}</strong></div>
         </div>
 
         {/* Umsatz Banner */}
@@ -1639,6 +1639,94 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             </button>
           ))}
         </div>
+
+        {/* Tab: Details */}
+        {drawerTab === "details" && (
+          <div className="drawer-tab-content">
+            <div className="details-grid">
+              <InlineField label="Firma" value={lead.company} onSave={v => onUpdateField(lead.id, "company", v)} />
+              <InlineField label="Anrede" value={lead.anrede} onSave={v => onUpdateField(lead.id, "anrede", v)} options={["", "Herr", "Frau", "Divers"]} />
+              <InlineField label="Titel" value={lead.titel} onSave={v => onUpdateField(lead.id, "titel", v)} options={["", "Dr.", "Prof.", "Prof. Dr."]} />
+              <InlineField label="Ansprechpartner" value={lead.person} onSave={v => onUpdateField(lead.id, "person", v)} />
+              <InlineField label="Telefon" value={lead.phone} onSave={v => onUpdateField(lead.id, "phone", v)} type="tel" />
+              <InlineField label="E-Mail" value={lead.email} onSave={v => onUpdateField(lead.id, "email", v)} type="email" />
+              <InlineField label="PLZ" value={lead.postalCode} onSave={v => onUpdateField(lead.id, "postalCode", v)} />
+              <InlineField label="Kundentyp" value={lead.customerType} onSave={v => onUpdateField(lead.id, "customerType", v)} options={["Privat", "Gewerbe", "Großkunde"]} />
+              <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
+              <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
+              <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
+              {(() => {
+                const auditThreshold = 10000;
+                const eligible = Number(lead.annualCosts || 0) >= auditThreshold && lead.customerType !== "Privat";
+                const checked = !!lead.energyAuditEligible;
+                return (
+                  <div className={`inline-field audit-gate ${eligible ? "active" : "locked"}`}>
+                    <label className="inline-label">Energieaudit</label>
+                    <div className="inline-value-row">
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          disabled={!eligible}
+                          onChange={e => eligible && onUpdateField(lead.id, "energyAuditEligible", e.target.checked)}
+                        />
+                        {eligible ? (checked ? "Berechtigt ✓" : "Klicken zum Aktivieren") : lead.customerType === "Privat" ? "Privatkunden ausgeschlossen" : "Ab €10.000/Jahr freischaltbar"}
+                      </label>
+                    </div>
+                  </div>
+                );
+              })()}
+              <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
+              <InlineField label="Geburtsdatum" value={lead.geburtsdatum} onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date" render={v => v ? formatDate(v) : null} />
+              <div className="inline-field">
+                <label className="inline-label">Nächster Termin</label>
+                <div className="inline-value-row" onClick={() => setShowAppointmentModal(true)}>
+                  <span className="inline-value">
+                    {lead.appointmentDate
+                      ? `${formatDate(lead.appointmentDate)}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`
+                      : <em className="inline-empty">Klicken zum Planen</em>}
+                  </span>
+                  <span className="inline-edit-icon">📅</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="details-energy-section">
+              <h3>Energieversorgung</h3>
+              <div className="energy-details-grid">
+                {(lead.energy?.strom?.length > 0 && lead.energy.strom.some(m => m.zählernummer)) || (lead.energy?.gas?.length > 0 && lead.energy.gas.some(m => m.zählernummer)) ? (
+                  <>
+                    {lead.energy?.strom?.filter(m => m.zählernummer).map((meter, idx) => (
+                      <div key={idx} className="energy-detail-card strom">
+                        <div className="energy-detail-label">🔌 Strom {idx + 1}</div>
+                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
+                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
+                        {meter.verbrauchKwh && <div className="energy-detail-item"><span className="energy-detail-key">Verbrauch:</span><span className="energy-detail-value">{Number(meter.verbrauchKwh).toLocaleString("de-DE")} kWh</span></div>}
+                        {meter.jahreskosten && <div className="energy-detail-item"><span className="energy-detail-key">Jahreskosten:</span><span className="energy-detail-value">€{Number(meter.jahreskosten).toLocaleString("de-DE")}</span></div>}
+                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
+                      </div>
+                    ))}
+                    {lead.energy?.gas?.filter(m => m.zählernummer).map((meter, idx) => (
+                      <div key={idx} className="energy-detail-card gas">
+                        <div className="energy-detail-label">🔥 Gas {idx + 1}</div>
+                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
+                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
+                        {meter.verbrauchKwh && <div className="energy-detail-item"><span className="energy-detail-key">Verbrauch:</span><span className="energy-detail-value">{Number(meter.verbrauchKwh).toLocaleString("de-DE")} kWh</span></div>}
+                        {meter.jahreskosten && <div className="energy-detail-item"><span className="energy-detail-key">Jahreskosten:</span><span className="energy-detail-value">€{Number(meter.jahreskosten).toLocaleString("de-DE")}</span></div>}
+                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
+                      </div>
+                    ))}
+                  </>
+                ) : (<p className="empty-energy-info">Keine Energieinformationen erfasst</p>)}
+              </div>
+            </div>
+            {lead.createdBy && (
+              <div className="drawer-created-by">
+                Erstellt von <strong>{lead.createdBy.email}</strong> am {formatDateTime(lead.createdBy.timestamp)}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Tab: Aktivität */}
         {drawerTab === "activity" && (
@@ -1765,92 +1853,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         )}
 
         {/* Tab: Details */}
-        {drawerTab === "details" && (
-          <div className="drawer-tab-content">
-            <div className="details-grid">
-              <InlineField label="Firma" value={lead.company} onSave={v => onUpdateField(lead.id, "company", v)} />
-              <InlineField label="Anrede" value={lead.anrede} onSave={v => onUpdateField(lead.id, "anrede", v)} options={["", "Herr", "Frau", "Divers"]} />
-              <InlineField label="Titel" value={lead.titel} onSave={v => onUpdateField(lead.id, "titel", v)} options={["", "Dr.", "Prof.", "Prof. Dr."]} />
-              <InlineField label="Ansprechpartner" value={lead.person} onSave={v => onUpdateField(lead.id, "person", v)} />
-              <InlineField label="Telefon" value={lead.phone} onSave={v => onUpdateField(lead.id, "phone", v)} type="tel" />
-              <InlineField label="E-Mail" value={lead.email} onSave={v => onUpdateField(lead.id, "email", v)} type="email" />
-              <InlineField label="PLZ" value={lead.postalCode} onSave={v => onUpdateField(lead.id, "postalCode", v)} />
-              <InlineField label="Kundentyp" value={lead.customerType} onSave={v => onUpdateField(lead.id, "customerType", v)} options={["Privat", "Gewerbe", "Großkunde"]} />
-              <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
-              <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
-              <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
-              {/* Energieaudit gate — ≥10.000 € + kein Privatkunde */}
-              {(() => {
-                const auditThreshold = 10000;
-                const eligible = Number(lead.annualCosts || 0) >= auditThreshold && lead.customerType !== "Privat";
-                const checked = !!lead.energyAuditEligible;
-                return (
-                  <div className={`inline-field audit-gate ${eligible ? "active" : "locked"}`}>
-                    <label className="inline-label">Energieaudit</label>
-                    <div className="inline-value-row">
-                      <label className="checkbox-label">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          disabled={!eligible}
-                          onChange={e => eligible && onUpdateField(lead.id, "energyAuditEligible", e.target.checked)}
-                        />
-                        {eligible ? (checked ? "Berechtigt ✓" : "Klicken zum Aktivieren") : lead.customerType === "Privat" ? "Privatkunden ausgeschlossen" : "Ab €10.000/Jahr freischaltbar"}
-                      </label>
-                    </div>
-                  </div>
-                );
-              })()}
-              <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
-              <InlineField label="Nachfass-Datum" value={lead.followUp} onSave={v => onUpdateField(lead.id, "followUp", v)} type="date" render={v => v ? formatDate(v) : null} />
-              <InlineField label="Geburtsdatum" value={lead.geburtsdatum} onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date" render={v => v ? formatDate(v) : null} />
-              {/* NEW: Termin inline */}
-              <div className="inline-field">
-                <label className="inline-label">Nächster Termin</label>
-                <div className="inline-value-row" onClick={() => setShowAppointmentModal(true)}>
-                  <span className="inline-value">
-                    {lead.appointmentDate
-                      ? `${formatDate(lead.appointmentDate)}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`
-                      : <em className="inline-empty">Klicken zum Planen</em>}
-                  </span>
-                  <span className="inline-edit-icon">📅</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="details-energy-section">
-              <h3>Energieversorgung</h3>
-              <div className="energy-details-grid">
-                {(lead.energy?.strom?.length > 0 && lead.energy.strom.some(m => m.zählernummer)) || (lead.energy?.gas?.length > 0 && lead.energy.gas.some(m => m.zählernummer)) ? (
-                  <>
-                    {lead.energy?.strom?.filter(m => m.zählernummer).map((meter, idx) => (
-                      <div key={idx} className="energy-detail-card strom">
-                        <div className="energy-detail-label">🔌 Strom {idx + 1}</div>
-                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
-                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
-                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
-                      </div>
-                    ))}
-                    {lead.energy?.gas?.filter(m => m.zählernummer).map((meter, idx) => (
-                      <div key={idx} className="energy-detail-card gas">
-                        <div className="energy-detail-label">🔥 Gas {idx + 1}</div>
-                        <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
-                        {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
-                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
-                      </div>
-                    ))}
-                  </>
-                ) : (<p className="empty-energy-info">Keine Energieinformationen erfasst</p>)}
-              </div>
-            </div>
-            {lead.createdBy && (
-              <div className="drawer-created-by">
-                Erstellt von <strong>{lead.createdBy.email}</strong> am {formatDateTime(lead.createdBy.timestamp)}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Tab: Wechsel & Provision */}
         {drawerTab === "wechsel" && (
           <div className="drawer-tab-content">
@@ -1987,7 +1989,10 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
 function NewLeadModal({ onClose, onSubmit, loading }) {
   const [form, setForm] = useState(initialForm);
   const auditThreshold = 10000;
-  const annualCostsValue = Number.parseFloat(form.annualCosts || 0) || 0;
+  // Jahreskosten aus allen Zählern summieren für Audit-Check
+  const parseFormNum = (v) => { const n = Number.parseFloat(String(v ?? "").replace(",", ".")); return Number.isFinite(n) && n > 0 ? n : 0; };
+  const allFormMeters = [...(form.energy?.strom || []), ...(form.energy?.gas || [])];
+  const annualCostsValue = allFormMeters.reduce((s, m) => s + parseFormNum(m.jahreskosten), 0) || (Number.parseFloat(form.annualCosts || 0) || 0);
   const isPrivatCustomer = form.customerType === "Privat";
   const isAuditEligibleByCost = annualCostsValue >= auditThreshold && !isPrivatCustomer;
 
@@ -2051,7 +2056,17 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
       if (!form.phone.trim() || !form.email.trim() || !form.deliveryAddress.plz.trim()) {
         return alert("Bitte Telefon, E-Mail und PLZ der Lieferadresse ausfüllen.");
       }
-      const formWithPostalCode = { ...form, postalCode: form.deliveryAddress.plz };
+      // Summiere Verbrauch+Kosten aus Zählern für Abwärtskompatibilität
+      const parseNum = (v) => { const n = Number.parseFloat(String(v ?? "").replace(",", ".")); return Number.isFinite(n) && n > 0 ? n : 0; };
+      const allMeters = [...(form.energy?.strom || []), ...(form.energy?.gas || [])];
+      const totalConsumption = allMeters.reduce((s, m) => s + parseNum(m.verbrauchKwh), 0);
+      const totalAnnualCosts = allMeters.reduce((s, m) => s + parseNum(m.jahreskosten), 0);
+      const formWithPostalCode = {
+        ...form,
+        postalCode: form.deliveryAddress.plz,
+        consumption: totalConsumption > 0 ? String(totalConsumption) : form.consumption,
+        annualCosts: totalAnnualCosts > 0 ? String(totalAnnualCosts) : form.annualCosts,
+      };
       onSubmit(formWithPostalCode, () => { setForm(initialForm); onClose(); });
   };
   return (
@@ -2072,8 +2087,6 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group"><label>E-Mail *</label><input name="email" type="email" placeholder="name@firma.de" value={form.email} onChange={handleChange} disabled={loading} required /></div>
             <div className="form-group"><label>Kundentyp</label><select name="customerType" value={form.customerType} onChange={handleChange} disabled={loading}><option>Privat</option><option>Gewerbe</option><option>Großkunde</option></select></div>
             <div className="form-group"><label>Aktueller Anbieter</label><input name="currentProvider" placeholder="z.B. E.ON" value={form.currentProvider} onChange={handleChange} disabled={loading} /></div>
-            <div className="form-group"><label>Verbrauch (kWh)</label><input name="consumption" type="number" placeholder="50000" value={form.consumption} onChange={handleChange} disabled={loading} /></div>
-            <div className="form-group"><label>Jahreskosten (€)</label><input name="annualCosts" type="number" placeholder="3500" value={form.annualCosts} onChange={handleChange} disabled={loading} /></div>
             <div className="form-group">
               <label>Vertragsende</label>
               <select name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading}>
@@ -2082,7 +2095,6 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
               </select>
               {form.contractEnd !== "unknown" && (<input type="date" name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading} style={{ marginTop: 6 }} />)}
             </div>
-            <div className="form-group"><label>Nachfass-Datum</label><input type="date" name="followUp" value={form.followUp} onChange={handleChange} disabled={loading} /></div>
 
             {/* ─── Lieferadresse ─── */}
             <div className="form-group form-group-full address-section">
@@ -2119,7 +2131,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>⚡ Stromzähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { ...EMPTY_METER }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.strom.map((meter, idx) => (
                 <div key={idx} className="meter-card strom">
@@ -2130,6 +2142,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                   <div className="meter-grid">
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 123456789" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Verbrauch (kWh) *</label><input type="number" placeholder="z.B. 25000" value={meter.verbrauchKwh} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, verbrauchKwh: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Jahreskosten (€)</label><input type="number" placeholder="z.B. 1800" value={meter.jahreskosten} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, jahreskosten: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
                   {idx > 0 && (
                     <div className="meter-address-block">
@@ -2149,7 +2163,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>🔥 Gaszähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { ...EMPTY_METER }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.gas.map((meter, idx) => (
                 <div key={idx} className="meter-card gas">
@@ -2160,6 +2174,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                   <div className="meter-grid">
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 987654321" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Verbrauch (kWh) *</label><input type="number" placeholder="z.B. 15000" value={meter.verbrauchKwh} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, verbrauchKwh: e.target.value } : m) } }))} disabled={loading} /></div>
+                    <div className="form-group"><label>Jahreskosten (€)</label><input type="number" placeholder="z.B. 1200" value={meter.jahreskosten} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, jahreskosten: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
                   {idx > 0 && (
                     <div className="meter-address-block">
@@ -3140,12 +3156,21 @@ function SavingsCalculator({ lead }) {
     )
   );
 
+  const meterCosts = (meter) => {
+    const n = Number.parseFloat(String(meter?.jahreskosten ?? "").replace(",", "."));
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+
   const stromMeters = Array.isArray(lead.energy?.strom) ? lead.energy.strom : [];
   const gasMeters = Array.isArray(lead.energy?.gas) ? lead.energy.gas : [];
   const stromFromMeters = stromMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
   const gasFromMeters = gasMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
+  const stromCostsFromMeters = stromMeters.reduce((sum, meter) => sum + meterCosts(meter), 0);
+  const gasCostsFromMeters = gasMeters.reduce((sum, meter) => sum + meterCosts(meter), 0);
   const fallbackConsumption = parseKwh(lead.consumption);
-  const annualCosts = Number.parseFloat(lead.annualCosts || 0) || 0;
+  const stromAnnualCosts = stromCostsFromMeters > 0 ? stromCostsFromMeters : (Number.parseFloat(lead.annualCosts || 0) || 0);
+  const gasAnnualCosts = gasCostsFromMeters;
+  const annualCosts = stromAnnualCosts + gasAnnualCosts;
   const normalizedEnergyType = normalizeText(lead.energyType || "");
   const hasStromMeters = stromMeters.length > 0;
   const hasGasMeters = gasMeters.length > 0;
@@ -3209,8 +3234,10 @@ function SavingsCalculator({ lead }) {
 
   const buildCopyText = () => {
     let text = "⚡ Energyo Einspar-Kalkulation\n";
-    text += `\nKundenverbrauch gesamt: ${totalKwh.toLocaleString("de-DE")} kWh`;
-    text += `\nDokumentierte Jahreskosten Kunde: ${annualCosts > 0 ? formatEuro(annualCosts) : "nicht hinterlegt"}`;
+    if (stromKwh > 0) text += `\nStrom Verbrauch: ${stromKwh.toLocaleString("de-DE")} kWh`;
+    if (gasKwh > 0) text += `\nGas Verbrauch: ${gasKwh.toLocaleString("de-DE")} kWh`;
+    if (stromAnnualCosts > 0) text += `\nJahreskosten Strom: ${formatEuro(stromAnnualCosts)}`;
+    if (gasAnnualCosts > 0) text += `\nJahreskosten Gas: ${formatEuro(gasAnnualCosts)}`;
     if (stromKwh > 0) {
       text += `\n\n📌 STROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nENERGYO AP: ${stromOfferCt > 0 ? `${stromOfferCt.toFixed(2)} ct/kWh` : "offen"}`;
       if (stromOfferGp > 0) text += `\nENERGYO GP: ${formatEuro(stromOfferGp)}/Jahr`;
@@ -3422,8 +3449,12 @@ function SavingsCalculator({ lead }) {
       </div>
 
       <div className="savings-baseline">
-        <div className="savings-detail-item"><span>Verbrauch gesamt</span><strong>{totalKwh > 0 ? `${totalKwh.toLocaleString("de-DE")} kWh` : "Nicht erfasst"}</strong></div>
-        <div className="savings-detail-item"><span>Jahreskosten Kunde</span><strong>{annualCosts > 0 ? formatEuro(annualCosts) : "Nicht erfasst"}</strong></div>
+        {stromKwh > 0 && <div className="savings-detail-item"><span>Strom Verbrauch</span><strong>{stromKwh.toLocaleString("de-DE")} kWh</strong></div>}
+        {gasKwh > 0 && <div className="savings-detail-item"><span>Gas Verbrauch</span><strong>{gasKwh.toLocaleString("de-DE")} kWh</strong></div>}
+        {stromKwh === 0 && gasKwh === 0 && <div className="savings-detail-item"><span>Verbrauch</span><strong>Nicht erfasst</strong></div>}
+        {stromAnnualCosts > 0 && <div className="savings-detail-item"><span>Jahreskosten Strom</span><strong>{formatEuro(stromAnnualCosts)}</strong></div>}
+        {gasAnnualCosts > 0 && <div className="savings-detail-item"><span>Jahreskosten Gas</span><strong>{formatEuro(gasAnnualCosts)}</strong></div>}
+        {annualCosts <= 0 && <div className="savings-detail-item"><span>Jahreskosten</span><strong>Nicht erfasst</strong></div>}
       </div>
 
       <p className="savings-guidance">Ersparnis wird ueber die AP-Differenz berechnet. Der unbekannte Grundpreis bleibt als Konstante in den dokumentierten Jahreskosten des Kunden bestehen.</p>
@@ -3431,9 +3462,6 @@ function SavingsCalculator({ lead }) {
       <div className="savings-actions">
         <button type="button" className="savings-copy-btn" onClick={loadReferenceTariffs} disabled={referenceLoading}>
           {referenceLoading ? "⏳ Referenztarife werden geladen..." : "🔄 Referenztarife automatisch laden"}
-        </button>
-        <button type="button" className="savings-open-btn" onClick={openTariffKalkulator}>
-          🌐 Tarifkalkulator mit Lead-Daten öffnen
         </button>
       </div>
 
@@ -3451,10 +3479,6 @@ function SavingsCalculator({ lead }) {
         <div className="savings-section">
           <p className="savings-section-title">📌 Strom</p>
           <div className="savings-inputs">
-            <div className="savings-field">
-              <label>Verbrauch (kWh)</label>
-              <input className="savings-input" type="number" readOnly value={stromKwh.toLocaleString("de-DE")} />
-            </div>
             <div className="savings-field">
               <label>ENERGYO AP (ct/kWh)</label>
               <input
@@ -3489,9 +3513,6 @@ function SavingsCalculator({ lead }) {
               />
             </div>
           </div>
-          <div className="savings-section-actions">
-            <button type="button" className="savings-import-btn" onClick={() => importApGpFromClipboard("strom")}>📥 AP/GP aus Zwischenablage</button>
-          </div>
           <div className="savings-mini-grid">
             <div className="savings-detail-item"><span>ENERGYO AP-Anteil/Jahr</span><strong>{stromOfferVariableAnnual > 0 ? formatEuro(stromOfferVariableAnnual) : "Offen"}</strong></div>
             <div className="savings-detail-item"><span>Aktueller AP-Anteil/Jahr</span><strong>{stromCurrentCt > 0 ? formatEuro(stromCurrentVariableAnnual) : "Optional"}</strong></div>
@@ -3504,10 +3525,6 @@ function SavingsCalculator({ lead }) {
         <div className="savings-section">
           <p className="savings-section-title">📌 Gas</p>
           <div className="savings-inputs">
-            <div className="savings-field">
-              <label>Verbrauch (kWh)</label>
-              <input className="savings-input" type="number" readOnly value={gasKwh.toLocaleString("de-DE")} />
-            </div>
             <div className="savings-field">
               <label>ENERGYO AP (ct/kWh)</label>
               <input
@@ -3541,9 +3558,6 @@ function SavingsCalculator({ lead }) {
                 placeholder="optional, z.B. 180.50"
               />
             </div>
-          </div>
-          <div className="savings-section-actions">
-            <button type="button" className="savings-import-btn" onClick={() => importApGpFromClipboard("gas")}>📥 AP/GP aus Zwischenablage</button>
           </div>
           <div className="savings-mini-grid">
             <div className="savings-detail-item"><span>ENERGYO AP-Anteil/Jahr</span><strong>{gasOfferVariableAnnual > 0 ? formatEuro(gasOfferVariableAnnual) : "Offen"}</strong></div>
