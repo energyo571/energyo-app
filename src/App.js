@@ -3298,23 +3298,50 @@ function SavingsCalculator({ lead }) {
   };
 
   const loadReferenceForSector = async (sector, sectorConsumption) => {
-    const response = await fetch("/api/tariff-reference", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        postalCode: effectivePostalCode,
-        sector,
-        consumption: sectorConsumption,
-        customerType: customerTypeNormalized === "privat" ? "Privat" : "Gewerbe",
-      }),
-    });
+    const apiBaseUrl = String(process.env.REACT_APP_API_BASE_URL || "").trim().replace(/\/+$/, "");
+    const basePath = "/api/tariff-reference";
+    const endpointCandidates = [
+      `${apiBaseUrl}${basePath}`,
+      `${apiBaseUrl}${basePath}.js`,
+    ].filter((value, index, arr) => value && arr.indexOf(value) === index);
 
-    const payload = await response.json();
-    if (!response.ok || !payload?.ok) {
-      throw new Error(payload?.error || `Tarif-API Fehler (${response.status})`);
+    let lastErrorMessage = "Referenztarife konnten nicht geladen werden.";
+
+    for (const endpoint of endpointCandidates) {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postalCode: effectivePostalCode,
+          sector,
+          consumption: sectorConsumption,
+          customerType: customerTypeNormalized === "privat" ? "Privat" : "Gewerbe",
+        }),
+      });
+
+      const raw = await response.text();
+      let payload = null;
+      try {
+        payload = raw ? JSON.parse(raw) : null;
+      } catch (_) {
+        const hint = (raw || "").trim().slice(0, 120);
+        lastErrorMessage = `Tarif-API lieferte kein JSON (${response.status})${hint ? `: ${hint}` : ""}`;
+        if (response.status === 404) continue;
+        throw new Error(lastErrorMessage);
+      }
+
+      if (response.ok && payload?.ok) return payload;
+
+      lastErrorMessage = payload?.error || `Tarif-API Fehler (${response.status})`;
+      if (response.status === 404) continue;
+      throw new Error(lastErrorMessage);
     }
 
-    return payload;
+    const localHint =
+      typeof window !== "undefined" && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
+        ? " Lokal: starte den Stack mit 'npm run start:full' (statt nur 'npm start')."
+        : "";
+    throw new Error(`${lastErrorMessage} (Endpoint nicht gefunden: /api/tariff-reference[.js]).${localHint}`);
   };
 
   const applyReferenceResult = (sector, payload) => {
