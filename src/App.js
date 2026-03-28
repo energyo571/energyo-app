@@ -3335,7 +3335,6 @@ function App() {
               <div className="leads-table-wrap">
                 <div className="leads-table-header">
                   <div className="lth-checkbox" />
-                  <div className="lth-prio" />
                   <div className="lth-main">Unternehmen / Kontakt</div>
                   <div className="lth-energy">Energie</div>
                   <div className="lth-flags">Health / Next step</div>

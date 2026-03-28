@@ -1363,9 +1363,9 @@ textarea:focus {
 .leads-table-header,
 .lead-row {
   display: grid;
-  grid-template-columns: 28px 24px minmax(230px, 2.2fr) 106px minmax(190px, 1.5fr) 108px 88px 110px 92px;
+  grid-template-columns: 28px minmax(220px, 2.4fr) 104px minmax(176px, 1.35fr) 102px 82px 102px 88px;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .leads-table-header {
@@ -1382,6 +1382,8 @@ textarea:focus {
   z-index: 2;
 }
 
+.lth-status,
+.lth-umsatz,
 .lth-followup,
 .lth-activity {
   white-space: nowrap;
@@ -1389,7 +1391,7 @@ textarea:focus {
 }
 
 .lead-row {
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
   transition: background 150ms ease;
@@ -1420,6 +1422,16 @@ textarea:focus {
 
 .lead-row-checkbox-placeholder {
   width: 30px;
+}
+
+.lead-row-main,
+.lead-row-energy,
+.lead-row-health,
+.lead-row-status,
+.lead-row-umsatz,
+.lead-row-followup,
+.lead-row-activity {
+  min-width: 0;
 }
 
 .lead-row-checkbox input[type="checkbox"] {
@@ -1495,6 +1507,7 @@ textarea:focus {
   gap: 4px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
   min-width: 0;
 }
 
@@ -1539,6 +1552,7 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .health-pill,
@@ -1593,6 +1607,17 @@ textarea:focus {
   border-radius: 999px;
   font-size: 9px;
   font-weight: 800;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lead-row-status,
+.lead-row-umsatz,
+.lead-row-followup,
+.lead-row-activity {
+  justify-self: center;
 }
 
 .lead-row-umsatz,
@@ -3767,7 +3792,7 @@ select {
 
   .leads-table-header,
   .lead-row {
-    grid-template-columns: 30px 24px minmax(220px, 1.9fr) 90px minmax(160px, 1.2fr) 110px 90px 110px 70px;
+    grid-template-columns: 30px minmax(220px, 2fr) 92px minmax(152px, 1.15fr) 104px 84px 104px 72px;
     gap: 8px;
   }
 
@@ -3875,7 +3900,7 @@ select {
 
   .leads-table-header,
   .lead-row {
-    min-width: 980px;
+    min-width: 900px;
   }
 
   .lead-row-energy {
