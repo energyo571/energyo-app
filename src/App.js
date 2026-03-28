@@ -27,6 +27,7 @@ const CALL_OUTCOMES = [
   "Ausführliches Gespräch", "Termin vereinbart", "Angebot besprochen", "Abschluss",
 ];
 const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024;
+const RENEWAL_RESURFACE_MONTHS = 6;
 const buildAttachmentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const getAttachmentHref = (attachment) => attachment?.url || attachment?.data || "";
 const initialForm = {
@@ -55,7 +56,7 @@ const getMonthsUntil = (dateValue) => {
   if (!dateValue || dateValue === "unknown") return Number.POSITIVE_INFINITY;
   return (new Date(dateValue) - new Date()) / (1000 * 60 * 60 * 24 * 30);
 };
-const isWonLeadRenewalDue = (lead, monthsBefore = 6) => {
+const isWonLeadRenewalDue = (lead, monthsBefore = RENEWAL_RESURFACE_MONTHS) => {
   if (!lead || lead.status !== "Gewonnen") return false;
   const monthsUntilEnd = getMonthsUntil(lead.contractEnd);
   return monthsUntilEnd >= 0 && monthsUntilEnd <= monthsBefore;
@@ -2104,6 +2105,9 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         {lead.energyAuditEligible && (
           <span className="audit-pill" title="Energieaudit berechtigt">🔍 Audit</span>
         )}
+        {lead.renewalResurfacedAt && (
+          <span className="resurface-pill" title="Automatisch wiedervorgelegt">🔁 Renewal</span>
+        )}
       </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
@@ -2186,6 +2190,8 @@ function KanbanBoard({ leads, onSelectLead }) {
                       <div className="kanban-flags">
                         {isOpenCancellationWindow(lead.contractEnd) && <span title="Kündigungsfenster">🔔</span>}
                         {isOverdue(lead.followUp) && <span title="Überfällig">⏰</span>}
+                        {hasSupplyConfirmation(lead) && <span title="Belieferungsbestätigung">⚡</span>}
+                        {lead.renewalResurfacedAt && <span title="Automatische Wiedervorlage">🔁</span>}
                       </div>
                     </div>
                   </div>
@@ -3265,6 +3271,7 @@ function App() {
   // NEW: multiselect state
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
+  const resurfacingLockRef = useRef(new Set());
 
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
@@ -3410,6 +3417,46 @@ function App() {
         .then(() => setNotifSent(true)).catch(() => {});
     }
   }, [user, leads, notifSent]);
+
+  useEffect(() => {
+    if (!user || !teamId || leads.length === 0) return;
+    const todayIso = new Date().toISOString().split("T")[0];
+    const candidates = leads.filter((lead) =>
+      lead.status === "Gewonnen"
+      && !lead.renewalResurfacedAt
+      && isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)
+    );
+
+    candidates.forEach(async (lead) => {
+      if (resurfacingLockRef.current.has(lead.id)) return;
+      resurfacingLockRef.current.add(lead.id);
+      try {
+        const now = new Date().toISOString();
+        await updateDoc(doc(db, "leads", lead.id), {
+          status: "Nachfassen",
+          followUp: lead.followUp || todayIso,
+          renewalResurfacedAt: now,
+          renewalResurfaceReason: `auto-${RENEWAL_RESURFACE_MONTHS}m-before-contract-end`,
+          statusHistory: [
+            ...(lead.statusHistory || []),
+            { from: "Gewonnen", to: "Nachfassen", timestamp: now, author: "System" },
+          ],
+          comments: [
+            ...(lead.comments || []),
+            {
+              timestamp: now,
+              author: "System",
+              text: `🔁 Automatische Wiedervorlage: ${RENEWAL_RESURFACE_MONTHS} Monate vor Vertragsende wieder in aktive Pipeline überführt.`,
+            },
+          ],
+        });
+      } catch (e) {
+        console.error("Auto-Resurface fehlgeschlagen", e);
+      } finally {
+        resurfacingLockRef.current.delete(lead.id);
+      }
+    });
+  }, [leads, teamId, user]);
 
   const uploadAttachmentToStorage = async (leadId, file) => {
     if (!file) throw new Error("Datei fehlt");
@@ -3594,12 +3641,12 @@ function App() {
   }, [leads, searchTerm, filterPriority, filterStatus, smartView, sortMode, user, kpiFocus]);
 
   const activePipelineLeads = useMemo(
-    () => filteredLeads.filter((lead) => lead.status !== "Gewonnen" || isWonLeadRenewalDue(lead, 6)),
+    () => filteredLeads.filter((lead) => lead.status !== "Gewonnen" || isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)),
     [filteredLeads],
   );
 
   const wonBundleLeads = useMemo(() => {
-    const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, 6));
+    const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
       const ma = getMonthsUntil(a.contractEnd);
       const mb = getMonthsUntil(b.contractEnd);
