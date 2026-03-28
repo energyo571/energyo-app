@@ -3629,7 +3629,7 @@ function App() {
       if (filterPriority !== "all" && calculatePriority(l) !== filterPriority) return false;
       if (filterStatus !== "all" && l.status !== filterStatus) return false;
       if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
-      if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
+      if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp) || isLeadInactiveForHours(l, 48))) return false;
       if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
       if (smartView === "won" && l.status !== "Gewonnen") return false;
       if (smartView === "renewals" && !l.renewalResurfacedAt) return false;
