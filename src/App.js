@@ -37,14 +37,13 @@ const initialForm = {
   bundleInquiry: false, energyAuditEligible: false, followUp: "", attachments: [],
   energyType: "strom",
   energy: {
-    strom: [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
-    gas:   [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
+    strom: [{ zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }],
+    gas:   [{ zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }],
   },
   // Adressierung
   deliveryAddress: { straße: "", hausnummer: "", plz: "", ort: "" },
   hasAlternativeInvoiceAddress: false,
   invoiceAddress: { straße: "", hausnummer: "", plz: "", stadt: "" },
-  multipleDeliveryLocations: [],
 };
 
 // ─── Hilfsfunktionen ──────────────────────────────────────────────────────────
@@ -92,6 +91,13 @@ const isContractEndUnrealistic = (contractEnd) => {
 };
 const isTodayDue = (d) => !!d && d === new Date().toISOString().split("T")[0];
 const isOverdue = (d) => !!d && d < new Date().toISOString().split("T")[0];
+const formatMeterAddress = (meter) => {
+  if (!meter) return "";
+  const streetLine = [meter.lieferStrasse, meter.lieferHausnummer].filter(Boolean).join(" ");
+  const cityLine = [meter.lieferPlz, meter.lieferStadt].filter(Boolean).join(" ");
+  const structured = [streetLine, cityLine].filter(Boolean).join(", ");
+  return structured || meter.lieferanschrift || "";
+};
 const formatDate = (d) => {
   if (!d || d === "unknown") return "—";
   return new Date(d).toLocaleDateString("de-DE");
@@ -612,7 +618,7 @@ const parseImportRow = (row, headers, cols, allUsers, currentUserEmail) => {
   const energy = { strom: [], gas: [] };
   const addMeter = (target, zaehlernummer, maloId = "") => {
     if (!zaehlernummer) return;
-    energy[target].push({ zählernummer: zaehlernummer, maloId: maloId || "", lieferanschrift: lieferanschrift || "", kontaktanschrift: "" });
+    energy[target].push({ zählernummer: zaehlernummer, maloId: maloId || "", lieferanschrift: lieferanschrift || "" });
   };
   addMeter("strom", getValue(cols.stromZaehler), getValue(cols.stromMalo));
   addMeter("gas", getValue(cols.gasZaehler), getValue(cols.gasMalo));
@@ -1822,8 +1828,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                         <div className="energy-detail-label">🔌 Strom {idx + 1}</div>
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
                         {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
-                        {meter.lieferanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Lieferanschrift:</span><span className="energy-detail-value">{meter.lieferanschrift}</span></div>}
-                        {meter.kontaktanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Kontaktanschrift:</span><span className="energy-detail-value">{meter.kontaktanschrift}</span></div>}
+                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
                       </div>
                     ))}
                     {lead.energy?.gas?.filter(m => m.zählernummer).map((meter, idx) => (
@@ -1831,8 +1836,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                         <div className="energy-detail-label">🔥 Gas {idx + 1}</div>
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
                         {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
-                        {meter.lieferanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Lieferanschrift:</span><span className="energy-detail-value">{meter.lieferanschrift}</span></div>}
-                        {meter.kontaktanschrift && <div className="energy-detail-item"><span className="energy-detail-key">Kontaktanschrift:</span><span className="energy-detail-value">{meter.kontaktanschrift}</span></div>}
+                        {formatMeterAddress(meter) && <div className="energy-detail-item"><span className="energy-detail-key">Abweichende Lieferadresse:</span><span className="energy-detail-value">{formatMeterAddress(meter)}</span></div>}
                       </div>
                     ))}
                   </>
@@ -2013,32 +2017,6 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
       invoiceAddress: { ...prev.invoiceAddress, [field]: value },
     }));
   };
-
-  const handleAddDeliveryLocation = () => {
-    setForm(prev => ({
-      ...prev,
-      multipleDeliveryLocations: [
-        ...prev.multipleDeliveryLocations,
-        { id: Date.now(), straße: "", hausnummer: "", plz: "", stadt: "" },
-      ],
-    }));
-  };
-
-  const handleRemoveDeliveryLocation = (id) => {
-    setForm(prev => ({
-      ...prev,
-      multipleDeliveryLocations: prev.multipleDeliveryLocations.filter(loc => loc.id !== id),
-    }));
-  };
-
-  const handleDeliveryLocationChange = (id, field, value) => {
-    setForm(prev => ({
-      ...prev,
-      multipleDeliveryLocations: prev.multipleDeliveryLocations.map(loc =>
-        loc.id === id ? { ...loc, [field]: value } : loc
-      ),
-    }));
-  };
   const handleFile = (e) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length === 0) return;
@@ -2138,34 +2116,10 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
               </div>
             )}
 
-            {/* ─── Mehrere Lieferstellen ─── */}
-            {form.bundleInquiry && (
-              <div className="form-group form-group-full">
-                <div className="energy-section-header">
-                  <label>🏢 Weitere Lieferstellen</label>
-                  <button type="button" className="add-meter-btn" onClick={handleAddDeliveryLocation} disabled={loading}>+ Liiferstelle hinzufügen</button>
-                </div>
-                {form.multipleDeliveryLocations.map((location, idx) => (
-                  <div key={location.id} className="delivery-location-card">
-                    <div className="delivery-location-header">
-                      <span className="location-index">Liiferstelle {idx + 1}</span>
-                      <button type="button" className="remove-meter-btn" onClick={() => handleRemoveDeliveryLocation(location.id)} disabled={loading}>✕ Entfernen</button>
-                    </div>
-                    <div className="address-grid">
-                      <div className="form-group"><label>Straße</label><input type="text" placeholder="Straße (leer = gleich wie Lieferadresse)" value={location.straße} onChange={(e) => handleDeliveryLocationChange(location.id, "straße", e.target.value)} disabled={loading} /></div>
-                      <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="Hausnummer" value={location.hausnummer} onChange={(e) => handleDeliveryLocationChange(location.id, "hausnummer", e.target.value)} disabled={loading} /></div>
-                      <div className="form-group"><label>PLZ</label><input type="text" placeholder="PLZ" value={location.plz} onChange={(e) => handleDeliveryLocationChange(location.id, "plz", e.target.value)} disabled={loading} /></div>
-                      <div className="form-group"><label>Stadt</label><input type="text" placeholder="Stadt" value={location.stadt} onChange={(e) => handleDeliveryLocationChange(location.id, "stadt", e.target.value)} disabled={loading} /></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>⚡ Stromzähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.strom.map((meter, idx) => (
                 <div key={idx} className="meter-card strom">
@@ -2176,9 +2130,18 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                   <div className="meter-grid">
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 123456789" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
-                    <div className="form-group"><label>Lieferanschrift</label><input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
-                    <div className="form-group"><label>Kontaktanschrift</label><input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
+                  {idx > 0 && (
+                    <div className="meter-address-block">
+                      <p className="meter-address-hint">Abweichende Lieferadresse nur bei zusaetzlichem Zaehler ausfuellen. Leer lassen, wenn identisch zur Haupt-Lieferadresse.</p>
+                      <div className="address-grid">
+                        <div className="form-group"><label>Straße</label><input type="text" placeholder="Straße" value={meter.lieferStrasse || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferStrasse: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="Hausnummer" value={meter.lieferHausnummer || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferHausnummer: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>PLZ</label><input type="text" placeholder="PLZ" value={meter.lieferPlz || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferPlz: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>Stadt</label><input type="text" placeholder="Stadt" value={meter.lieferStadt || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, lieferStadt: e.target.value } : m) } }))} disabled={loading} /></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -2186,7 +2149,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group form-group-full">
               <div className="energy-section-header">
                 <label>🔥 Gaszähler</label>
-                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
+                <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { zählernummer: "", maloId: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.gas.map((meter, idx) => (
                 <div key={idx} className="meter-card gas">
@@ -2197,9 +2160,18 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                   <div className="meter-grid">
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 987654321" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
-                    <div className="form-group"><label>Lieferanschrift</label><input type="text" placeholder="optional" value={meter.lieferanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
-                    <div className="form-group"><label>Kontaktanschrift</label><input type="text" placeholder="optional" value={meter.kontaktanschrift} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, kontaktanschrift: e.target.value } : m) } }))} disabled={loading} /></div>
                   </div>
+                  {idx > 0 && (
+                    <div className="meter-address-block">
+                      <p className="meter-address-hint">Abweichende Lieferadresse nur bei zusaetzlichem Zaehler ausfuellen. Leer lassen, wenn identisch zur Haupt-Lieferadresse.</p>
+                      <div className="address-grid">
+                        <div className="form-group"><label>Straße</label><input type="text" placeholder="Straße" value={meter.lieferStrasse || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferStrasse: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="Hausnummer" value={meter.lieferHausnummer || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferHausnummer: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>PLZ</label><input type="text" placeholder="PLZ" value={meter.lieferPlz || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferPlz: e.target.value } : m) } }))} disabled={loading} /></div>
+                        <div className="form-group"><label>Stadt</label><input type="text" placeholder="Stadt" value={meter.lieferStadt || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, lieferStadt: e.target.value } : m) } }))} disabled={loading} /></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -4521,6 +4521,18 @@ select {
   border-bottom: 1px solid var(--line-soft);
 }
 
+.meter-address-block {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line-soft);
+}
+
+.meter-address-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
 .meter-index {
   font-weight: 700;
   font-size: 12px;
