@@ -1714,63 +1714,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Planung */}
         {drawerTab === "planung" && (
           <div className="drawer-tab-content">
-            <div className="planung-intake-card">
-              <div className="planung-intake-head">
-                <strong>Verbrauch und Angebotsbasis</strong>
-                <span>Direkt anpassbar für das Telefonat</span>
-              </div>
-              <div className="details-grid planung-details-grid">
-                <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
-                <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
-                <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
-                <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
-              </div>
-            </div>
-
             <div className="planung-calc-wrap">
               <SavingsCalculator lead={lead} />
-            </div>
-
-            <div className="deal-progress-bar">
-              {[{label:"❄️ Cold",tone:"cold",s:1},{label:"🌤 Warm",tone:"warm",s:2},{label:"🔥 Hot",tone:"hot",s:3}].map(({label,tone,s}) => (
-                <div key={tone} className={`deal-progress-step ${temperature.step >= s ? tone : "inactive"} ${temperature.step === s ? "current" : ""}`}>
-                  <span>{label}</span>
-                </div>
-              ))}
-              <div className="deal-progress-hint">{temperature.step < 3 ? (temperature.step === 1 ? "Aktivität auslösen → wird Warm" : "Kontakt intensivieren → wird Hot") : "Jetzt closing starten!"}</div>
-            </div>
-            <div className="drawer-signal-grid">
-              <div className="drawer-signal-card">
-                <span>Owner</span>
-                <strong>{getLeadOwnerEmail(lead)}</strong>
-              </div>
-              <div className={`drawer-signal-card readiness-card ${readiness.tone}`}>
-                <span>Abschlussampel</span>
-                <strong>{readiness.label}</strong>
-                <small>{readiness.reason}</small>
-              </div>
-              <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
-                <span>Deal Score</span>
-                <strong>{leadScore}/100</strong>
-              </div>
-              <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
-                <span>Abschlusschance</span>
-                <strong>{closeProbability}%</strong>
-              </div>
-              <div className="drawer-signal-card">
-                <span>Letzte Aktivität</span>
-                <strong>{formatDateTime(getLastActivityTimestamp(lead)) || "Noch keine"}</strong>
-              </div>
-              <div className="drawer-signal-card">
-                <span>Nächste Aktion</span>
-                <strong>{nextAction.label}</strong>
-              </div>
-              {lead.appointmentDate && (
-                <div className="drawer-signal-card appointment-signal" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
-                  <span>Nächster Termin</span>
-                  <strong>{formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}</strong>
-                </div>
-              )}
             </div>
             <div className="next-action-playbook">
               <div className="next-action-playbook-head">
@@ -3108,7 +3053,29 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
 
 // ─── SavingsCalculator ───────────────────────────────────────────────────────
 function SavingsCalculator({ lead }) {
-  const kWh = parseInt(lead.consumption) || 0;
+  const parseKwh = (value) => {
+    const n = Number.parseFloat(String(value ?? "").replace(",", "."));
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+  const meterConsumption = (meter) => (
+    parseKwh(
+      meter?.verbrauchKwh
+      ?? meter?.verbrauch
+      ?? meter?.consumption
+      ?? meter?.jahresverbrauch
+      ?? meter?.kwh
+    )
+  );
+
+  const stromMeters = Array.isArray(lead.energy?.strom) ? lead.energy.strom : [];
+  const gasMeters = Array.isArray(lead.energy?.gas) ? lead.energy.gas : [];
+  const stromFromMeters = stromMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
+  const gasFromMeters = gasMeters.reduce((sum, meter) => sum + meterConsumption(meter), 0);
+  const fallbackConsumption = parseKwh(lead.consumption);
+
+  const stromKwh = stromFromMeters > 0 ? stromFromMeters : (gasFromMeters === 0 ? fallbackConsumption : 0);
+  const gasKwh = gasFromMeters;
+  const kWh = stromKwh + gasKwh;
   const annualCosts = parseFloat(lead.annualCosts) || 0;
 
   const [currentPrice, setCurrentPrice] = useState(() => {
@@ -3137,7 +3104,27 @@ function SavingsCalculator({ lead }) {
 
       <div className="savings-inputs">
         <div className="savings-field">
-          <label>Jahresverbrauch (kWh)</label>
+          <label>Stromverbrauch (kWh)</label>
+          <input
+            className="savings-input"
+            type="number"
+            readOnly
+            value={stromKwh || ""}
+            placeholder="Kein Stromverbrauch erfasst"
+          />
+        </div>
+        <div className="savings-field">
+          <label>Gasverbrauch (kWh)</label>
+          <input
+            className="savings-input"
+            type="number"
+            readOnly
+            value={gasKwh || ""}
+            placeholder="Kein Gasverbrauch erfasst"
+          />
+        </div>
+        <div className="savings-field">
+          <label>Gesamtverbrauch (kWh)</label>
           <input
             className="savings-input"
             type="number"
@@ -3169,6 +3156,10 @@ function SavingsCalculator({ lead }) {
           />
         </div>
       </div>
+
+      <p className="savings-meter-hint">
+        Stromzähler: {stromMeters.filter((m) => !!m?.zählernummer).length} · Gaszähler: {gasMeters.filter((m) => !!m?.zählernummer).length}
+      </p>
 
       {currentCt > 0 && newCt > 0 && annualSavings > 0 && (
         <div className="savings-result positive">

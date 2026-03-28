@@ -3233,41 +3233,18 @@ textarea:focus {
   gap: 16px;
 }
 
-.planung-intake-card {
-  background: #fff;
-  border: 1px solid var(--line-soft);
-  border-radius: 16px;
-  padding: 12px;
-}
-
-.planung-intake-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.planung-intake-head strong {
-  font-size: 14px;
-  color: var(--text);
-}
-
-.planung-intake-head span {
-  font-size: 12px;
-  color: var(--text-soft);
-  white-space: normal;
-}
-
-.planung-details-grid {
-  margin-bottom: 0;
-}
-
 .planung-calc-wrap {
   background: #fff;
   border: 1px solid var(--line-soft);
   border-radius: 16px;
   padding: 10px;
+}
+
+.savings-meter-hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-soft);
 }
 
 .activity-compose-bar,
@@ -4656,11 +4633,6 @@ select {
 
   .drawer-customer-core {
     grid-template-columns: 1fr;
-  }
-
-  .planung-intake-head {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .dashboard-grid,
