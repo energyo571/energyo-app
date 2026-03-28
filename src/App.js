@@ -3377,6 +3377,8 @@ function App() {
   const [smartView, setSmartView] = useState("all");
   const [sortMode, setSortMode] = useState("priority");
   const [kpiFocus, setKpiFocus] = useState("all");
+  const [marketTrendPct, setMarketTrendPct] = useState(() => parseOptionalNumber(process.env.REACT_APP_MARKET_TREND_PCT));
+  const [marketTrendSource, setMarketTrendSource] = useState("env");
   const [leadsPerPage, setLeadsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -3582,6 +3584,48 @@ function App() {
       }
     });
   }, [leads, teamId, user]);
+
+  useEffect(() => {
+    const cacheKey = "marketTrendCacheV1";
+    const todayIso = new Date().toISOString().split("T")[0];
+
+    try {
+      const cachedRaw = window.localStorage.getItem(cacheKey);
+      if (cachedRaw) {
+        const cached = JSON.parse(cachedRaw);
+        if (cached?.asOf === todayIso && Number.isFinite(cached?.trendPct)) {
+          setMarketTrendPct(cached.trendPct);
+          setMarketTrendSource(cached.source || "cache");
+          return;
+        }
+      }
+    } catch (_) {
+      // ignore local cache parse issues
+    }
+
+    let isActive = true;
+    fetch("/api/market-trend")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isActive || !data?.ok || !Number.isFinite(data?.trendPct)) return;
+        setMarketTrendPct(data.trendPct);
+        setMarketTrendSource(data.source || "api");
+        try {
+          window.localStorage.setItem(cacheKey, JSON.stringify({
+            trendPct: data.trendPct,
+            source: data.source || "api",
+            asOf: data.asOf || todayIso,
+          }));
+        } catch (_) {
+          // ignore local storage failures
+        }
+      })
+      .catch(() => {
+        // keep env fallback
+      });
+
+    return () => { isActive = false; };
+  }, []);
 
   const uploadAttachmentToStorage = async (leadId, file) => {
     if (!file) throw new Error("Datei fehlt");
@@ -3854,8 +3898,6 @@ function App() {
     };
   }, [stats.closingRate]);
 
-  const marketTrendPct = useMemo(() => parseOptionalNumber(process.env.REACT_APP_MARKET_TREND_PCT), []);
-
   const cockpitCtas = useMemo(() => rankCockpitCtas({
     leads: activePipelineLeads,
     marketTrendPct,
@@ -4018,7 +4060,7 @@ function App() {
             <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
               <div className="cockpit-action-head">
                 <strong>{closingRateCoach.title}</strong>
-                <span>Closing Rate: {stats.closingRate}%</span>
+                <span>Closing Rate: {stats.closingRate}% · Preisquelle: {marketTrendSource}</span>
               </div>
               <ul className="cockpit-action-list">
                 {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
