@@ -3648,7 +3648,12 @@ function App() {
     [filteredLeads],
   );
 
-  const totalPipelinePages = Math.max(1, Math.ceil(activePipelineLeads.length / leadsPerPage));
+  const displayLeads = useMemo(() => {
+    if (smartView === "won" || kpiFocus === "won") return filteredLeads;
+    return activePipelineLeads;
+  }, [filteredLeads, activePipelineLeads, smartView, kpiFocus]);
+
+  const totalPipelinePages = Math.max(1, Math.ceil(displayLeads.length / leadsPerPage));
 
   useEffect(() => {
     setCurrentPage(1);
@@ -3660,8 +3665,8 @@ function App() {
 
   const paginatedActiveLeads = useMemo(() => {
     const start = (currentPage - 1) * leadsPerPage;
-    return activePipelineLeads.slice(start, start + leadsPerPage);
-  }, [activePipelineLeads, currentPage, leadsPerPage]);
+    return displayLeads.slice(start, start + leadsPerPage);
+  }, [displayLeads, currentPage, leadsPerPage]);
 
   const wonBundleLeads = useMemo(() => {
     const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
@@ -3749,7 +3754,7 @@ function App() {
             <div className="main-toolbar">
               <div className="toolbar-left">
                 <h1 className="page-title">Lead-Pipeline</h1>
-                <span className="lead-count-badge">{activePipelineLeads.length}</span>
+                <span className="lead-count-badge">{displayLeads.length}</span>
               </div>
               <div className="toolbar-right">
                 <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
@@ -3780,14 +3785,14 @@ function App() {
             {selectionMode && selectedLeadIds.size > 0 && (
               <BulkActionBar
                 selectedCount={selectedLeadIds.size}
-                totalCount={activePipelineLeads.length}
+                totalCount={displayLeads.length}
                 onDelete={bulkDeleteLeads}
                 onCancel={() => { setSelectionMode(false); setSelectedLeadIds(new Set()); }}
                 onSelectAll={() => {
-                  if (selectedLeadIds.size === activePipelineLeads.length) {
+                  if (selectedLeadIds.size === displayLeads.length) {
                     setSelectedLeadIds(new Set());
                   } else {
-                    setSelectedLeadIds(new Set(activePipelineLeads.map(l => l.id)));
+                    setSelectedLeadIds(new Set(displayLeads.map(l => l.id)));
                   }
                 }}
               />
@@ -3831,7 +3836,7 @@ function App() {
               {kpiFocus !== "all" && (
                 <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>KPI-Fokus zurücksetzen</button>
               )}
-              <span className="filter-result-count">{activePipelineLeads.length} aktiv · {wonBundleLeads.length} gewonnen gebündelt</span>
+              <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} gewonnen gebündelt</span>
             </div>
 
             <div className="kpi-strip">
@@ -3839,6 +3844,7 @@ function App() {
                 <span className="kpi-val">{formatEnergyVolume(stats.movedEnergyKwh)}</span>
                 <span className="kpi-label">Bewegte Energiemenge</span>
               </button>
+              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
               <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "inactive48" ? "active" : ""}`} onClick={() => applyKpiFocus("inactive48")}><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">>48h ohne Aktivität</span></button>
@@ -3846,7 +3852,6 @@ function App() {
                 <span className="kpi-val">{stats.openCancellation}</span>
                 <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
               </button>
-              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
             </div>
 
@@ -3908,7 +3913,7 @@ function App() {
                   <div className="lth-followup">Nachfassen</div>
                   <div className="lth-activity">Aktivität</div>
                 </div>
-                {activePipelineLeads.length === 0 ? (
+                {displayLeads.length === 0 ? (
                   <div className="empty-leads">
                     <p>Keine Leads gefunden.</p>
                     <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Ersten Lead anlegen</button>
@@ -3931,7 +3936,7 @@ function App() {
               <KanbanBoard leads={paginatedActiveLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
             )}
 
-            {wonBundleLeads.length > 0 && (
+            {smartView !== "won" && kpiFocus !== "won" && wonBundleLeads.length > 0 && (
               <div className="won-bundle-section">
                 <div className="won-bundle-head">
                   <h3>Gewonnen gebündelt</h3>

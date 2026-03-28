@@ -1579,7 +1579,7 @@ textarea:focus {
   display: grid;
   grid-template-columns: 28px 74px minmax(210px, 2.25fr) 102px minmax(148px, 1.15fr) 100px 80px 100px 84px;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .leads-table-header {
@@ -1609,7 +1609,7 @@ textarea:focus {
 }
 
 .lead-row {
-  padding: 3px 10px;
+  padding: 2px 8px;
   --lead-row-bg: #ffffff;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
@@ -2243,15 +2243,15 @@ textarea:focus {
 .kanban-cards {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  padding: 11px;
+  gap: 7px;
+  padding: 9px;
 }
 
 .kanban-card {
   background: white;
   border: 1px solid #dee7f5;
-  border-radius: 13px;
-  padding: 10px;
+  border-radius: 11px;
+  padding: 8px;
   box-shadow: 0 8px 18px rgba(13, 31, 61, 0.08);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
@@ -2279,8 +2279,8 @@ textarea:focus {
 }
 
 .kanban-person {
-  margin: 6px 0 8px;
-  font-size: 12px;
+  margin: 4px 0 6px;
+  font-size: 11px;
   color: var(--text-soft);
 }
 
