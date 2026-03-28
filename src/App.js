@@ -136,7 +136,7 @@ const getLeadTemperature = (lead) => {
   if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical" };
   if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "🔥 HOT FIRE", tone: "hot" };
   if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "🌤 Warm", tone: "warm" };
-  return { label: "🧊 COLD FROST", tone: "cold" };
+  return { label: "❄️ COLD FROST", tone: "cold" };
 };
 const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
