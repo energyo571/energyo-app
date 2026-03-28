@@ -40,6 +40,11 @@ const initialForm = {
     strom: [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
     gas:   [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
   },
+  // Adressierung
+  deliveryAddress: { straße: "", hausnummer: "", ort: "", plz: "" },
+  hasAlternativeInvoiceAddress: false,
+  invoiceAddress: { straße: "", hausnummer: "", plz: "", stadt: "" },
+  multipleDeliveryLocations: [],
 };
 
 // ─── Hilfsfunktionen ──────────────────────────────────────────────────────────
@@ -1994,6 +1999,46 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
       return next;
     });
   };
+
+  const handleDeliveryAddressChange = (field, value) => {
+    setForm(prev => ({
+      ...prev,
+      deliveryAddress: { ...prev.deliveryAddress, [field]: value },
+    }));
+  };
+
+  const handleInvoiceAddressChange = (field, value) => {
+    setForm(prev => ({
+      ...prev,
+      invoiceAddress: { ...prev.invoiceAddress, [field]: value },
+    }));
+  };
+
+  const handleAddDeliveryLocation = () => {
+    setForm(prev => ({
+      ...prev,
+      multipleDeliveryLocations: [
+        ...prev.multipleDeliveryLocations,
+        { id: Date.now(), straße: "", hausnummer: "", plz: "", stadt: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveDeliveryLocation = (id) => {
+    setForm(prev => ({
+      ...prev,
+      multipleDeliveryLocations: prev.multipleDeliveryLocations.filter(loc => loc.id !== id),
+    }));
+  };
+
+  const handleDeliveryLocationChange = (id, field, value) => {
+    setForm(prev => ({
+      ...prev,
+      multipleDeliveryLocations: prev.multipleDeliveryLocations.map(loc =>
+        loc.id === id ? { ...loc, [field]: value } : loc
+      ),
+    }));
+  };
   const handleFile = (e) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length === 0) return;
@@ -2057,6 +2102,62 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
               {form.contractEnd !== "unknown" && (<input type="date" name="contractEnd" value={form.contractEnd} onChange={handleChange} disabled={loading} style={{ marginTop: 6 }} />)}
             </div>
             <div className="form-group"><label>Nachfass-Datum</label><input type="date" name="followUp" value={form.followUp} onChange={handleChange} disabled={loading} /></div>
+
+            {/* ─── Lieferadresse ─── */}
+            <div className="form-group form-group-full address-section">
+              <label className="section-label">📬 Lieferadresse</label>
+              <div className="address-grid">
+                <div className="form-group"><label>Straße *</label><input type="text" placeholder="Hauptstraße" value={form.deliveryAddress.straße} onChange={(e) => handleDeliveryAddressChange("straße", e.target.value)} disabled={loading} /></div>
+                <div className="form-group"><label>Hausnummer *</label><input type="text" placeholder="42" value={form.deliveryAddress.hausnummer} onChange={(e) => handleDeliveryAddressChange("hausnummer", e.target.value)} disabled={loading} /></div>
+                <div className="form-group"><label>Ort *</label><input type="text" placeholder="Berlin" value={form.deliveryAddress.ort} onChange={(e) => handleDeliveryAddressChange("ort", e.target.value)} disabled={loading} /></div>
+                <div className="form-group"><label>PLZ *</label><input type="text" placeholder="10115" value={form.deliveryAddress.plz} onChange={(e) => handleDeliveryAddressChange("plz", e.target.value)} disabled={loading} /></div>
+              </div>
+            </div>
+
+            {/* ─── Rechnungsadresse Toggle ─── */}
+            <div className="form-group form-group-full">
+              <label className="checkbox-label">
+                <input type="checkbox" checked={form.hasAlternativeInvoiceAddress} onChange={(e) => setForm(p => ({ ...p, hasAlternativeInvoiceAddress: e.target.checked }))} disabled={loading} />
+                Rechnungsadresse weicht von Lieferadresse ab
+              </label>
+            </div>
+
+            {/* ─── Rechnungsadresse (expandable) ─── */}
+            {form.hasAlternativeInvoiceAddress && (
+              <div className="form-group form-group-full address-section expanded">
+                <label className="section-label">💳 Rechnungsadresse</label>
+                <div className="address-grid">
+                  <div className="form-group"><label>Straße</label><input type="text" placeholder="Rechnungsstraße" value={form.invoiceAddress.straße} onChange={(e) => handleInvoiceAddressChange("straße", e.target.value)} disabled={loading} /></div>
+                  <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="42" value={form.invoiceAddress.hausnummer} onChange={(e) => handleInvoiceAddressChange("hausnummer", e.target.value)} disabled={loading} /></div>
+                  <div className="form-group"><label>PLZ</label><input type="text" placeholder="10115" value={form.invoiceAddress.plz} onChange={(e) => handleInvoiceAddressChange("plz", e.target.value)} disabled={loading} /></div>
+                  <div className="form-group"><label>Stadt</label><input type="text" placeholder="Berlin" value={form.invoiceAddress.stadt} onChange={(e) => handleInvoiceAddressChange("stadt", e.target.value)} disabled={loading} /></div>
+                </div>
+              </div>
+            )}
+
+            {/* ─── Mehrere Lieferstellen ─── */}
+            {form.bundleInquiry && (
+              <div className="form-group form-group-full">
+                <div className="energy-section-header">
+                  <label>🏢 Weitere Lieferstellen</label>
+                  <button type="button" className="add-meter-btn" onClick={handleAddDeliveryLocation} disabled={loading}>+ Liiferstelle hinzufügen</button>
+                </div>
+                {form.multipleDeliveryLocations.map((location, idx) => (
+                  <div key={location.id} className="delivery-location-card">
+                    <div className="delivery-location-header">
+                      <span className="location-index">Liiferstelle {idx + 1}</span>
+                      <button type="button" className="remove-meter-btn" onClick={() => handleRemoveDeliveryLocation(location.id)} disabled={loading}>✕ Entfernen</button>
+                    </div>
+                    <div className="address-grid">
+                      <div className="form-group"><label>Straße</label><input type="text" placeholder="Straße (leer = gleich wie Lieferadresse)" value={location.straße} onChange={(e) => handleDeliveryLocationChange(location.id, "straße", e.target.value)} disabled={loading} /></div>
+                      <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="Hausnummer" value={location.hausnummer} onChange={(e) => handleDeliveryLocationChange(location.id, "hausnummer", e.target.value)} disabled={loading} /></div>
+                      <div className="form-group"><label>PLZ</label><input type="text" placeholder="PLZ" value={location.plz} onChange={(e) => handleDeliveryLocationChange(location.id, "plz", e.target.value)} disabled={loading} /></div>
+                      <div className="form-group"><label>Stadt</label><input type="text" placeholder="Stadt" value={location.stadt} onChange={(e) => handleDeliveryLocationChange(location.id, "stadt", e.target.value)} disabled={loading} /></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="form-group form-group-full">
               <div className="energy-section-header">
