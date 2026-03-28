@@ -1638,6 +1638,28 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
               <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
               <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
+              {/* Energieaudit gate — spiegelt NewLeadModal, ≥10.000 € Pflicht */}
+              {(() => {
+                const auditThreshold = 10000;
+                const eligible = Number(lead.annualCosts || 0) >= auditThreshold;
+                const checked = !!lead.energyAuditEligible;
+                return (
+                  <div className={`inline-field audit-gate ${eligible ? "active" : "locked"}`}>
+                    <label className="inline-label">Energieaudit</label>
+                    <div className="inline-value-row">
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          disabled={!eligible}
+                          onChange={e => eligible && onUpdateField(lead.id, "energyAuditEligible", e.target.checked)}
+                        />
+                        {eligible ? (checked ? "Berechtigt ✓" : "Klicken zum Aktivieren") : "Ab €10.000/Jahr freischaltbar"}
+                      </label>
+                    </div>
+                  </div>
+                );
+              })()}
               <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
               <InlineField label="Nachfass-Datum" value={lead.followUp} onSave={v => onUpdateField(lead.id, "followUp", v)} type="date" render={v => v ? formatDate(v) : null} />
               <InlineField label="Geburtsdatum" value={lead.geburtsdatum} onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date" render={v => v ? formatDate(v) : null} />
