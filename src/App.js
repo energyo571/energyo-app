@@ -3163,53 +3163,46 @@ function SavingsCalculator({ lead }) {
   const stromKwh = stromFromMeters > 0 ? stromFromMeters : (fallbackConsumption > 0 && fallbackCarrier === "strom" ? fallbackConsumption : 0);
   const gasKwh = gasFromMeters > 0 ? gasFromMeters : (fallbackConsumption > 0 && fallbackCarrier === "gas" ? fallbackConsumption : 0);
   const totalKwh = stromKwh + gasKwh;
-  const singleCarrierCurrentPrice = totalKwh > 0 && annualCosts > 0 && ((stromKwh > 0 && gasKwh === 0) || (gasKwh > 0 && stromKwh === 0))
-    ? ((annualCosts / totalKwh) * 100).toFixed(2)
-    : "";
 
-  // Separate price states for Strom and Gas
-  const [stromCurrentPrice, setStromCurrentPrice] = useState(() => (stromKwh > 0 && gasKwh === 0 ? singleCarrierCurrentPrice : ""));
-  const [stromNewPrice, setStromNewPrice] = useState("");
-  const [gasCurrentPrice, setGasCurrentPrice] = useState(() => (gasKwh > 0 && stromKwh === 0 ? singleCarrierCurrentPrice : ""));
-  const [gasNewPrice, setGasNewPrice] = useState("");
+  const [stromCurrentPrice, setStromCurrentPrice] = useState("");
+  const [gasCurrentPrice, setGasCurrentPrice] = useState("");
+  const [stromOfferAnnual, setStromOfferAnnual] = useState("");
+  const [gasOfferAnnual, setGasOfferAnnual] = useState("");
 
-  useEffect(() => {
-    if (!singleCarrierCurrentPrice) return;
-    if (stromKwh > 0 && gasKwh === 0 && !stromCurrentPrice) setStromCurrentPrice(singleCarrierCurrentPrice);
-    if (gasKwh > 0 && stromKwh === 0 && !gasCurrentPrice) setGasCurrentPrice(singleCarrierCurrentPrice);
-  }, [singleCarrierCurrentPrice, stromKwh, gasKwh, stromCurrentPrice, gasCurrentPrice]);
-
-  // Strom calculations
   const stromCurrentCt = parseFloat(stromCurrentPrice) || 0;
-  const stromNewCt = parseFloat(stromNewPrice) || 0;
-  const stromDiffCt = stromCurrentCt - stromNewCt;
-  const stromAnnualSavings = stromKwh > 0 && stromCurrentCt > 0 && stromNewCt > 0 ? (stromDiffCt / 100 * stromKwh) : 0;
-
-  // Gas calculations
   const gasCurrentCt = parseFloat(gasCurrentPrice) || 0;
-  const gasNewCt = parseFloat(gasNewPrice) || 0;
-  const gasDiffCt = gasCurrentCt - gasNewCt;
-  const gasAnnualSavings = gasKwh > 0 && gasCurrentCt > 0 && gasNewCt > 0 ? (gasDiffCt / 100 * gasKwh) : 0;
+  const stromWorkOnlyAnnual = stromKwh > 0 && stromCurrentCt > 0 ? (stromCurrentCt / 100) * stromKwh : 0;
+  const gasWorkOnlyAnnual = gasKwh > 0 && gasCurrentCt > 0 ? (gasCurrentCt / 100) * gasKwh : 0;
 
-  // Combined totals
-  const totalAnnualSavings = stromAnnualSavings + gasAnnualSavings;
+  const stromOfferAnnualValue = parseFloat(stromOfferAnnual) || 0;
+  const gasOfferAnnualValue = parseFloat(gasOfferAnnual) || 0;
+  const totalOfferAnnual = stromOfferAnnualValue + gasOfferAnnualValue;
+  const totalAnnualSavings = annualCosts > 0 && totalOfferAnnual > 0 ? annualCosts - totalOfferAnnual : 0;
   const totalMonthlySavings = totalAnnualSavings / 12;
+  const hasOffer = totalOfferAnnual > 0;
+  const hasSavings = annualCosts > 0 && totalAnnualSavings > 0;
+  const hasNoAdvantage = annualCosts > 0 && hasOffer && totalAnnualSavings <= 0;
 
   const buildCopyText = () => {
     let text = "⚡ Energyo Einspar-Kalkulation\n";
+    text += `\nKundenverbrauch gesamt: ${totalKwh.toLocaleString("de-DE")} kWh`;
+    text += `\nDokumentierte Jahreskosten Kunde: ${annualCosts > 0 ? formatEuro(annualCosts) : "nicht hinterlegt"}`;
     if (stromKwh > 0) {
-      text += `\n📌 STROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${stromCurrentCt.toFixed(2)} ct/kWh → ${formatEuro(stromCurrentCt / 100 * stromKwh)}/Jahr\nNeuer Preis: ${stromNewCt.toFixed(2)} ct/kWh → ${formatEuro(stromNewCt / 100 * stromKwh)}/Jahr\n✅ Ersparnis: ${formatEuro(stromAnnualSavings)}/Jahr`;
+      text += `\n\n📌 STROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nENERGYO Angebot/Jahr: ${stromOfferAnnualValue > 0 ? formatEuro(stromOfferAnnualValue) : "offen"}`;
+      if (stromCurrentCt > 0) text += `\nAktueller Arbeitspreis Kunde (optional): ${stromCurrentCt.toFixed(2)} ct/kWh`; 
     }
     if (gasKwh > 0) {
-      text += `\n\n📌 GAS\nVerbrauch: ${gasKwh.toLocaleString("de-DE")} kWh\nAktueller Preis: ${gasCurrentCt.toFixed(2)} ct/kWh → ${formatEuro(gasCurrentCt / 100 * gasKwh)}/Jahr\nNeuer Preis: ${gasNewCt.toFixed(2)} ct/kWh → ${formatEuro(gasNewCt / 100 * gasKwh)}/Jahr\n✅ Ersparnis: ${formatEuro(gasAnnualSavings)}/Jahr`;
+      text += `\n\n📌 GAS\nVerbrauch: ${gasKwh.toLocaleString("de-DE")} kWh\nENERGYO Angebot/Jahr: ${gasOfferAnnualValue > 0 ? formatEuro(gasOfferAnnualValue) : "offen"}`;
+      if (gasCurrentCt > 0) text += `\nAktueller Arbeitspreis Kunde (optional): ${gasCurrentCt.toFixed(2)} ct/kWh`;
     }
-    if (totalAnnualSavings > 0) {
+    if (hasOffer) {
+      text += `\n\nAngebot gesamt/Jahr: ${formatEuro(totalOfferAnnual)}`;
+    }
+    if (annualCosts > 0 && hasOffer) {
       text += `\n\n🎯 GESAMT ERSPARNIS\nJährlich: ${formatEuro(totalAnnualSavings)}\nMonatlich: ${formatEuro(totalMonthlySavings)}`;
     }
     return text;
   };
-
-  const hasSavings = totalAnnualSavings > 0;
 
   return (
     <div className="savings-calc">
@@ -3221,6 +3214,13 @@ function SavingsCalculator({ lead }) {
         </div>
       </div>
 
+      <div className="savings-baseline">
+        <div className="savings-detail-item"><span>Verbrauch gesamt</span><strong>{totalKwh > 0 ? `${totalKwh.toLocaleString("de-DE")} kWh` : "Nicht erfasst"}</strong></div>
+        <div className="savings-detail-item"><span>Jahreskosten Kunde</span><strong>{annualCosts > 0 ? formatEuro(annualCosts) : "Nicht erfasst"}</strong></div>
+      </div>
+
+      <p className="savings-guidance">Ersparnis basiert auf den dokumentierten Jahreskosten des Kunden. Der aktuelle Arbeitspreis ist optional und dient nur zum Vergleich, da Grundpreise sonst fehlen.</p>
+
       {stromKwh > 0 && (
         <div className="savings-section">
           <p className="savings-section-title">📌 Strom</p>
@@ -3230,37 +3230,32 @@ function SavingsCalculator({ lead }) {
               <input className="savings-input" type="number" readOnly value={stromKwh.toLocaleString("de-DE")} />
             </div>
             <div className="savings-field">
-              <label>Aktueller Preis (ct/kWh)</label>
+              <label>Aktueller Arbeitspreis Kunde optional (ct/kWh)</label>
               <input
                 className="savings-input"
                 type="number"
                 step="0.01"
                 value={stromCurrentPrice}
                 onChange={e => setStromCurrentPrice(e.target.value)}
-                placeholder="z.B. 28.5"
+                placeholder="z.B. aus Jahresabrechnung"
               />
             </div>
             <div className="savings-field">
-              <label>Neuer Preis ENERGYO (ct/kWh)</label>
+              <label>ENERGYO Angebot/Jahr (€)</label>
               <input
                 className="savings-input"
                 type="number"
                 step="0.01"
-                value={stromNewPrice}
-                onChange={e => setStromNewPrice(e.target.value)}
-                placeholder="z.B. 22.0"
+                value={stromOfferAnnual}
+                onChange={e => setStromOfferAnnual(e.target.value)}
+                placeholder="API / Angebot / Tarifrechner"
               />
             </div>
           </div>
-          {stromCurrentCt > 0 && stromNewCt > 0 && stromAnnualSavings > 0 && (
-            <div className="savings-carrier-result positive">
-              <span className="savings-carrier-amount">{formatEuro(stromAnnualSavings)}</span>
-              <span className="savings-carrier-period">Jahresersparnis</span>
-            </div>
-          )}
-          {stromCurrentCt > 0 && stromNewCt > 0 && stromDiffCt <= 0 && (
-            <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "8px 0" }}>⚠️ Kein Vorteil</div>
-          )}
+          <div className="savings-mini-grid">
+            <div className="savings-detail-item"><span>Angebot/Jahr</span><strong>{stromOfferAnnualValue > 0 ? formatEuro(stromOfferAnnualValue) : "Offen"}</strong></div>
+            {stromCurrentCt > 0 && <div className="savings-detail-item"><span>Aktueller Arbeitspreis-Anteil/Jahr</span><strong>{formatEuro(stromWorkOnlyAnnual)}</strong></div>}
+          </div>
         </div>
       )}
 
@@ -3273,37 +3268,32 @@ function SavingsCalculator({ lead }) {
               <input className="savings-input" type="number" readOnly value={gasKwh.toLocaleString("de-DE")} />
             </div>
             <div className="savings-field">
-              <label>Aktueller Preis (ct/kWh)</label>
+              <label>Aktueller Arbeitspreis Kunde optional (ct/kWh)</label>
               <input
                 className="savings-input"
                 type="number"
                 step="0.01"
                 value={gasCurrentPrice}
                 onChange={e => setGasCurrentPrice(e.target.value)}
-                placeholder="z.B. 8.5"
+                placeholder="z.B. aus Jahresabrechnung"
               />
             </div>
             <div className="savings-field">
-              <label>Neuer Preis ENERGYO (ct/kWh)</label>
+              <label>ENERGYO Angebot/Jahr (€)</label>
               <input
                 className="savings-input"
                 type="number"
                 step="0.01"
-                value={gasNewPrice}
-                onChange={e => setGasNewPrice(e.target.value)}
-                placeholder="z.B. 7.2"
+                value={gasOfferAnnual}
+                onChange={e => setGasOfferAnnual(e.target.value)}
+                placeholder="API / Angebot / Tarifrechner"
               />
             </div>
           </div>
-          {gasCurrentCt > 0 && gasNewCt > 0 && gasAnnualSavings > 0 && (
-            <div className="savings-carrier-result positive">
-              <span className="savings-carrier-amount">{formatEuro(gasAnnualSavings)}</span>
-              <span className="savings-carrier-period">Jahresersparnis</span>
-            </div>
-          )}
-          {gasCurrentCt > 0 && gasNewCt > 0 && gasDiffCt <= 0 && (
-            <div style={{ color: "#ef4444", fontSize: "0.82rem", padding: "8px 0" }}>⚠️ Kein Vorteil</div>
-          )}
+          <div className="savings-mini-grid">
+            <div className="savings-detail-item"><span>Angebot/Jahr</span><strong>{gasOfferAnnualValue > 0 ? formatEuro(gasOfferAnnualValue) : "Offen"}</strong></div>
+            {gasCurrentCt > 0 && <div className="savings-detail-item"><span>Aktueller Arbeitspreis-Anteil/Jahr</span><strong>{formatEuro(gasWorkOnlyAnnual)}</strong></div>}
+          </div>
         </div>
       )}
 
@@ -3325,12 +3315,26 @@ function SavingsCalculator({ lead }) {
           </div>
           <div className="savings-result-details">
             <div className="savings-detail-item"><span>Pro Monat</span><strong>{formatEuro(totalMonthlySavings)}</strong></div>
+            <div className="savings-detail-item"><span>Kunde/Jahr</span><strong>{formatEuro(annualCosts)}</strong></div>
+            <div className="savings-detail-item"><span>ENERGYO/Jahr</span><strong>{formatEuro(totalOfferAnnual)}</strong></div>
           </div>
           <div className="savings-actions">
             <button className="savings-copy-btn" onClick={() => navigator.clipboard.writeText(buildCopyText())}>
               📋 Kalkulation kopieren
             </button>
           </div>
+        </div>
+      )}
+
+      {hasNoAdvantage && (
+        <div className="savings-warning">
+          ⚠️ Kein Vorteil: Das aktuelle Angebot liegt nicht unter den dokumentierten Jahreskosten des Kunden.
+        </div>
+      )}
+
+      {annualCosts <= 0 && hasOffer && (
+        <div className="savings-warning neutral">
+          ℹ️ Angebot erfasst, aber ohne dokumentierte Jahreskosten kann noch keine belastbare Ersparnis ausgewiesen werden.
         </div>
       )}
     </div>
