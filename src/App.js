@@ -4208,6 +4208,7 @@ function App() {
               </div>
               {cockpitTrendSparkline && (
                 <div className="cockpit-trend-inline" title="Markttrend letzte 7 Tage">
+                  <div className="cockpit-trend-title">Markttrend 7 Tage</div>
                   <svg className="cockpit-trend-svg" viewBox={`0 0 ${cockpitTrendSparkline.width} ${cockpitTrendSparkline.height}`} role="img" aria-label="Markttrend 7 Tage">
                     <path d={cockpitTrendSparkline.path} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
                     {cockpitTrendSparkline.points.map((point) => (
