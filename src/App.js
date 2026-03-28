@@ -3277,8 +3277,21 @@ function App() {
 
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
-    if (focus === "overdue" || focus === "today") { setSortMode("followUp"); setSmartView("action"); return; }
-    if (focus === "inactive48") { setSortMode("activity"); setSmartView("action"); return; }
+    if (focus === "overdue" || focus === "today") {
+      setSortMode("followUp");
+      setSmartView("action");
+      setFilterStatus("all");
+      return;
+    }
+    if (focus === "inactive48") {
+      // Prevent hidden UI filters from blanking the inactive queue.
+      setSortMode("activity");
+      setSmartView("action");
+      setFilterStatus("all");
+      setFilterPriority("all");
+      setSearchTerm("");
+      return;
+    }
     if (focus === "cancellation" || focus === "priorityA") { setSortMode("priority"); setSmartView("all"); return; }
     if (focus === "won") { setSortMode("activity"); setSmartView("won"); return; }
     setSmartView("all");
