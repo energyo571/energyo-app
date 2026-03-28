@@ -4140,6 +4140,7 @@ function App() {
       setFilterPriority("all");
       setSearchTerm("");
       setSortMode("activity");
+      setSelectedLeadId(null);
     } else if (cta.action === "stalledOffers") {
       setSmartView("all");
       setKpiFocus("all");
@@ -4147,7 +4148,12 @@ function App() {
       setFilterPriority("all");
       setSortMode("activity");
     }
-    if (cta.leadId) setSelectedLeadId(cta.leadId);
+    if (cta.action !== "uncontacted" && cta.leadId) setSelectedLeadId(cta.leadId);
+  };
+
+  const closeLeadDrawer = () => {
+    setSelectedLeadId(null);
+    applyFocusPreset("all");
   };
 
   if (!user) return <LoginPage onLogin={setUser} user={user} />;
@@ -4458,7 +4464,7 @@ function App() {
       {selectedLead && (
         <LeadDetailDrawer
           lead={selectedLead}
-          onClose={() => setSelectedLeadId(null)}
+          onClose={closeLeadDrawer}
           user={user}
           userRole={userRole}
           onUpdateField={updateLeadField}
