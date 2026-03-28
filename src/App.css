@@ -1364,7 +1364,7 @@ textarea:focus {
 .leads-table-header,
 .lead-row {
   display: grid;
-  grid-template-columns: 28px minmax(220px, 2.4fr) 104px minmax(176px, 1.35fr) 102px 82px 102px 88px;
+  grid-template-columns: 28px 74px minmax(210px, 2.25fr) 102px minmax(148px, 1.15fr) 100px 80px 100px 84px;
   align-items: center;
   gap: 8px;
 }
@@ -1388,6 +1388,9 @@ textarea:focus {
 .lth-followup,
 .lth-activity {
   white-space: nowrap;
+  text-align: center;
+}
+.lth-signals {
   text-align: center;
 }
 
@@ -1432,6 +1435,13 @@ textarea:focus {
 .lead-row-umsatz,
 .lead-row-followup,
 .lead-row-activity {
+  min-width: 0;
+}
+.lead-row-signals {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: stretch;
   min-width: 0;
 }
 
@@ -1572,6 +1582,13 @@ textarea:focus {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.lead-row-signals .ampel-pill,
+.lead-row-signals .health-pill {
+  justify-content: center;
+  min-height: 18px;
+  padding: 2px 5px;
+  font-size: 8px;
 }
 
 .ampel-pill.red {
@@ -3848,7 +3865,7 @@ select {
 
   .leads-table-header,
   .lead-row {
-    grid-template-columns: 30px minmax(220px, 2fr) 92px minmax(152px, 1.15fr) 104px 84px 104px 72px;
+    grid-template-columns: 30px 68px minmax(198px, 1.9fr) 90px minmax(138px, 1.05fr) 102px 82px 102px 70px;
     gap: 8px;
   }
 
@@ -3956,7 +3973,7 @@ select {
 
   .leads-table-header,
   .lead-row {
-    min-width: 900px;
+    min-width: 980px;
   }
 
   .lead-row-energy {
