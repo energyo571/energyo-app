@@ -1153,24 +1153,41 @@ textarea:focus {
   font-weight: 700;
 }
 
+.focus-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0 10px;
+  flex-wrap: wrap;
+}
+
+.focus-select {
+  min-width: 260px;
+}
+
+.filter-bar.compact {
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .kpi-strip {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .kpi-item {
   background: var(--surface);
   border: 1px solid var(--line-soft);
-  border-radius: 18px;
-  padding: 16px 18px;
-  box-shadow: var(--shadow-soft);
+  border-radius: 14px;
+  padding: 12px 10px;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .kpi-item.clickable {
@@ -1251,7 +1268,7 @@ textarea:focus {
 }
 
 .kpi-val {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 900;
   line-height: 1;
 }

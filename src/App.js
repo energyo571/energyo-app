@@ -3492,6 +3492,8 @@ function App() {
   const [marketTrendPct, setMarketTrendPct] = useState(() => parseOptionalNumber(process.env.REACT_APP_MARKET_TREND_PCT));
   const [marketTrendSource, setMarketTrendSource] = useState("env");
   const [marketTrendHistory, setMarketTrendHistory] = useState([]);
+  const [focusPreset, setFocusPreset] = useState("all");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [leadsPerPage, setLeadsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -3520,6 +3522,54 @@ function App() {
     if (focus === "cancellation" || focus === "priorityA") { setSortMode("priority"); setSmartView("all"); return; }
     if (focus === "won") { setSortMode("activity"); setSmartView("won"); return; }
     setSmartView("all");
+  };
+
+  const applyFocusPreset = (preset) => {
+    setFocusPreset(preset);
+    if (preset === "all") {
+      setSmartView("all");
+      setKpiFocus("all");
+      setFilterStatus("all");
+      setFilterPriority("all");
+      return;
+    }
+    if (preset === "mine") {
+      setSmartView("mine");
+      setKpiFocus("all");
+      return;
+    }
+    if (preset === "action") {
+      setSmartView("action");
+      setKpiFocus("all");
+      setSortMode("followUp");
+      return;
+    }
+    if (preset === "hot") {
+      setSmartView("hot");
+      setKpiFocus("all");
+      return;
+    }
+    if (preset === "renewals") {
+      setSmartView("renewals");
+      setKpiFocus("all");
+      return;
+    }
+    if (preset === "won") {
+      setSmartView("won");
+      setKpiFocus("won");
+      return;
+    }
+    if (preset === "uncontacted") {
+      setSmartView("all");
+      setKpiFocus("all");
+      setFilterStatus("Neu");
+      setFilterPriority("all");
+      setSortMode("activity");
+      return;
+    }
+    if (preset === "overdue" || preset === "today" || preset === "inactive48" || preset === "cancellation") {
+      applyKpiFocus(preset);
+    }
   };
 
   const selectedLead = useMemo(() => leads.find(l => l.id === selectedLeadId) || null, [leads, selectedLeadId]);
@@ -4150,55 +4200,67 @@ function App() {
               </div>
             )}
 
-            {/* Smart-View Chips — replaces the removed CommandCenter */}
-            <div className="smart-view-bar">
-              {[
-                { id: "all",    label: "Alle Leads" },
-                { id: "mine",   label: "Meine Leads" },
-                { id: "action", label: "Action Queue" },
-                { id: "hot",    label: "Hot Deals" },
-                { id: "renewals", label: "Renewals" },
-                { id: "won",    label: "Gewonnen" },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  className={`smart-view-chip ${smartView === item.id ? "active" : ""}`}
-                  onClick={() => { setSmartView(item.id); setKpiFocus("all"); }}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="filter-bar">
-              <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
-                <option value="all">Alle Heat-Level</option>
-                <option value="A">Hot</option><option value="B">Warm</option><option value="C">Cold</option>
+            <div className="focus-bar">
+              <select value={focusPreset} onChange={(e) => applyFocusPreset(e.target.value)} className="filter-select-inline compact focus-select">
+                <option value="all">Fokus: Alle Leads</option>
+                <option value="mine">Fokus: Meine Leads</option>
+                <option value="action">Fokus: Action Queue</option>
+                <option value="hot">Fokus: Hot Deals</option>
+                <option value="renewals">Fokus: Renewals</option>
+                <option value="won">Fokus: Gewonnen</option>
+                <option value="uncontacted">Fokus: Unkontaktiert</option>
+                <option value="overdue">Fokus: Überfällig</option>
+                <option value="today">Fokus: Heute fällig</option>
+                <option value="inactive48">Fokus: >48h ohne Aktivität</option>
+                <option value="cancellation">Fokus: Kündigungsfenster</option>
               </select>
-              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="filter-select-inline">
-                <option value="all">Alle Status</option>
-                {STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}
-              </select>
-              {kpiFocus !== "all" && (
-                <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>KPI-Fokus zurücksetzen</button>
-              )}
+              <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
+                {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
+              </button>
               <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} gewonnen gebündelt</span>
             </div>
 
+            {showAdvancedFilters && (
+              <div className="filter-bar compact">
+                <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="filter-select-inline">
+                  <option value="all">Alle Heat-Level</option>
+                  <option value="A">Hot</option><option value="B">Warm</option><option value="C">Cold</option>
+                </select>
+                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="filter-select-inline">
+                  <option value="all">Alle Status</option>
+                  {STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}
+                </select>
+                {(kpiFocus !== "all" || filterPriority !== "all" || filterStatus !== "all") && (
+                  <button
+                    type="button"
+                    className="kpi-reset-btn"
+                    onClick={() => {
+                      setFilterPriority("all");
+                      setFilterStatus("all");
+                      setKpiFocus("all");
+                      applyFocusPreset("all");
+                    }}
+                  >
+                    Filter zurücksetzen
+                  </button>
+                )}
+              </div>
+            )}
+
             <div className="kpi-strip">
-              <button type="button" className="kpi-item kpi-umsatz clickable" onClick={() => applyKpiFocus("all")}>
+              <div className="kpi-item kpi-umsatz">
                 <span className="kpi-val">{formatEnergyVolume(stats.movedEnergyKwh)}</span>
                 <span className="kpi-label">Bewegte Energiemenge</span>
-              </button>
-              <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
-              <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
-              <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
-              <button type="button" className={`kpi-item clickable ${kpiFocus === "inactive48" ? "active" : ""}`} onClick={() => applyKpiFocus("inactive48")}><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">>48h ohne Aktivität</span></button>
-              <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}>
+              </div>
+              <div className="kpi-item kpi-prio"><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></div>
+              <div className="kpi-item kpi-warning"><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></div>
+              <div className="kpi-item kpi-today"><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></div>
+              <div className="kpi-item"><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">>48h ohne Aktivität</span></div>
+              <div className="kpi-item kpi-alert">
                 <span className="kpi-val">{stats.openCancellation}</span>
                 <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
-              </button>
-              <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
+              </div>
+              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></div>
             </div>
 
             <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
