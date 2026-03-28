@@ -254,6 +254,116 @@ const getNextAction = (lead) => {
   const plan = getNextActionPlan(lead);
   return { label: plan.label, tone: plan.tone };
 };
+const getContactTouchCount = (lead) => (lead.callLogs?.length || 0) + (lead.comments?.length || 0);
+const parseOptionalNumber = (value) => {
+  const num = Number.parseFloat(String(value ?? "").replace(",", "."));
+  return Number.isFinite(num) ? num : null;
+};
+const rankCockpitCtas = ({ leads, marketTrendPct = null }) => {
+  const workingLeads = leads.filter((lead) => lead.status !== "Gewonnen" && lead.status !== "Verloren");
+  const inactiveLeads = workingLeads.filter((lead) => isLeadInactiveForHours(lead, 48));
+  const uncontactedLeads = workingLeads.filter((lead) => getContactTouchCount(lead) === 0);
+  const overdueLeads = workingLeads.filter((lead) => isOverdue(lead.followUp));
+  const cancelWindowLeads = workingLeads.filter((lead) => isOpenCancellationWindow(lead.contractEnd));
+  const stalledOfferLeads = workingLeads.filter((lead) => (lead.status === "Angebot" || lead.status === "Nachfassen") && getHoursSince(getLastActivityTimestamp(lead)) >= 72);
+  const hotLeads = workingLeads.filter((lead) => getLeadTemperature(lead).tone === "hot");
+
+  const cards = [];
+
+  if (uncontactedLeads.length > 0) {
+    cards.push({
+      id: "cta-uncontacted",
+      tone: "warning",
+      score: uncontactedLeads.length * 14,
+      title: `${uncontactedLeads.length} unkontaktierte Leads`,
+      message: "Schneller Erstkontakt bringt den \"ah ja stimmt\"-Momentum zurück.",
+      actionLabel: "Unkontaktierte öffnen",
+      action: "uncontacted",
+      leadId: uncontactedLeads[0]?.id,
+    });
+  }
+
+  if (inactiveLeads.length > 0) {
+    cards.push({
+      id: "cta-inactive",
+      tone: "alert",
+      score: inactiveLeads.length * 12,
+      title: `${inactiveLeads.length} Leads ohne Aktivität >48h`,
+      message: "Reaktivieren, bevor der Deal kalt wird.",
+      actionLabel: "Jetzt priorisieren",
+      action: "inactive48",
+      leadId: inactiveLeads[0]?.id,
+    });
+  }
+
+  if (overdueLeads.length > 0) {
+    cards.push({
+      id: "cta-overdue",
+      tone: "alert",
+      score: overdueLeads.length * 11,
+      title: `${overdueLeads.length} Follow-ups überfällig`,
+      message: "Heute zuerst diese Kontakte schließen.",
+      actionLabel: "Überfällige anzeigen",
+      action: "overdue",
+      leadId: overdueLeads[0]?.id,
+    });
+  }
+
+  if (cancelWindowLeads.length > 0) {
+    cards.push({
+      id: "cta-cancel-window",
+      tone: "warning",
+      score: cancelWindowLeads.length * 13,
+      title: `${cancelWindowLeads.length} Leads im Kündigungsfenster`,
+      message: "Timing-Vorteil jetzt nutzen und Abschluss sichern.",
+      actionLabel: "Kündigungsfenster öffnen",
+      action: "cancellation",
+      leadId: cancelWindowLeads[0]?.id,
+    });
+  }
+
+  if (stalledOfferLeads.length > 0) {
+    cards.push({
+      id: "cta-perfect-price-no-answer",
+      tone: "warning",
+      score: stalledOfferLeads.length * 10,
+      title: "Perfekter Preis, aber keine Antwort",
+      message: `${stalledOfferLeads.length} Angebots-Leads warten >72h ohne Reaktion.`,
+      actionLabel: "Angebots-Stau öffnen",
+      action: "stalledOffers",
+      leadId: stalledOfferLeads[0]?.id,
+    });
+  }
+
+  if (marketTrendPct !== null) {
+    const trendLeads = hotLeads.length > 0 ? hotLeads : workingLeads.slice(0, 1);
+    if (trendLeads.length > 0) {
+      cards.push({
+        id: "cta-price-trend",
+        tone: marketTrendPct >= 0 ? "alert" : "success",
+        score: Math.round(Math.abs(marketTrendPct) * 8) + (hotLeads.length * 3),
+        title: marketTrendPct >= 0 ? "Preise steigen: schnell sichern" : "Preise entspannt: Vergleich offensiv spielen",
+        message: `Markttrend ${marketTrendPct >= 0 ? "+" : ""}${marketTrendPct.toFixed(1)}% (30 Tage). ${marketTrendPct >= 0 ? "Jetzt Entscheidung beschleunigen." : "Preisvorteil aktiv kommunizieren."}`,
+        actionLabel: "Preis-Argument nutzen",
+        action: "hot",
+        leadId: trendLeads[0]?.id,
+      });
+    }
+  } else {
+    cards.push({
+      id: "cta-price-source-missing",
+      tone: "muted",
+      score: 1,
+      title: "Preis-CTA Quelle fehlt",
+      message: "Für Preisargumente bitte Marktquelle anbinden (API/Feed).",
+      actionLabel: "Hot Leads öffnen",
+      action: "hot",
+      leadId: hotLeads[0]?.id,
+    });
+  }
+
+  return cards.sort((a, b) => b.score - a.score).slice(0, 6);
+};
 const addDaysToIso = (days) => {
   const dt = new Date();
   dt.setDate(dt.getDate() + days);
@@ -3744,6 +3854,43 @@ function App() {
     };
   }, [stats.closingRate]);
 
+  const marketTrendPct = useMemo(() => parseOptionalNumber(process.env.REACT_APP_MARKET_TREND_PCT), []);
+
+  const cockpitCtas = useMemo(() => rankCockpitCtas({
+    leads: activePipelineLeads,
+    marketTrendPct,
+  }), [activePipelineLeads, marketTrendPct]);
+
+  const runCockpitCtaAction = (cta) => {
+    if (!cta) return;
+    if (cta.action === "inactive48") {
+      applyKpiFocus("inactive48");
+    } else if (cta.action === "overdue") {
+      applyKpiFocus("overdue");
+    } else if (cta.action === "cancellation") {
+      applyKpiFocus("cancellation");
+    } else if (cta.action === "hot") {
+      setSmartView("hot");
+      setKpiFocus("all");
+      setFilterStatus("all");
+      setFilterPriority("all");
+    } else if (cta.action === "uncontacted") {
+      setSmartView("all");
+      setKpiFocus("all");
+      setFilterStatus("Neu");
+      setFilterPriority("all");
+      setSearchTerm("");
+      setSortMode("activity");
+    } else if (cta.action === "stalledOffers") {
+      setSmartView("all");
+      setKpiFocus("all");
+      setFilterStatus("Angebot");
+      setFilterPriority("all");
+      setSortMode("activity");
+    }
+    if (cta.leadId) setSelectedLeadId(cta.leadId);
+  };
+
   if (!user) return <LoginPage onLogin={setUser} user={user} />;
 
   return (
@@ -3876,6 +4023,15 @@ function App() {
               <ul className="cockpit-action-list">
                 {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
               </ul>
+              <div className="cockpit-cta-grid">
+                {cockpitCtas.map((cta) => (
+                  <div key={cta.id} className={`cockpit-cta-card ${cta.tone}`}>
+                    <strong>{cta.title}</strong>
+                    <p>{cta.message}</p>
+                    <button type="button" className="ghost-btn-sm" onClick={() => runCockpitCtaAction(cta)}>{cta.actionLabel}</button>
+                  </div>
+                ))}
+              </div>
               {stats.inactive48 > 0 && (
                 <div className="cockpit-action-queue">
                   <div className="cockpit-action-queue-head">
