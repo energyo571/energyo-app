@@ -1372,6 +1372,7 @@ textarea:focus {
 .leads-table-header {
   padding: 8px 12px;
   background: #f7f9fd;
+  --lead-row-bg: #f7f9fd;
   color: var(--text-soft);
   font-size: 10px;
   font-weight: 800;
@@ -1396,6 +1397,7 @@ textarea:focus {
 
 .lead-row {
   padding: 4px 12px;
+  --lead-row-bg: #ffffff;
   border-bottom: 1px solid var(--line-soft);
   cursor: pointer;
   transition: background 150ms ease;
@@ -1406,15 +1408,41 @@ textarea:focus {
 }
 
 .lead-row:hover {
+  --lead-row-bg: #fbfdff;
   background: #fbfdff;
 }
 
 .lead-row.selected {
+  --lead-row-bg: #f3f8ff;
   background: linear-gradient(90deg, rgba(15, 111, 255, 0.08), rgba(255,255,255,0));
 }
 
 .lead-row.bulk-checked {
+  --lead-row-bg: #eaf2ff;
   background: rgba(15, 111, 255, 0.1);
+}
+
+.lth-checkbox,
+.lead-row-checkbox,
+.lead-row-checkbox-placeholder {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: var(--lead-row-bg);
+}
+
+.lth-signals,
+.lead-row-signals {
+  position: sticky;
+  left: 36px;
+  z-index: 5;
+  background: var(--lead-row-bg);
+  box-shadow: 10px 0 12px -12px rgba(15, 23, 42, 0.32);
+}
+
+.lth-checkbox,
+.lth-signals {
+  z-index: 6;
 }
 
 .lead-row-checkbox {
@@ -3867,6 +3895,11 @@ select {
   .lead-row {
     grid-template-columns: 30px 68px minmax(198px, 1.9fr) 90px minmax(138px, 1.05fr) 102px 82px 102px 70px;
     gap: 8px;
+  }
+
+  .lth-signals,
+  .lead-row-signals {
+    left: 38px;
   }
 
   .command-hero-metrics,
