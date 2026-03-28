@@ -3168,6 +3168,12 @@ function SavingsCalculator({ lead }) {
   const [gasCurrentPrice, setGasCurrentPrice] = useState("");
   const [stromOfferPrice, setStromOfferPrice] = useState("");
   const [gasOfferPrice, setGasOfferPrice] = useState("");
+  const [referenceLoading, setReferenceLoading] = useState(false);
+  const [referenceError, setReferenceError] = useState("");
+  const [referenceMeta, setReferenceMeta] = useState({ strom: "", gas: "" });
+
+  const effectivePostalCode = String(lead.postalCode || lead.deliveryAddress?.plz || "").trim();
+  const customerTypeNormalized = normalizeText(lead.customerType || "privat");
 
   const stromCurrentCt = parseFloat(stromCurrentPrice) || 0;
   const gasCurrentCt = parseFloat(gasCurrentPrice) || 0;
@@ -3213,6 +3219,64 @@ function SavingsCalculator({ lead }) {
     return text;
   };
 
+  const loadReferenceForSector = async (sector, sectorConsumption) => {
+    const response = await fetch("/api/tariff-reference", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        postalCode: effectivePostalCode,
+        sector,
+        consumption: sectorConsumption,
+        customerType: customerTypeNormalized === "privat" ? "Privat" : "Gewerbe",
+      }),
+    });
+
+    const payload = await response.json();
+    if (!response.ok || !payload?.ok) {
+      throw new Error(payload?.error || `Tarif-API Fehler (${response.status})`);
+    }
+
+    return payload;
+  };
+
+  const applyReferenceResult = (sector, payload) => {
+    const ap = Number.parseFloat(payload?.reference?.workingPriceCt || 0);
+    if (sector === "strom" && ap > 0) setStromOfferPrice(ap.toFixed(2));
+    if (sector === "gas" && ap > 0) setGasOfferPrice(ap.toFixed(2));
+
+    const serviceName = [payload?.reference?.resellerName, payload?.reference?.serviceName].filter(Boolean).join(" - ");
+    if (serviceName) {
+      setReferenceMeta((prev) => ({ ...prev, [sector]: serviceName }));
+    }
+  };
+
+  const loadReferenceTariffs = async () => {
+    if (!effectivePostalCode) {
+      setReferenceError("PLZ fehlt im Lead. Bitte zuerst PLZ pflegen.");
+      return;
+    }
+    if (totalKwh <= 0) {
+      setReferenceError("Verbrauch fehlt. Bitte zuerst Verbrauch erfassen.");
+      return;
+    }
+
+    setReferenceLoading(true);
+    setReferenceError("");
+
+    try {
+      const tasks = [];
+      if (stromKwh > 0) tasks.push(loadReferenceForSector("strom", stromKwh).then((payload) => ({ sector: "strom", payload })));
+      if (gasKwh > 0) tasks.push(loadReferenceForSector("gas", gasKwh).then((payload) => ({ sector: "gas", payload })));
+
+      const results = await Promise.all(tasks);
+      results.forEach(({ sector, payload }) => applyReferenceResult(sector, payload));
+    } catch (error) {
+      setReferenceError(error?.message || "Referenztarife konnten nicht geladen werden.");
+    } finally {
+      setReferenceLoading(false);
+    }
+  };
+
   return (
     <div className="savings-calc">
       <div className="savings-header">
@@ -3229,6 +3293,22 @@ function SavingsCalculator({ lead }) {
       </div>
 
       <p className="savings-guidance">Ersparnis wird ueber die AP-Differenz berechnet. Der unbekannte Grundpreis bleibt als Konstante in den dokumentierten Jahreskosten des Kunden bestehen.</p>
+
+      <div className="savings-actions">
+        <button type="button" className="savings-copy-btn" onClick={loadReferenceTariffs} disabled={referenceLoading}>
+          {referenceLoading ? "⏳ Referenztarife werden geladen..." : "🔄 Referenztarife automatisch laden"}
+        </button>
+      </div>
+
+      {(referenceMeta.strom || referenceMeta.gas) && (
+        <p className="savings-meter-hint">
+          {referenceMeta.strom ? `Strom: ${referenceMeta.strom}` : ""}
+          {referenceMeta.strom && referenceMeta.gas ? " · " : ""}
+          {referenceMeta.gas ? `Gas: ${referenceMeta.gas}` : ""}
+        </p>
+      )}
+
+      {referenceError && <div className="savings-warning neutral">ℹ️ {referenceError}</div>}
 
       {stromKwh > 0 && (
         <div className="savings-section">
