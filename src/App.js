@@ -319,6 +319,66 @@ const getLeadScoreTone = (probability) => {
   if (probability >= 45) return "mid";
   return "low";
 };
+const getLeadReadiness = (lead) => {
+  if (lead.status === "Gewonnen") {
+    return {
+      label: "Gruen",
+      tone: "green",
+      reason: "Abschluss bereits erfolgt.",
+      missing: [],
+    };
+  }
+  if (lead.status === "Verloren") {
+    return {
+      label: "Rot",
+      tone: "red",
+      reason: "Lead ist als verloren markiert.",
+      missing: [],
+    };
+  }
+
+  const coreMissing = [];
+  const qualityMissing = [];
+  const hasIdentity = !!(String(lead.company || "").trim() || String(lead.person || "").trim());
+  const hasContactChannel = !!(String(lead.phone || "").trim() || String(lead.email || "").trim());
+  const hasConsumption = Number.parseInt(String(lead.consumption || ""), 10) > 0;
+  const hasContractEnd = !!lead.contractEnd && lead.contractEnd !== "unknown";
+  const deliveryPoints = getTotalDeliveryPoints(lead);
+
+  if (!hasIdentity) coreMissing.push("Kontakt/Firma");
+  if (!hasContactChannel) coreMissing.push("Telefon oder E-Mail");
+  if (!hasConsumption) coreMissing.push("Verbrauch");
+  if (!hasContractEnd) coreMissing.push("Vertragsende");
+
+  if (!String(lead.currentProvider || "").trim()) qualityMissing.push("Anbieter");
+  if (!String(lead.postalCode || "").trim()) qualityMissing.push("PLZ");
+  if (deliveryPoints === 0) qualityMissing.push("Zähler/Lieferstelle");
+
+  if (coreMissing.length > 0) {
+    return {
+      label: "Rot",
+      tone: "red",
+      reason: `Nicht angebotsfaehig: ${coreMissing.slice(0, 2).join(", ")}`,
+      missing: coreMissing,
+    };
+  }
+
+  if (qualityMissing.length > 0) {
+    return {
+      label: "Gelb",
+      tone: "yellow",
+      reason: `Daten nachziehen: ${qualityMissing.slice(0, 2).join(", ")}`,
+      missing: qualityMissing,
+    };
+  }
+
+  return {
+    label: "Gruen",
+    tone: "green",
+    reason: "Angebotsfaehig und bereit fuer Abschlussarbeit.",
+    missing: [],
+  };
+};
 const sortLeads = (items, sortMode) => {
   const sorted = [...items];
   if (sortMode === "potential") return sorted.sort((a, b) => calculateUmsatzPotential(b.consumption) - calculateUmsatzPotential(a.consumption));
@@ -498,7 +558,8 @@ Lead-Informationen:
 - Vertragsende: ${formatDate(lead.contractEnd)}
 - Kündigungsfenster: ${isOpenCancellationWindow(lead.contractEnd) ? "JA – DRINGEND" : "nein"}
 - Nachfassdatum: ${formatDate(lead.followUp)}
-- Temperatur: ${getLeadTemperature(lead).label}
+  - Temperatur: ${getLeadTemperature(lead).label}
+  - Abschlussampel: ${getLeadReadiness(lead).label}
 - Empfohlene nächste Aktion: ${nextAction.label}
 - Kanal: ${nextAction.channel}
 - Timing: ${nextAction.when}
@@ -932,6 +993,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const nextAction = getNextActionPlan(lead);
   const sequencePlan = getLeadSequencePlan(lead);
   const scoreTone = getLeadScoreTone(closeProbability);
+  const readiness = getLeadReadiness(lead);
   const previewHref = getAttachmentHref(previewAttachment);
 
   const getSequenceOutcome = (stepId) => {
@@ -1157,6 +1219,11 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           <div className="drawer-signal-card">
             <span>Owner</span>
             <strong>{getLeadOwnerEmail(lead)}</strong>
+          </div>
+          <div className={`drawer-signal-card readiness-card ${readiness.tone}`}>
+            <span>Abschlussampel</span>
+            <strong>{readiness.label}</strong>
+            <small>{readiness.reason}</small>
           </div>
           <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
             <span>Deal Score</span>
@@ -1711,7 +1778,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
   const meta = STATUS_META[lead.status] || STATUS_META.Neu;
   const umsatz = calculateUmsatzPotential(lead.consumption);
   const activityCount = getLeadActivityCount(lead);
-  const temperature = getLeadTemperature(lead);
+  const readiness = getLeadReadiness(lead);
   const nextAction = getNextAction(lead);
   const closeProbability = getLeadWinProbability(lead);
   const scoreTone = getLeadScoreTone(closeProbability);
@@ -1753,7 +1820,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints} Lieferstellen</span>)}
       </div>
       <div className="lead-row-health">
-        <span className={`health-pill ${temperature.tone}`}>{temperature.label}</span>
+        <span className={`ampel-pill ${readiness.tone}`} title={readiness.reason}>Ampel: {readiness.label}</span>
         <span className={`lead-score-pill ${scoreTone}`}>Deal {closeProbability}%</span>
         <span className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</span>
       </div>
