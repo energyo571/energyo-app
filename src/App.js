@@ -3356,22 +3356,20 @@ function SavingsCalculator({ lead }) {
   };
 
   const buildTariffKalkulatorUrl = () => {
-    const kalkulatorBaseUrl = process.env.REACT_APP_TARIFKALKULATOR_URL || "https://stromundgasportal.de/tk/#/";
+    const kalkulatorBaseUrl = process.env.REACT_APP_TARIFKALKULATOR_URL || "https://tarifrechner.software/whitelabel/whitelabel/calculator?id=34ec3a70-d7d4-11ef-982f-df6ea12393d2";
     const preferredSector = stromKwh > 0 ? "strom" : (gasKwh > 0 ? "gas" : (normalizedEnergyType.includes("gas") ? "gas" : "strom"));
     const preferredConsumption = preferredSector === "strom"
       ? (stromKwh > 0 ? Math.round(stromKwh) : Math.round(totalKwh || fallbackConsumption || 0))
       : (gasKwh > 0 ? Math.round(gasKwh) : Math.round(totalKwh || fallbackConsumption || 0));
 
-    const params = new URLSearchParams({
-      sector: preferredSector,
-      isCompanyService: customerTypeNormalized === "privat" ? "0" : "1",
-      plz: effectivePostalCode,
-      consumption: String(Math.max(preferredConsumption, 0)),
-      futureBaseSuppliers: "false",
-      ratesEnabled: "false",
-    });
-
-    return `${kalkulatorBaseUrl}?${params.toString()}`;
+    const url = new URL(kalkulatorBaseUrl);
+    url.searchParams.set("sector", preferredSector);
+    url.searchParams.set("isCompanyService", customerTypeNormalized === "privat" ? "0" : "1");
+    url.searchParams.set("plz", effectivePostalCode);
+    url.searchParams.set("consumption", String(Math.max(preferredConsumption, 0)));
+    url.searchParams.set("futureBaseSuppliers", "false");
+    url.searchParams.set("ratesEnabled", "false");
+    return url.toString();
   };
 
   const openTariffKalkulator = () => {
