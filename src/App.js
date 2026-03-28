@@ -3649,7 +3649,6 @@ function App() {
   const wonBundleLeads = useMemo(() => {
     const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
-                { id: "renewals", label: "Renewals" },
       const ma = getMonthsUntil(a.contractEnd);
       const mb = getMonthsUntil(b.contractEnd);
       return ma - mb;
@@ -3690,6 +3689,7 @@ function App() {
     }
     if (stats.closingRate < 25) {
       return {
+                { id: "renewals", label: "Renewals" },
         tone: "warning",
         title: "Closing 15-24%: Disziplin erhöht Conversion",
         tips: [
