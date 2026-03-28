@@ -33,7 +33,7 @@ const getAttachmentHref = (attachment) => attachment?.url || attachment?.data ||
 const initialForm = {
   company: "", person: "", anrede: "", titel: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
-  customerType: "Privat", postalCode: "", currentProvider: "",
+  customerType: "Privat", currentProvider: "",
   bundleInquiry: false, energyAuditEligible: false, followUp: "", attachments: [],
   energyType: "strom",
   energy: {
@@ -41,7 +41,7 @@ const initialForm = {
     gas:   [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
   },
   // Adressierung
-  deliveryAddress: { straße: "", hausnummer: "", ort: "", plz: "" },
+  deliveryAddress: { straße: "", hausnummer: "", plz: "", ort: "" },
   hasAlternativeInvoiceAddress: false,
   invoiceAddress: { straße: "", hausnummer: "", plz: "", stadt: "" },
   multipleDeliveryLocations: [],
@@ -2070,7 +2070,11 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form, () => { setForm(initialForm); onClose(); });
+      if (!form.phone.trim() || !form.email.trim() || !form.deliveryAddress.plz.trim()) {
+        return alert("Bitte Telefon, E-Mail und PLZ der Lieferadresse ausfüllen.");
+      }
+      const formWithPostalCode = { ...form, postalCode: form.deliveryAddress.plz };
+      onSubmit(formWithPostalCode, () => { setForm(initialForm); onClose(); });
   };
   return (
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -2088,7 +2092,6 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             <div className="form-group"><label>Geburtsdatum</label><input type="date" name="geburtsdatum" value={form.geburtsdatum} onChange={handleChange} disabled={loading} /></div>
             <div className="form-group"><label>Telefon *</label><input name="phone" type="tel" placeholder="+49..." value={form.phone} onChange={handleChange} disabled={loading} required /></div>
             <div className="form-group"><label>E-Mail *</label><input name="email" type="email" placeholder="name@firma.de" value={form.email} onChange={handleChange} disabled={loading} required /></div>
-            <div className="form-group"><label>PLZ *</label><input name="postalCode" placeholder="12345" value={form.postalCode} onChange={handleChange} disabled={loading} required /></div>
             <div className="form-group"><label>Kundentyp</label><select name="customerType" value={form.customerType} onChange={handleChange} disabled={loading}><option>Privat</option><option>Gewerbe</option><option>Großkunde</option></select></div>
             <div className="form-group"><label>Aktueller Anbieter</label><input name="currentProvider" placeholder="z.B. E.ON" value={form.currentProvider} onChange={handleChange} disabled={loading} /></div>
             <div className="form-group"><label>Verbrauch (kWh)</label><input name="consumption" type="number" placeholder="50000" value={form.consumption} onChange={handleChange} disabled={loading} /></div>
@@ -2109,8 +2112,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
               <div className="address-grid">
                 <div className="form-group"><label>Straße *</label><input type="text" placeholder="Hauptstraße" value={form.deliveryAddress.straße} onChange={(e) => handleDeliveryAddressChange("straße", e.target.value)} disabled={loading} /></div>
                 <div className="form-group"><label>Hausnummer *</label><input type="text" placeholder="42" value={form.deliveryAddress.hausnummer} onChange={(e) => handleDeliveryAddressChange("hausnummer", e.target.value)} disabled={loading} /></div>
-                <div className="form-group"><label>Ort *</label><input type="text" placeholder="Berlin" value={form.deliveryAddress.ort} onChange={(e) => handleDeliveryAddressChange("ort", e.target.value)} disabled={loading} /></div>
-                <div className="form-group"><label>PLZ *</label><input type="text" placeholder="10115" value={form.deliveryAddress.plz} onChange={(e) => handleDeliveryAddressChange("plz", e.target.value)} disabled={loading} /></div>
+                  <div className="form-group"><label>PLZ *</label><input type="text" placeholder="10115" value={form.deliveryAddress.plz} onChange={(e) => handleDeliveryAddressChange("plz", e.target.value)} disabled={loading} /></div>
+                  <div className="form-group"><label>Stadt *</label><input type="text" placeholder="Berlin" value={form.deliveryAddress.ort} onChange={(e) => handleDeliveryAddressChange("ort", e.target.value)} disabled={loading} /></div>
               </div>
             </div>
 
