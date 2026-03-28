@@ -144,15 +144,186 @@ const getLeadTemperature = (lead) => {
   if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "Warm", tone: "warm" };
   return { label: "Cold", tone: "cold" };
 };
+const getNextActionPlan = (lead) => {
+  const hasPhone = !!lead.phone;
+  const hasEmail = !!lead.email;
+
+  if (lead.status === "Gewonnen") {
+    return {
+      label: "Abschluss sichern",
+      tone: "success",
+      channel: hasEmail ? "E-Mail" : "Telefon",
+      when: "Heute",
+      reason: "Onboarding und Referenzchance sichern",
+    };
+  }
+  if (lead.status === "Verloren") {
+    return {
+      label: "Archiv prüfen",
+      tone: "muted",
+      channel: "CRM",
+      when: "Diese Woche",
+      reason: "Win/Loss-Learnings dokumentieren",
+    };
+  }
+  if (isOverdue(lead.followUp)) {
+    return {
+      label: "Heute nachfassen",
+      tone: "danger",
+      channel: hasPhone ? "Telefon" : "E-Mail",
+      when: "Innerhalb 2h",
+      reason: "Follow-up ist überfällig",
+    };
+  }
+  if (isTodayDue(lead.followUp)) {
+    return {
+      label: "Heute anrufen",
+      tone: "today",
+      channel: hasPhone ? "Telefon" : "E-Mail",
+      when: "Heute vor 17:00",
+      reason: "Fälliger Touchpoint im Plan",
+    };
+  }
+  if (isOpenCancellationWindow(lead.contractEnd)) {
+    return {
+      label: "Angebot priorisieren",
+      tone: "hot",
+      channel: hasPhone ? "Telefon + E-Mail" : "E-Mail",
+      when: "Heute",
+      reason: "Kündigungsfenster ist offen",
+    };
+  }
+  if ((lead.callLogs?.length || 0) === 0) {
+    return {
+      label: "Ersten Anruf machen",
+      tone: "default",
+      channel: hasPhone ? "Telefon" : "E-Mail",
+      when: "Heute",
+      reason: "Noch kein Erstkontakt dokumentiert",
+    };
+  }
+  if (lead.status === "Angebot") {
+    return {
+      label: "Angebot nachhalten",
+      tone: "warm",
+      channel: hasPhone ? "Telefon" : "E-Mail",
+      when: "In 24h",
+      reason: "Entscheidung aktiv beschleunigen",
+    };
+  }
+  return {
+    label: "Nächsten Touchpoint planen",
+    tone: "default",
+    channel: hasEmail ? "E-Mail" : hasPhone ? "Telefon" : "CRM",
+    when: "In 48h",
+    reason: "Kontinuität im Deal aufrechterhalten",
+  };
+};
 const getNextAction = (lead) => {
-  if (lead.status === "Gewonnen") return { label: "Abschluss sichern", tone: "success" };
-  if (lead.status === "Verloren") return { label: "Archiv prüfen", tone: "muted" };
-  if (isOverdue(lead.followUp)) return { label: "Heute nachfassen", tone: "danger" };
-  if (isTodayDue(lead.followUp)) return { label: "Heute anrufen", tone: "today" };
-  if (isOpenCancellationWindow(lead.contractEnd)) return { label: "Angebot priorisieren", tone: "hot" };
-  if ((lead.callLogs?.length || 0) === 0) return { label: "Ersten Anruf machen", tone: "default" };
-  if (lead.status === "Angebot") return { label: "Angebot nachhalten", tone: "warm" };
-  return { label: "Nächsten Touchpoint planen", tone: "default" };
+  const plan = getNextActionPlan(lead);
+  return { label: plan.label, tone: plan.tone };
+};
+const addDaysToIso = (days) => {
+  const dt = new Date();
+  dt.setDate(dt.getDate() + days);
+  return dt.toISOString().split("T")[0];
+};
+const getLeadSequencePlan = (lead) => {
+  if (lead.status === "Gewonnen") {
+    return {
+      stage: "post-win",
+      title: "Retention Sequenz",
+      steps: [
+        { id: "retention-1", title: "Onboarding-Call", channel: "Telefon", dueInDays: 0, purpose: "Sauberen Start und Ansprechpartner klären" },
+        { id: "retention-2", title: "Mehrwert-Mail senden", channel: "E-Mail", dueInDays: 2, purpose: "Nutzung vertiefen und Vertrauen erhöhen" },
+        { id: "retention-3", title: "Referenz anfragen", channel: "Telefon + E-Mail", dueInDays: 7, purpose: "Empfehlungen und Upsell vorbereiten" },
+      ],
+    };
+  }
+
+  const tone = getLeadTemperature(lead).tone;
+  if (tone === "hot" || tone === "critical") {
+    return {
+      stage: "hot",
+      title: "Hot Deal Sequenz",
+      steps: [
+        { id: "hot-1", title: "Entscheider direkt anrufen", channel: "Telefon", dueInDays: 0, purpose: "Momentum nutzen und Einwand sofort klären" },
+        { id: "hot-2", title: "Angebot mit Deadline senden", channel: "E-Mail", dueInDays: 0, purpose: "Verbindlichkeit erzeugen" },
+        { id: "hot-3", title: "Finales Follow-up", channel: "Telefon + WhatsApp", dueInDays: 1, purpose: "Entscheidung aktiv abschließen" },
+      ],
+    };
+  }
+
+  if (tone === "warm") {
+    return {
+      stage: "warm",
+      title: "Warm Lead Sequenz",
+      steps: [
+        { id: "warm-1", title: "Bedarfs-Check", channel: "Telefon", dueInDays: 0, purpose: "Use Case und Pain Point präzisieren" },
+        { id: "warm-2", title: "Case + Angebot senden", channel: "E-Mail", dueInDays: 1, purpose: "Mehrwert konkret machen" },
+        { id: "warm-3", title: "Commitment-Termin sichern", channel: "Telefon", dueInDays: 3, purpose: "Deal in Angebotsphase schieben" },
+      ],
+    };
+  }
+
+  return {
+    stage: "cold",
+    title: "Cold Lead Sequenz",
+    steps: [
+      { id: "cold-1", title: "Erstkontakt aufbauen", channel: "E-Mail", dueInDays: 0, purpose: "Relevanz und Interesse testen" },
+      { id: "cold-2", title: "Kurz-Call anbieten", channel: "Telefon", dueInDays: 2, purpose: "Persönlichen Kontakt initiieren" },
+      { id: "cold-3", title: "Breakup oder Nurture", channel: "E-Mail", dueInDays: 5, purpose: "Pipeline bereinigen oder weiterentwickeln" },
+    ],
+  };
+};
+const clampScore = (value, min = 0, max = 100) => Math.min(max, Math.max(min, value));
+const calculateLeadScore = (lead) => {
+  if (lead.status === "Gewonnen") return 100;
+  if (lead.status === "Verloren") return 5;
+
+  let score = 30;
+  const consumption = lead.consumption ? parseInt(lead.consumption, 10) : 0;
+  const activityCount = getLeadActivityCount(lead);
+
+  if (calculatePriority(lead) === "A") score += 15;
+  else if (calculatePriority(lead) === "B") score += 8;
+  else score += 2;
+
+  if (isOpenCancellationWindow(lead.contractEnd)) score += 18;
+  if (isTodayDue(lead.followUp)) score += 8;
+  if (isOverdue(lead.followUp)) score -= 12;
+  if (lead.appointmentDate) score += 16;
+
+  if (lead.status === "Angebot") score += 12;
+  if (lead.status === "Nachfassen") score += 8;
+  if (lead.status === "Kontaktiert") score += 6;
+
+  if (consumption >= 50000) score += 10;
+  else if (consumption >= 20000) score += 5;
+
+  if (lead.phone) score += 4;
+  if (lead.email) score += 4;
+  score += Math.min(12, activityCount * 2);
+
+  return clampScore(Math.round(score));
+};
+const getLeadWinProbability = (lead) => {
+  if (lead.status === "Gewonnen") return 100;
+  if (lead.status === "Verloren") return 0;
+
+  const score = calculateLeadScore(lead);
+  let probability = Math.round(score * 0.82);
+
+  if (lead.status === "Angebot") probability += 10;
+  if (lead.appointmentDate) probability += 6;
+  if (isOverdue(lead.followUp)) probability -= 8;
+
+  return clampScore(probability, 1, 98);
+};
+const getLeadScoreTone = (probability) => {
+  if (probability >= 70) return "high";
+  if (probability >= 45) return "mid";
+  return "low";
 };
 const sortLeads = (items, sortMode) => {
   const sorted = [...items];
@@ -316,12 +487,17 @@ function AIAssistantPanel({ lead, userRole }) {
   ];
 
   const buildPrompt = (m) => {
+    const leadScore = calculateLeadScore(lead);
+    const closeProbability = getLeadWinProbability(lead);
+    const nextAction = getNextActionPlan(lead);
     const ctx = `
 Lead-Informationen:
 - Firma: ${lead.company || "—"}
 - Ansprechpartner: ${lead.person || "—"}
 - Status: ${lead.status}
 - Priorität: ${calculatePriority(lead)}
+- Lead-Score: ${leadScore}/100
+- Abschlusswahrscheinlichkeit: ${closeProbability}%
 - Verbrauch: ${lead.consumption ? lead.consumption + " kWh" : "unbekannt"}
 - Jahreskosten: ${lead.annualCosts ? "€" + lead.annualCosts : "unbekannt"}
 - Aktueller Anbieter: ${lead.currentProvider || "unbekannt"}
@@ -329,6 +505,10 @@ Lead-Informationen:
 - Kündigungsfenster: ${isOpenCancellationWindow(lead.contractEnd) ? "JA – DRINGEND" : "nein"}
 - Nachfassdatum: ${formatDate(lead.followUp)}
 - Temperatur: ${getLeadTemperature(lead).label}
+- Empfohlene nächste Aktion: ${nextAction.label}
+- Kanal: ${nextAction.channel}
+- Timing: ${nextAction.when}
+- Grund: ${nextAction.reason}
 - Letzte Aktivitäten: ${(lead.callLogs || []).slice(-2).map(c => `${c.outcome} (${formatDate(c.timestamp)})`).join(", ") || "keine"}
 - Notizen: ${(lead.comments || []).slice(-3).map(c => c.text).join(" | ") || "keine"}
     `.trim();
@@ -370,7 +550,16 @@ Lead-Informationen:
   return (
     <div className="ai-panel">
       <div className="ai-panel-header">
-        <span className="ai-panel-icon">🤖</span>
+        <span className="ai-panel-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img" focusable="false">
+            <circle cx="12" cy="4" r="2" />
+            <path d="M9.2 5.7h5.6v2H9.2z" />
+            <rect x="4" y="8" width="16" height="11" rx="4" ry="4" />
+            <circle cx="9" cy="13.4" r="1.4" />
+            <circle cx="15" cy="13.4" r="1.4" />
+            <path d="M8.4 17c.8.8 1.9 1.2 3.6 1.2s2.8-.4 3.6-1.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </span>
         <span className="ai-panel-title">KI-Assistent</span>
       </div>
       <div className="ai-mode-grid">
@@ -836,6 +1025,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const [previewAttachment, setPreviewAttachment] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [sequenceBusyId, setSequenceBusyId] = useState(null);
+  const [sequenceMsg, setSequenceMsg] = useState("");
 
   const priority = calculatePriority(lead);
   const priorityMeta = getPriorityMeta(priority);
@@ -843,7 +1034,20 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
   const isOverdueNow = isOverdue(lead.followUp);
   const isTodayNow = isTodayDue(lead.followUp);
+  const leadScore = calculateLeadScore(lead);
+  const closeProbability = getLeadWinProbability(lead);
+  const nextAction = getNextActionPlan(lead);
+  const sequencePlan = getLeadSequencePlan(lead);
+  const scoreTone = getLeadScoreTone(closeProbability);
   const previewHref = getAttachmentHref(previewAttachment);
+
+  const getSequenceOutcome = (stepId) => {
+    const logs = lead.aiActionLog || [];
+    const outcomeEntry = [...logs]
+      .reverse()
+      .find((entry) => entry?.type === "sequence-step-outcome" && entry?.stepId === stepId);
+    return outcomeEntry?.outcome || null;
+  };
 
   const timeline = useMemo(() => {
     const items = [];
@@ -897,11 +1101,66 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
     await onUpdateField(lead.id, "appointmentTitle", data.appointmentTitle);
   };
 
+  const applySequenceStep = async (step) => {
+    setSequenceBusyId(step.id);
+    setSequenceMsg("");
+    try {
+      const now = new Date().toISOString();
+      const followUpDate = addDaysToIso(step.dueInDays);
+      const sequenceComment = {
+        timestamp: now,
+        author: user.email,
+        text: `[Sequenz] ${step.title} | Kanal: ${step.channel} | Timing: ${step.dueInDays === 0 ? "Heute" : `+${step.dueInDays} Tage`} | Ziel: ${step.purpose}`,
+      };
+      const actionLogEntry = {
+        id: `seq-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: "sequence-step-applied",
+        stepId: step.id,
+        stepTitle: step.title,
+        channel: step.channel,
+        dueInDays: step.dueInDays,
+        plannedFollowUp: followUpDate,
+        by: user.email,
+        timestamp: now,
+      };
+
+      await onUpdateField(lead.id, "comments", [...(lead.comments || []), sequenceComment]);
+      await onUpdateField(lead.id, "followUp", followUpDate);
+      await onUpdateField(lead.id, "aiActionLog", [...(lead.aiActionLog || []), actionLogEntry]);
+      setSequenceMsg(`Schritt "${step.title}" übernommen.`);
+    } catch (e) {
+      setSequenceMsg(`Übernahme fehlgeschlagen (${e?.code || "unknown"}).`);
+    }
+    setSequenceBusyId(null);
+  };
+
+  const trackSequenceOutcome = async (step, outcome) => {
+    setSequenceBusyId(`${step.id}-${outcome}`);
+    setSequenceMsg("");
+    try {
+      const now = new Date().toISOString();
+      const outcomeEntry = {
+        id: `seq-outcome-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: "sequence-step-outcome",
+        stepId: step.id,
+        stepTitle: step.title,
+        outcome,
+        by: user.email,
+        timestamp: now,
+      };
+      await onUpdateField(lead.id, "aiActionLog", [...(lead.aiActionLog || []), outcomeEntry]);
+      setSequenceMsg(`Outcome für "${step.title}" gespeichert: ${outcome}.`);
+    } catch (e) {
+      setSequenceMsg(`Outcome konnte nicht gespeichert werden (${e?.code || "unknown"}).`);
+    }
+    setSequenceBusyId(null);
+  };
+
   const tabs = [
     { id: "activity",    label: "Aktivität" },
     { id: "details",     label: "Details" },
-    { id: "ai",          label: "🤖 KI" },
     { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
+    { id: "ai",          label: "KI Bot" },
   ];
 
   return (
@@ -1005,13 +1264,21 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             <span>Owner</span>
             <strong>{getLeadOwnerEmail(lead)}</strong>
           </div>
+          <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
+            <span>Deal Score</span>
+            <strong>{leadScore}/100</strong>
+          </div>
+          <div className={`drawer-signal-card lead-score-card ${scoreTone}`}>
+            <span>Abschlusschance</span>
+            <strong>{closeProbability}%</strong>
+          </div>
           <div className="drawer-signal-card">
             <span>Letzte Aktivität</span>
             <strong>{formatDateTime(getLastActivityTimestamp(lead)) || "Noch keine"}</strong>
           </div>
           <div className="drawer-signal-card">
             <span>Nächste Aktion</span>
-            <strong>{getNextAction(lead).label}</strong>
+            <strong>{nextAction.label}</strong>
           </div>
           {lead.appointmentDate && (
             <div className="drawer-signal-card appointment-signal" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
@@ -1032,6 +1299,76 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           <button className="quick-action-btn appointment" onClick={() => setShowAppointmentModal(true)}>📅 Termin planen</button>
         </div>
 
+        <div className="next-action-playbook">
+          <div className="next-action-playbook-head">
+            <span>Next Best Action</span>
+            <strong className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</strong>
+          </div>
+          <div className="next-action-playbook-grid">
+            <div>
+              <span>Kanal</span>
+              <strong>{nextAction.channel}</strong>
+            </div>
+            <div>
+              <span>Timing</span>
+              <strong>{nextAction.when}</strong>
+            </div>
+            <div>
+              <span>Grund</span>
+              <strong>{nextAction.reason}</strong>
+            </div>
+          </div>
+
+          <div className="sequence-playbook-head">
+            <span>{sequencePlan.title}</span>
+          </div>
+          <div className="sequence-playbook-list">
+            {sequencePlan.steps.map((step, idx) => {
+              const outcome = getSequenceOutcome(step.id);
+              return (
+                <div key={step.id} className="sequence-step-card">
+                  <div className="sequence-step-main">
+                    <strong>{idx + 1}. {step.title}</strong>
+                    <p>{step.purpose}</p>
+                    <div className="sequence-step-meta">
+                      <span>Kanal: {step.channel}</span>
+                      <span>Timing: {step.dueInDays === 0 ? "Heute" : `+${step.dueInDays} Tage`}</span>
+                      {outcome && <span className={`sequence-outcome-chip ${outcome === "erfolg" ? "success" : "neutral"}`}>Outcome: {outcome}</span>}
+                    </div>
+                  </div>
+                  <div className="sequence-step-actions">
+                    <button
+                      type="button"
+                      className="sequence-btn apply"
+                      onClick={() => applySequenceStep(step)}
+                      disabled={!!sequenceBusyId}
+                    >
+                      {sequenceBusyId === step.id ? "..." : "Übernehmen"}
+                    </button>
+                    <button
+                      type="button"
+                      className="sequence-btn success"
+                      onClick={() => trackSequenceOutcome(step, "erfolg")}
+                      disabled={!!sequenceBusyId}
+                    >
+                      Erfolg
+                    </button>
+                    <button
+                      type="button"
+                      className="sequence-btn neutral"
+                      onClick={() => trackSequenceOutcome(step, "kein-kontakt")}
+                      disabled={!!sequenceBusyId}
+                    >
+                      Kein Kontakt
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {sequenceMsg && <p className="sequence-msg">{sequenceMsg}</p>}
+        </div>
+
         {/* Tabs */}
         <div className="drawer-tabs">
           {tabs.map(t => (
@@ -1040,7 +1377,21 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               className={`drawer-tab-btn ${t.id === "ai" ? "ai-tab" : ""} ${drawerTab === t.id ? "active" : ""}`}
               onClick={() => setDrawerTab(t.id)}
             >
-              {t.label}
+              {t.id === "ai" ? (
+                <span className="ai-tab-label">
+                  <span className="ai-tab-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="img" focusable="false">
+                      <circle cx="12" cy="4" r="2" />
+                      <path d="M9.2 5.7h5.6v2H9.2z" />
+                      <rect x="4" y="8" width="16" height="11" rx="4" ry="4" />
+                      <circle cx="9" cy="13.4" r="1.4" />
+                      <circle cx="15" cy="13.4" r="1.4" />
+                      <path d="M8.4 17c.8.8 1.9 1.2 3.6 1.2s2.8-.4 3.6-1.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                  <span>{t.label}</span>
+                </span>
+              ) : t.label}
             </button>
           ))}
         </div>
@@ -1213,44 +1564,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                 ))}
               </div>
             ) : (<p className="empty-timeline">Keine Anhänge vorhanden.</p>)}
-          </div>
-        )}
-
-        {/* Edit Comment Modal */}
-        {editCommentId && (
-          <div className="modal-backdrop" onClick={() => setEditCommentId(null)}>
-            <div className="modal" onClick={e => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Kommentar bearbeiten</h2>
-                <button className="drawer-close-btn" onClick={() => setEditCommentId(null)}>✕</button>
-              </div>
-              <div className="modal-body">
-                <textarea
-                  value={editCommentText}
-                  onChange={(e) => setEditCommentText(e.target.value)}
-                  rows={4}
-                  placeholder="Kommentartext..."
-                  className="comment-edit-textarea"
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="primary-btn"
-                  onClick={() => {
-                    const updated = lead.comments.map((c) =>
-                      c.timestamp === editCommentId ? { ...c, text: editCommentText } : c
-                    );
-                    onUpdateField(lead.id, "comments", updated);
-                    setEditCommentId(null);
-                    setEditCommentText("");
-                  }}
-                  disabled={!editCommentText.trim()}
-                >
-                  Speichern
-                </button>
-                <button className="ghost-btn" onClick={() => setEditCommentId(null)}>Abbrechen</button>
-              </div>
-            </div>
           </div>
         )}
 
@@ -1483,6 +1796,8 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
   const activityCount = getLeadActivityCount(lead);
   const temperature = getLeadTemperature(lead);
   const nextAction = getNextAction(lead);
+  const closeProbability = getLeadWinProbability(lead);
+  const scoreTone = getLeadScoreTone(closeProbability);
   const owner = getLeadOwnerEmail(lead);
   const lastActivityAt = getLastActivityTimestamp(lead);
   const stromCount = getEnergyMeterCount(lead, "strom");
@@ -1525,6 +1840,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
       </div>
       <div className="lead-row-health">
         <span className={`health-pill ${temperature.tone}`}>{temperature.label}</span>
+        <span className={`lead-score-pill ${scoreTone}`}>Deal {closeProbability}%</span>
         <span className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</span>
       </div>
       <div className="lead-row-status">
@@ -1825,9 +2141,14 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
     try {
       const normalizedEmail = inviteEmail.trim().toLowerCase();
       const nextRole = canAssignAdmins ? inviteRole : "agent";
-      const q = query(collection(db, "users"), where("email", "==", normalizedEmail));
+      const q = query(collection(db, "users"), where("teamId", "==", teamId), where("email", "==", normalizedEmail));
       const snap = await getDocs(q);
-      const existingInvQ = query(collection(db, "invitations"), where("invitedEmail", "==", normalizedEmail), where("status", "==", "pending"));
+      const existingInvQ = query(
+        collection(db, "invitations"),
+        where("teamId", "==", teamId),
+        where("invitedEmail", "==", normalizedEmail),
+        where("status", "==", "pending")
+      );
       const existingInvSnap = await getDocs(existingInvQ);
       if (snap.empty) {
         if (!existingInvSnap.empty) {
@@ -1847,7 +2168,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
         }
       }
       setInviteEmail(""); setInviteRole("agent"); onRefresh();
-    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}).`); }
+    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}): ${e?.message || "Unbekannt"}`); }
     setLoading(false);
   };
 
@@ -1858,17 +2179,30 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
     try {
       const normalizedEmail = manualEmail.trim().toLowerCase();
       const nextRole = canAssignAdmins ? manualRole : "agent";
-      const q = query(collection(db, "users"), where("email", "==", normalizedEmail));
+      const q = query(collection(db, "users"), where("teamId", "==", teamId), where("email", "==", normalizedEmail));
       const snap = await getDocs(q);
       if (!snap.empty) {
-        await updateDoc(doc(db, "users", snap.docs[0].id), { teamId, role: nextRole });
-        setMsg("success", `${manualEmail} hinzugefügt.`);
+        try {
+          await updateDoc(doc(db, "users", snap.docs[0].id), { teamId, role: nextRole });
+          setMsg("success", `${manualEmail} hinzugefügt.`);
+        } catch {
+          await addDoc(collection(db, "invitations"), {
+            teamId,
+            invitedBy: currentUser.email,
+            invitedEmail: normalizedEmail,
+            role: nextRole,
+            createdAt: new Date().toISOString(),
+            status: "pending",
+            addedManually: true,
+          });
+          setMsg("info", `${manualEmail} als Einladung vorgemerkt.`);
+        }
       } else {
         await addDoc(collection(db, "invitations"), { teamId, invitedBy: currentUser.email, invitedEmail: normalizedEmail, role: nextRole, createdAt: new Date().toISOString(), status: "pending", addedManually: true });
         setMsg("info", `${manualEmail} vorgemerkt.`);
       }
       setManualEmail(""); setManualRole("agent"); onRefresh();
-    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}).`); }
+    } catch (e) { setMsg("error", `Fehler (${e?.code || "unknown"}): ${e?.message || "Unbekannt"}`); }
     setLoading(false);
   };
 
@@ -2113,36 +2447,6 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
     setStep(2);
   }, [currentUser.email, leads, users]);
 
-  const processTabularData = React.useCallback((rows) => {
-    if (!rows || rows.length < 2) {
-      setError('Datei muss mindestens 1 Kopfzeile + 1 Datenzeile haben');
-      return;
-    }
-
-    const headers = rows[0].map((h) => String(h || '').trim());
-    const cols = detectColumnHeaders(headers);
-
-    const parsedRows = [];
-    const dups = [];
-    for (let i = 1; i < rows.length; i++) {
-      if (!rows[i] || rows[i].every((c) => !String(c || '').trim())) continue;
-      const parsed = parseImportRow(rows[i], headers, cols, users, currentUser.email);
-      parsedRows.push({ row: i + 1, lead: parsed });
-    }
-
-    const mergedLeads = mergeImportedLeads(parsedRows);
-    const newLeads = [];
-    mergedLeads.forEach((entry) => {
-      const dup = detectDuplicates(entry.lead, leads);
-      if (dup) dups.push({ row: entry.row, lead: entry.lead, duplicate: dup });
-      else newLeads.push(entry);
-    });
-
-    setParsedLeads(newLeads);
-    setDuplicates(dups);
-    setStep(2);
-  }, [currentUser.email, leads, users]);
-
   const handleFileChange = (e) => {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -2269,8 +2573,6 @@ function App() {
   const [activeTab, setActiveTab] = useState("leads");
   const [notifSent, setNotifSent] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
-  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [densityMode, setDensityMode] = useState("dense");
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
@@ -2317,10 +2619,22 @@ function App() {
       try {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists() && userDoc.data().teamId) {
-          setUserProfile(userDoc.data());
-          setTeamId(userDoc.data().teamId);
-          setUserRole(userDoc.data().role || "admin");
-          setCanAssignAdmins(userDoc.data().canAssignAdmins === true);
+          const existingProfile = userDoc.data();
+          const inferredRole = existingProfile.role || (existingProfile.teamId === `team-${currentUser.uid}` ? "admin" : "agent");
+          const inferredCanAssignAdmins = existingProfile.canAssignAdmins === true || inferredRole === "admin";
+
+          // Backfill legacy profiles so rules and client permissions stay in sync.
+          if (!existingProfile.role || typeof existingProfile.canAssignAdmins === "undefined") {
+            await setDoc(userRef, {
+              role: inferredRole,
+              canAssignAdmins: inferredCanAssignAdmins,
+            }, { merge: true });
+          }
+
+          setUserProfile({ ...existingProfile, role: inferredRole, canAssignAdmins: inferredCanAssignAdmins });
+          setTeamId(existingProfile.teamId);
+          setUserRole(inferredRole);
+          setCanAssignAdmins(inferredCanAssignAdmins);
         } else {
           const newTeamId = `team-${currentUser.uid}`;
           const newProfile = { email: currentUser.email, teamId: newTeamId, role: "admin", createdAt: new Date().toISOString(), canAssignAdmins: true };
@@ -2633,25 +2947,6 @@ function App() {
               <div className="toolbar-left">
                 <h1 className="page-title">Lead-Pipeline</h1>
                 <span className="lead-count-badge">{filteredLeads.length}</span>
-                {!multiSelectMode && userRole === "admin" && (
-                  <span className="delete-mode-link" onClick={() => setMultiSelectMode(true)}>🗑️ Leads löschen</span>
-                )}
-                {multiSelectMode && (
-                  <div className="delete-mode-info">
-                    <span className="delete-mode-count">{selectedLeadIds.size} ausgewählt</span>
-                    {selectedLeadIds.size > 0 && (
-                      <button className="danger-btn-sm delete-mode-btn" onClick={() => bulkDeleteLeads(selectedLeadIds)}>
-                        Löschen
-                      </button>
-                    )}
-                    <button className="ghost-btn-sm delete-mode-cancel" onClick={() => {
-                      setMultiSelectMode(false);
-                      setSelectedLeadIds(new Set());
-                    }}>
-                      ✕
-                    </button>
-                  </div>
-                )}
               </div>
               <div className="toolbar-right">
                 <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
