@@ -3491,6 +3491,7 @@ function App() {
   const [kpiFocus, setKpiFocus] = useState("all");
   const [marketTrendPct, setMarketTrendPct] = useState(() => parseOptionalNumber(process.env.REACT_APP_MARKET_TREND_PCT));
   const [marketTrendSource, setMarketTrendSource] = useState("env");
+  const [marketTrendHistory, setMarketTrendHistory] = useState([]);
   const [leadsPerPage, setLeadsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -3708,6 +3709,7 @@ function App() {
         if (cached?.asOf === todayIso && Number.isFinite(cached?.trendPct)) {
           setMarketTrendPct(cached.trendPct);
           setMarketTrendSource(cached.source || "cache");
+          setMarketTrendHistory(Array.isArray(cached.history) ? cached.history : []);
           return;
         }
       }
@@ -3722,11 +3724,13 @@ function App() {
         if (!isActive || !data?.ok || !Number.isFinite(data?.trendPct)) return;
         setMarketTrendPct(data.trendPct);
         setMarketTrendSource(data.source || "api");
+        setMarketTrendHistory(Array.isArray(data.history) ? data.history : []);
         try {
           window.localStorage.setItem(cacheKey, JSON.stringify({
             trendPct: data.trendPct,
             source: data.source || "api",
             asOf: data.asOf || todayIso,
+            history: Array.isArray(data.history) ? data.history : [],
           }));
         } catch (_) {
           // ignore local storage failures
@@ -4010,6 +4014,34 @@ function App() {
     };
   }, [stats.closingRate]);
 
+  const cockpitTrendSparkline = useMemo(() => {
+    const points = marketTrendHistory.filter((item) => Number.isFinite(item?.trendPct));
+    if (points.length < 2) return null;
+
+    const width = 240;
+    const height = 46;
+    const padding = 6;
+    const values = points.map((p) => p.trendPct);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = Math.max(0.001, max - min);
+
+    const chartPoints = points.map((point, idx) => {
+      const x = padding + (idx * (width - padding * 2)) / Math.max(1, points.length - 1);
+      const y = height - padding - ((point.trendPct - min) / span) * (height - padding * 2);
+      return { x, y, asOf: point.asOf, value: point.trendPct };
+    });
+
+    return {
+      width,
+      height,
+      path: chartPoints.map((p, idx) => `${idx === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" "),
+      points: chartPoints,
+      start: points[0]?.asOf,
+      end: points[points.length - 1]?.asOf,
+    };
+  }, [marketTrendHistory]);
+
   const cockpitCtas = useMemo(() => rankCockpitCtas({
     leads: activePipelineLeads,
     marketTrendPct,
@@ -4174,6 +4206,22 @@ function App() {
                 <strong>{closingRateCoach.title}</strong>
                 <span>Closing Rate: {stats.closingRate}% · Preisquelle: {marketTrendSource}</span>
               </div>
+              {cockpitTrendSparkline && (
+                <div className="cockpit-trend-inline" title="Markttrend letzte 7 Tage">
+                  <svg className="cockpit-trend-svg" viewBox={`0 0 ${cockpitTrendSparkline.width} ${cockpitTrendSparkline.height}`} role="img" aria-label="Markttrend 7 Tage">
+                    <path d={cockpitTrendSparkline.path} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                    {cockpitTrendSparkline.points.map((point) => (
+                      <circle key={point.asOf} cx={point.x} cy={point.y} r="2.2" fill="#1d4ed8">
+                        <title>{`${formatDate(point.asOf)}: ${point.value >= 0 ? "+" : ""}${point.value.toFixed(1)}%`}</title>
+                      </circle>
+                    ))}
+                  </svg>
+                  <div className="cockpit-trend-labels">
+                    <span>{formatDate(cockpitTrendSparkline.start)}</span>
+                    <span>{formatDate(cockpitTrendSparkline.end)}</span>
+                  </div>
+                </div>
+              )}
               <ul className="cockpit-action-list">
                 {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
               </ul>
