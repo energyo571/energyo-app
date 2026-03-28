@@ -3630,6 +3630,7 @@ function App() {
       if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp))) return false;
       if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
       if (smartView === "won" && l.status !== "Gewonnen") return false;
+      if (smartView === "renewals" && !l.renewalResurfacedAt) return false;
       if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
       if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
       if (kpiFocus === "inactive48" && !isLeadInactiveForHours(l, 48)) return false;
@@ -3648,6 +3649,7 @@ function App() {
   const wonBundleLeads = useMemo(() => {
     const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
+                { id: "renewals", label: "Renewals" },
       const ma = getMonthsUntil(a.contractEnd);
       const mb = getMonthsUntil(b.contractEnd);
       return ma - mb;
