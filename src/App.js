@@ -3689,7 +3689,6 @@ function App() {
     }
     if (stats.closingRate < 25) {
       return {
-                { id: "renewals", label: "Renewals" },
         tone: "warning",
         title: "Closing 15-24%: Disziplin erhöht Conversion",
         tips: [
@@ -3701,6 +3700,7 @@ function App() {
     }
     return {
       tone: "success",
+                { id: "renewals", label: "Renewals" },
       title: "Closing stark: Erfolgsroutine skalieren",
       tips: [
         "Top-Argumente aus gewonnenen Leads als Script sichern.",
