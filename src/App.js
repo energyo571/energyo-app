@@ -134,7 +134,9 @@ const getTotalDeliveryPoints = (lead) => getEnergyMeterCount(lead, "strom") + ge
 const getLeadActivityCount = (lead) =>
   (lead.comments?.length || 0) + (lead.callLogs?.length || 0) + (lead.statusHistory?.length || 0);
 const getLastActivityTimestamp = (lead) => {
-  const timestamps = [lead.createdAt];
+  // createdAt is intentionally excluded: lead creation is not an engagement event.
+  // Temperature only heats up through real actions (calls, comments, status changes).
+  const timestamps = [];
   (lead.comments || []).forEach((item) => timestamps.push(item.timestamp));
   (lead.callLogs || []).forEach((item) => timestamps.push(item.timestamp));
   (lead.statusHistory || []).forEach((item) => timestamps.push(item.timestamp));
