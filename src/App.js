@@ -2317,7 +2317,38 @@ function KanbanBoard({ leads, onSelectLead }) {
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-function Dashboard({ leads, teamMembers }) {
+function Dashboard({ leads, teamMembers, userRole }) {
+  const [trendInfo, setTrendInfo] = useState(null);
+  const [trendLoading, setTrendLoading] = useState(false);
+  const [trendError, setTrendError] = useState("");
+
+  const loadMarketTrend = useCallback(async (forceRefresh = false) => {
+    setTrendLoading(true);
+    setTrendError("");
+    try {
+      const response = await fetch(`/api/market-trend${forceRefresh ? "?refresh=1" : ""}`);
+      const data = await response.json();
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.error || "Trendquelle nicht erreichbar");
+      }
+      setTrendInfo({
+        trendPct: data.trendPct,
+        source: data.source || "unknown",
+        asOf: data.asOf || "",
+        updatedAt: data.updatedAt || "",
+        cached: !!data.cached,
+      });
+    } catch (error) {
+      setTrendError(error?.message || "Trend konnte nicht geladen werden");
+    } finally {
+      setTrendLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadMarketTrend(false);
+  }, [loadMarketTrend]);
+
   const stats = useMemo(() => {
     const byStatus = STATUS_OPTIONS.map(s => ({ label: s, count: leads.filter(l => l.status === s).length }));
     const topPerformer = teamMembers.map(m => {
@@ -2374,6 +2405,39 @@ function Dashboard({ leads, teamMembers }) {
             ))}
           </div>
         )}
+      </div>
+      <div className="card dashboard-card market-trend-card">
+        <div className="market-trend-head">
+          <h2>📈 Markttrend (30 Tage)</h2>
+          {userRole === "admin" && <span className="market-admin-badge">Admin</span>}
+        </div>
+        {trendError ? (
+          <p className="market-trend-error">{trendError}</p>
+        ) : (
+          <>
+            <div className="market-trend-value-wrap">
+              <strong className={`market-trend-value ${(trendInfo?.trendPct || 0) >= 0 ? "up" : "down"}`}>
+                {trendInfo?.trendPct != null
+                  ? `${trendInfo.trendPct >= 0 ? "+" : ""}${trendInfo.trendPct.toFixed(1)}%`
+                  : "--"}
+              </strong>
+              <span className="market-trend-sub">{(trendInfo?.trendPct || 0) >= 0 ? "Preisauftrieb" : "Preisrueckgang"}</span>
+            </div>
+            <div className="market-trend-meta">
+              <span>Quelle: {trendInfo?.source || "--"}</span>
+              <span>Stand: {trendInfo?.asOf ? formatDate(trendInfo.asOf) : "--"}</span>
+              <span>{trendInfo?.cached ? "Aus Snapshot" : "Frisch geladen"}</span>
+            </div>
+          </>
+        )}
+        <button
+          type="button"
+          className="ghost-btn market-refresh-btn"
+          onClick={() => loadMarketTrend(true)}
+          disabled={trendLoading}
+        >
+          {trendLoading ? "Aktualisiert..." : "Trend jetzt aktualisieren"}
+        </button>
       </div>
     </div>
   );
@@ -4181,7 +4245,7 @@ function App() {
         {activeTab === "dashboard" && (
           <div className="tab-page">
             <div className="main-toolbar"><h1 className="page-title">Dashboard</h1></div>
-            <Dashboard leads={leads} teamMembers={teamMembers} />
+            <Dashboard leads={leads} teamMembers={teamMembers} userRole={userRole} />
           </div>
         )}
 

@@ -2142,6 +2142,75 @@ textarea:focus {
   font-size: 22px;
 }
 
+.market-trend-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.market-trend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.market-admin-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0b5ed7;
+  background: #e9f2ff;
+  border: 1px solid #cfe0ff;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.market-trend-value-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.market-trend-value {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.market-trend-value.up {
+  color: #c92a2a;
+}
+
+.market-trend-value.down {
+  color: #087f5b;
+}
+
+.market-trend-sub {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.market-trend-meta {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.market-trend-error {
+  margin: 0;
+  background: #fff1f0;
+  border: 1px solid #ffd0ca;
+  color: #b42323;
+  border-radius: 10px;
+  padding: 9px 10px;
+  font-size: 12px;
+}
+
+.market-refresh-btn {
+  align-self: flex-start;
+}
+
 .performer-list,
 .team-members-list {
   display: flex;
