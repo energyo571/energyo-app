@@ -1317,6 +1317,54 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const temperature = getLeadTemperature(lead);
   const previewHref = getAttachmentHref(previewAttachment);
 
+  const setFollowUpInDays = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    onUpdateField(lead.id, "followUp", d.toISOString().split("T")[0]);
+  };
+
+  const statusActions = (() => {
+    if (lead.status === "Neu") {
+      return {
+        title: "Nächster Schritt für Neu",
+        actions: [
+          { key: "mark-contacted", label: "Als kontaktiert markieren", onClick: () => onUpdateStatus(lead.id, "Kontaktiert") },
+          { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
+          { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
+        ],
+      };
+    }
+    if (lead.status === "Kontaktiert") {
+      return {
+        title: "Nächster Schritt nach Kontakt",
+        actions: [
+          { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
+          { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
+          { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
+          { key: "move-offer", label: "Zu Angebot", onClick: () => onUpdateStatus(lead.id, "Angebot") },
+        ],
+      };
+    }
+    if (lead.status === "Angebot") {
+      return {
+        title: "Nächster Schritt für Angebot",
+        actions: [
+          { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
+          { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
+          { key: "followup-three", label: "In 3 Tagen nachfassen", onClick: () => setFollowUpInDays(3) },
+        ],
+      };
+    }
+    return {
+      title: "Nächster Schritt",
+      actions: [
+        { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
+        { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
+        { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
+      ],
+    };
+  })();
+
   const getSequenceOutcome = (stepId) => {
     const logs = lead.aiActionLog || [];
     const outcomeEntry = [...logs]
@@ -1436,7 +1484,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
     { id: "activity",    label: "Aktivität" },
     { id: "planung",     label: "📋 Planung" },
     { id: "details",     label: "Details" },
-    { id: "calc",        label: "🧮 Kalkulator" },
     { id: "wechsel",     label: "🔄 Wechsel" },
     { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
     { id: "ai",          label: "KI Bot" },
@@ -1466,6 +1513,17 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             </div>
           </div>
           <button className="drawer-close-btn" onClick={onClose} aria-label="Schließen">✕</button>
+        </div>
+
+        <div className="drawer-customer-core">
+          <div className="drawer-core-item"><span>Kontakt</span><strong>{[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ") || "-"}</strong></div>
+          <div className="drawer-core-item"><span>Telefon</span><strong>{lead.phone || "-"}</strong></div>
+          <div className="drawer-core-item"><span>E-Mail</span><strong>{lead.email || "-"}</strong></div>
+          <div className="drawer-core-item"><span>Kunde</span><strong>{lead.customerType || "-"}</strong></div>
+          <div className="drawer-core-item"><span>PLZ</span><strong>{lead.postalCode || "-"}</strong></div>
+          <div className="drawer-core-item"><span>Verbrauch</span><strong>{lead.consumption ? `${Number(lead.consumption).toLocaleString("de-DE")} kWh` : "-"}</strong></div>
+          <div className="drawer-core-item"><span>Jahreskosten</span><strong>{lead.annualCosts ? formatEuro(Number(lead.annualCosts)) : "-"}</strong></div>
+          <div className="drawer-core-item"><span>Anbieter</span><strong>{lead.currentProvider || "-"}</strong></div>
         </div>
 
         {/* Umsatz Banner */}
@@ -1577,11 +1635,14 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Aktivität */}
         {drawerTab === "activity" && (
           <div className="drawer-tab-content">
+            <div className="status-action-head">
+              <strong>{statusActions.title}</strong>
+              <span>Status: {lead.status}</span>
+            </div>
             <div className="quick-action-row">
-              <button className="quick-action-btn" onClick={() => onUpdateField(lead.id, "followUp", new Date().toISOString().split("T")[0])}>Heute setzen</button>
-              <button className="quick-action-btn" onClick={() => { const t = new Date(); t.setDate(t.getDate() + 1); onUpdateField(lead.id, "followUp", t.toISOString().split("T")[0]); }}>Morgen nachfassen</button>
-              <button className="quick-action-btn" onClick={() => onUpdateStatus(lead.id, "Angebot")}>Zu Angebot ziehen</button>
-              <button className="quick-action-btn appointment" onClick={() => setShowAppointmentModal(true)}>📅 Termin planen</button>
+              {statusActions.actions.map((action) => (
+                <button key={action.key} className={`quick-action-btn ${action.className || ""}`} onClick={action.onClick}>{action.label}</button>
+              ))}
             </div>
             <div className="activity-compose-bar">
               <button
@@ -1653,6 +1714,23 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Planung */}
         {drawerTab === "planung" && (
           <div className="drawer-tab-content">
+            <div className="planung-intake-card">
+              <div className="planung-intake-head">
+                <strong>Verbrauch und Angebotsbasis</strong>
+                <span>Direkt anpassbar für das Telefonat</span>
+              </div>
+              <div className="details-grid planung-details-grid">
+                <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
+                <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
+                <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
+                <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
+              </div>
+            </div>
+
+            <div className="planung-calc-wrap">
+              <SavingsCalculator lead={lead} />
+            </div>
+
             <div className="deal-progress-bar">
               {[{label:"❄️ Cold",tone:"cold",s:1},{label:"🌤 Warm",tone:"warm",s:2},{label:"🔥 Hot",tone:"hot",s:3}].map(({label,tone,s}) => (
                 <div key={tone} className={`deal-progress-step ${temperature.step >= s ? tone : "inactive"} ${temperature.step === s ? "current" : ""}`}>
@@ -1819,13 +1897,6 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                 Erstellt von <strong>{lead.createdBy.email}</strong> am {formatDateTime(lead.createdBy.timestamp)}
               </div>
             )}
-          </div>
-        )}
-
-        {/* Tab: Kalkulator */}
-        {drawerTab === "calc" && (
-          <div className="drawer-tab-content">
-            <SavingsCalculator lead={lead} />
           </div>
         )}
 

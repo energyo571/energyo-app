@@ -2656,6 +2656,41 @@ textarea:focus {
 .drawer-badge.info { background: #ebf5ff; color: #0b5ed7; }
 .drawer-badge.audit { background: #e8f8f0; color: #087f5b; }
 
+.drawer-customer-core {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.drawer-core-item {
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 8px 10px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawer-core-item span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+.drawer-core-item strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ─── Audit pill in lead row signals ──────────────────────────────────────── */
 .audit-pill {
   font-size: 10px;
@@ -2926,6 +2961,25 @@ textarea:focus {
   margin-bottom: 12px;
 }
 
+.status-action-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.status-action-head strong {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.status-action-head span {
+  font-size: 12px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
 .quick-action-btn {
   border: 1px solid #cfe0ff;
   background: #f7faff;
@@ -3177,6 +3231,43 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.planung-intake-card {
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.planung-intake-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.planung-intake-head strong {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.planung-intake-head span {
+  font-size: 12px;
+  color: var(--text-soft);
+  white-space: normal;
+}
+
+.planung-details-grid {
+  margin-bottom: 0;
+}
+
+.planung-calc-wrap {
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  padding: 10px;
 }
 
 .activity-compose-bar,
@@ -4561,6 +4652,15 @@ select {
   .command-hero-metrics,
   .drawer-signal-grid {
     grid-template-columns: 1fr;
+  }
+
+  .drawer-customer-core {
+    grid-template-columns: 1fr;
+  }
+
+  .planung-intake-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .dashboard-grid,
