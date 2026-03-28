@@ -3277,6 +3277,37 @@ function SavingsCalculator({ lead }) {
     }
   };
 
+  const buildTariffKalkulatorUrl = () => {
+    const kalkulatorBaseUrl = process.env.REACT_APP_TARIFKALKULATOR_URL || "https://stromundgasportal.de/tk/#/";
+    const preferredSector = stromKwh > 0 ? "strom" : (gasKwh > 0 ? "gas" : (normalizedEnergyType.includes("gas") ? "gas" : "strom"));
+    const preferredConsumption = preferredSector === "strom"
+      ? (stromKwh > 0 ? Math.round(stromKwh) : Math.round(totalKwh || fallbackConsumption || 0))
+      : (gasKwh > 0 ? Math.round(gasKwh) : Math.round(totalKwh || fallbackConsumption || 0));
+
+    const params = new URLSearchParams({
+      sector: preferredSector,
+      isCompanyService: customerTypeNormalized === "privat" ? "0" : "1",
+      plz: effectivePostalCode,
+      consumption: String(Math.max(preferredConsumption, 0)),
+      futureBaseSuppliers: "false",
+      ratesEnabled: "false",
+    });
+
+    return `${kalkulatorBaseUrl}?${params.toString()}`;
+  };
+
+  const openTariffKalkulator = () => {
+    if (!effectivePostalCode) {
+      setReferenceError("PLZ fehlt im Lead. Bitte zuerst PLZ pflegen.");
+      return;
+    }
+    if (totalKwh <= 0 && fallbackConsumption <= 0) {
+      setReferenceError("Verbrauch fehlt. Bitte zuerst Verbrauch erfassen.");
+      return;
+    }
+    window.open(buildTariffKalkulatorUrl(), "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="savings-calc">
       <div className="savings-header">
@@ -3297,6 +3328,9 @@ function SavingsCalculator({ lead }) {
       <div className="savings-actions">
         <button type="button" className="savings-copy-btn" onClick={loadReferenceTariffs} disabled={referenceLoading}>
           {referenceLoading ? "⏳ Referenztarife werden geladen..." : "🔄 Referenztarife automatisch laden"}
+        </button>
+        <button type="button" className="savings-open-btn" onClick={openTariffKalkulator}>
+          🌐 Tarifkalkulator mit Lead-Daten öffnen
         </button>
       </div>
 

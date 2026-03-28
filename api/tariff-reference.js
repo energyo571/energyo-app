@@ -1,4 +1,4 @@
-const DEFAULT_BASE_URL = process.env.TARIFKALKULATOR_BASE_URL || "https://tarifkalkulator24.de";
+const DEFAULT_BASE_URL = process.env.TARIFKALKULATOR_BASE_URL || "https://stromundgasportal.de";
 
 const REF_PRODUCTS = {
   privat: {
