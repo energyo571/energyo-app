@@ -133,10 +133,10 @@ const getLastActivityTimestamp = (lead) => {
 const getLeadTemperature = (lead) => {
   if (lead.status === "Gewonnen") return { label: "Won", tone: "won" };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost" };
-  if (isOverdue(lead.followUp)) return { label: "Kritisch", tone: "critical" };
-  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "Hot", tone: "hot" };
-  if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "Warm", tone: "warm" };
-  return { label: "Cold", tone: "cold" };
+  if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical" };
+  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "🔥 Feuer", tone: "hot" };
+  if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "🌤 Warm", tone: "warm" };
+  return { label: "🧊 Eisig", tone: "cold" };
 };
 const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
