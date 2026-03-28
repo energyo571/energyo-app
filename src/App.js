@@ -51,6 +51,22 @@ const getRestLaufzeit = (contractEnd) => {
   if (contractEnd === "unknown" || !contractEnd) return null;
   return (new Date(contractEnd) - new Date()) / (1000 * 60 * 60 * 24 * 365);
 };
+const getMonthsUntil = (dateValue) => {
+  if (!dateValue || dateValue === "unknown") return Number.POSITIVE_INFINITY;
+  return (new Date(dateValue) - new Date()) / (1000 * 60 * 60 * 24 * 30);
+};
+const isWonLeadRenewalDue = (lead, monthsBefore = 6) => {
+  if (!lead || lead.status !== "Gewonnen") return false;
+  const monthsUntilEnd = getMonthsUntil(lead.contractEnd);
+  return monthsUntilEnd >= 0 && monthsUntilEnd <= monthsBefore;
+};
+const hasSupplyConfirmation = (lead) => !!lead?.wechselProcess?.steps?.liefertag?.completedAt;
+const getWechselProgress = (lead) => {
+  const steps = lead?.wechselProcess?.steps || {};
+  const total = WECHSEL_STEPS.length;
+  const completed = WECHSEL_STEPS.filter((step) => !!steps[step.id]?.completedAt).length;
+  return { completed, total };
+};
 const calculatePriority = (lead) => {
   const consumption = lead.consumption ? parseInt(lead.consumption) : 0;
   const laufzeit = getRestLaufzeit(lead.contractEnd);
@@ -3577,6 +3593,20 @@ function App() {
     }), sortMode);
   }, [leads, searchTerm, filterPriority, filterStatus, smartView, sortMode, user, kpiFocus]);
 
+  const activePipelineLeads = useMemo(
+    () => filteredLeads.filter((lead) => lead.status !== "Gewonnen" || isWonLeadRenewalDue(lead, 6)),
+    [filteredLeads],
+  );
+
+  const wonBundleLeads = useMemo(() => {
+    const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, 6));
+    return [...bucket].sort((a, b) => {
+      const ma = getMonthsUntil(a.contractEnd);
+      const mb = getMonthsUntil(b.contractEnd);
+      return ma - mb;
+    });
+  }, [filteredLeads]);
+
   const stats = useMemo(() => ({
     totalLeads: leads.length,
     wonLeads: leads.filter(l => l.status === "Gewonnen").length,
@@ -3654,7 +3684,7 @@ function App() {
             <div className="main-toolbar">
               <div className="toolbar-left">
                 <h1 className="page-title">Lead-Pipeline</h1>
-                <span className="lead-count-badge">{filteredLeads.length}</span>
+                <span className="lead-count-badge">{activePipelineLeads.length}</span>
               </div>
               <div className="toolbar-right">
                 <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
@@ -3685,14 +3715,14 @@ function App() {
             {selectionMode && selectedLeadIds.size > 0 && (
               <BulkActionBar
                 selectedCount={selectedLeadIds.size}
-                totalCount={filteredLeads.length}
+                totalCount={activePipelineLeads.length}
                 onDelete={bulkDeleteLeads}
                 onCancel={() => { setSelectionMode(false); setSelectedLeadIds(new Set()); }}
                 onSelectAll={() => {
-                  if (selectedLeadIds.size === filteredLeads.length) {
+                  if (selectedLeadIds.size === activePipelineLeads.length) {
                     setSelectedLeadIds(new Set());
                   } else {
-                    setSelectedLeadIds(new Set(filteredLeads.map(l => l.id)));
+                    setSelectedLeadIds(new Set(activePipelineLeads.map(l => l.id)));
                   }
                 }}
               />
@@ -3735,7 +3765,7 @@ function App() {
               {kpiFocus !== "all" && (
                 <button type="button" className="kpi-reset-btn" onClick={() => applyKpiFocus("all")}>KPI-Fokus zurücksetzen</button>
               )}
-              <span className="filter-result-count">{filteredLeads.length} von {leads.length} Leads</span>
+              <span className="filter-result-count">{activePipelineLeads.length} aktiv · {wonBundleLeads.length} gewonnen gebündelt</span>
             </div>
 
             <div className="kpi-strip">
@@ -3793,13 +3823,13 @@ function App() {
                   <div className="lth-followup">Nachfassen</div>
                   <div className="lth-activity">Aktivität</div>
                 </div>
-                {filteredLeads.length === 0 ? (
+                {activePipelineLeads.length === 0 ? (
                   <div className="empty-leads">
                     <p>Keine Leads gefunden.</p>
                     <button className="new-lead-btn" onClick={() => setShowNewLeadModal(true)}>+ Ersten Lead anlegen</button>
                   </div>
                 ) : (
-                  filteredLeads.map(lead => (
+                  activePipelineLeads.map(lead => (
                     <LeadRow
                       key={lead.id}
                       lead={lead}
@@ -3813,7 +3843,36 @@ function App() {
                 )}
               </div>
             ) : (
-              <KanbanBoard leads={filteredLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
+              <KanbanBoard leads={activePipelineLeads} onSelectLead={l => setSelectedLeadId(l.id)} />
+            )}
+
+            {wonBundleLeads.length > 0 && (
+              <div className="won-bundle-section">
+                <div className="won-bundle-head">
+                  <h3>Gewonnen gebündelt</h3>
+                  <span>{wonBundleLeads.length} Leads außerhalb der aktiven Pipeline</span>
+                </div>
+                <div className="won-bundle-list">
+                  {wonBundleLeads.map((lead) => {
+                    const progress = getWechselProgress(lead);
+                    const supplyConfirmed = hasSupplyConfirmation(lead);
+                    const monthsUntilEnd = getMonthsUntil(lead.contractEnd);
+                    return (
+                      <button key={lead.id} type="button" className="won-bundle-card" onClick={() => setSelectedLeadId(lead.id)}>
+                        <div className="won-bundle-title">{lead.company || lead.person || "Lead"}</div>
+                        <div className="won-bundle-meta">Vertragsende: {formatDate(lead.contractEnd)}</div>
+                        <div className="won-bundle-meta">Wechselstatus: {progress.completed}/{progress.total} Schritte</div>
+                        <div className={`won-bundle-meta ${supplyConfirmed ? "ok" : "warn"}`}>
+                          Belieferungsbestätigung: {supplyConfirmed ? "Vorhanden" : "Fehlt"}
+                        </div>
+                        {Number.isFinite(monthsUntilEnd) && monthsUntilEnd > 0 && (
+                          <div className="won-bundle-meta">Wiedervorlage automatisch bei ≤ 6 Monaten Restlaufzeit</div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </>
         )}
