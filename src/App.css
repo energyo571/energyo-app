@@ -175,6 +175,13 @@ button {
   line-height: 1;
 }
 
+.sidebar-kpi-value--compact {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
 .kpi-warning { color: #ffb020; }
 .kpi-alert { color: #ff7373; }
 .kpi-success { color: #4ade80; }

@@ -2588,22 +2588,44 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, userProfile, 
     { id: "dashboard", label: "Dashboard", icon: "📊" },
     { id: "team", label: "Team", icon: "👥" },
   ];
+
+  const handleNavClick = (id) => {
+    setActiveTab(id);
+    if (id === "leads") {
+      setTimeout(() => {
+        document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth" });
+      }, 50);
+    }
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header"><img src={logo} alt="ENERGYO" className="sidebar-logo" /></div>
       <nav className="sidebar-nav">
         {navItems.map(item => (
-          <button key={item.id} className={`sidebar-nav-item ${activeTab === item.id ? "active" : ""}`} onClick={() => setActiveTab(item.id)}>
+          <button key={item.id} className={`sidebar-nav-item ${activeTab === item.id ? "active" : ""}`} onClick={() => handleNavClick(item.id)}>
             <span className="sidebar-item-icon">{item.icon}</span>
             <span className="sidebar-item-label">{item.label}</span>
           </button>
         ))}
       </nav>
       <div className="sidebar-kpis">
-        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}><span className="sidebar-kpi-value kpi-warning">{stats.overdue}</span><span className="sidebar-kpi-label">Überfällig</span></div>
-        <div className="sidebar-kpi-item" onClick={() => setActiveTab("leads")}><span className="sidebar-kpi-value kpi-alert">{stats.openCancellation}</span><span className="sidebar-kpi-label">Kündigungsfenster</span></div>
-        <div className="sidebar-kpi-item"><span className="sidebar-kpi-value kpi-success">{stats.wonLeads}</span><span className="sidebar-kpi-label">Gewonnen</span></div>
-        <div className="sidebar-kpi-item"><span className={`sidebar-kpi-value ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span><span className="sidebar-kpi-label">Closing rate</span></div>
+        <div className="sidebar-kpi-item" onClick={() => handleNavClick("leads")}>
+          <span className="sidebar-kpi-value kpi-alert">{stats.inactive48}</span>
+          <span className="sidebar-kpi-label">To Do</span>
+        </div>
+        <div className="sidebar-kpi-item" onClick={() => handleNavClick("leads")}>
+          <span className="sidebar-kpi-value kpi-blue sidebar-kpi-value--compact">{formatEnergyVolume(stats.movedEnergyKwh)}</span>
+          <span className="sidebar-kpi-label">Bewegte Energie</span>
+        </div>
+        <div className="sidebar-kpi-item" onClick={() => handleNavClick("leads")}>
+          <span className="sidebar-kpi-value kpi-success sidebar-kpi-value--compact">{formatEuro(stats.totalUmsatzPotential)}</span>
+          <span className="sidebar-kpi-label">Umsatzpotenzial</span>
+        </div>
+        <div className="sidebar-kpi-item">
+          <span className={`sidebar-kpi-value ${getClosingRateClass(stats.closingRate)}`}>{stats.closingRate}%</span>
+          <span className="sidebar-kpi-label">Closing Rate</span>
+        </div>
       </div>
       <div className="sidebar-footer">
         <div className="sidebar-user">
