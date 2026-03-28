@@ -147,21 +147,14 @@ const isLeadInactiveForHours = (lead, minHours = 48) => {
   return getHoursSince(lastActivity) >= minHours;
 };
 const getLeadTemperature = (lead) => {
+  if (lead.status === "Gewonnen") return { label: "Won", tone: "won", step: 3 };
+  if (lead.status === "Verloren") return { label: "Lost", tone: "lost", step: 0 };
+  if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical", step: 2 };
+  // Bidirectional: purely activity-based — every lead can warm up through action
   const inactivityHours = getHoursSince(getLastActivityTimestamp(lead));
-  if (lead.status === "Gewonnen") return { label: "Won", tone: "won" };
-  if (lead.status === "Verloren") return { label: "Lost", tone: "lost" };
-  if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical" };
-  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") {
-    if (inactivityHours >= 96) return { label: "❄️ COLD FROST", tone: "cold" };
-    if (inactivityHours >= 72) return { label: "🌤 Warm", tone: "warm" };
-    return { label: "🔥 HOT FIRE", tone: "hot" };
-  }
-  if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) {
-    if (inactivityHours >= 72) return { label: "❄️ COLD FROST", tone: "cold" };
-    return { label: "🌤 Warm", tone: "warm" };
-  }
-  if (inactivityHours >= 48) return { label: "❄️ COLD FROST", tone: "cold" };
-  return { label: "❄️ COLD FROST", tone: "cold" };
+  if (inactivityHours < 24) return { label: "🔥 HOT", tone: "hot", step: 3 };
+  if (inactivityHours < 72) return { label: "🌤 Warm", tone: "warm", step: 2 };
+  return { label: "❄️ Cold", tone: "cold", step: 1 };
 };
 const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
@@ -1192,6 +1185,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const sequencePlan = getLeadSequencePlan(lead);
   const scoreTone = getLeadScoreTone(closeProbability);
   const readiness = getLeadReadiness(lead);
+  const temperature = getLeadTemperature(lead);
   const previewHref = getAttachmentHref(previewAttachment);
 
   const getSequenceOutcome = (stepId) => {
@@ -1333,6 +1327,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
               {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
               {lead.bundleInquiry && <span className="drawer-badge info">📦 Bündelanfrage</span>}
+              {lead.energyAuditEligible && <span className="drawer-badge audit">🔍 Energieaudit berechtigt</span>}
               {lead.appointmentDate && (
                 <span className="drawer-badge appointment" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
                   📅 Termin: {formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` ${lead.appointmentTime}` : ""}
@@ -1411,6 +1406,16 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               </button>
             );
           })}
+        </div>
+
+        {/* Deal progress bar: Cold → Warm → Hot */}
+        <div className="deal-progress-bar">
+          {[{label:"❄️ Cold",tone:"cold",s:1},{label:"🌤 Warm",tone:"warm",s:2},{label:"🔥 Hot",tone:"hot",s:3}].map(({label,tone,s}) => (
+            <div key={tone} className={`deal-progress-step ${temperature.step >= s ? tone : "inactive"} ${temperature.step === s ? "current" : ""}`}>
+              <span>{label}</span>
+            </div>
+          ))}
+          <div className="deal-progress-hint">{temperature.step < 3 ? (temperature.step === 1 ? "Aktivität auslösen → wird Warm" : "Kontakt intensivieren → wird Hot") : "Jetzt closing starten!"}</div>
         </div>
 
         <div className="drawer-signal-grid">
@@ -1638,10 +1643,10 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               <InlineField label="Aktueller Anbieter" value={lead.currentProvider} onSave={v => onUpdateField(lead.id, "currentProvider", v)} />
               <InlineField label="Verbrauch (kWh)" value={lead.consumption} onSave={v => onUpdateField(lead.id, "consumption", v)} type="number" />
               <InlineField label="Jahreskosten (€)" value={lead.annualCosts} onSave={v => onUpdateField(lead.id, "annualCosts", v)} type="number" render={v => v ? `€${parseInt(v).toLocaleString("de-DE")}` : null} />
-              {/* Energieaudit gate — spiegelt NewLeadModal, ≥10.000 € Pflicht */}
+              {/* Energieaudit gate — ≥10.000 € + kein Privatkunde */}
               {(() => {
                 const auditThreshold = 10000;
-                const eligible = Number(lead.annualCosts || 0) >= auditThreshold;
+                const eligible = Number(lead.annualCosts || 0) >= auditThreshold && lead.customerType !== "Privat";
                 const checked = !!lead.energyAuditEligible;
                 return (
                   <div className={`inline-field audit-gate ${eligible ? "active" : "locked"}`}>
@@ -1654,7 +1659,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
                           disabled={!eligible}
                           onChange={e => eligible && onUpdateField(lead.id, "energyAuditEligible", e.target.checked)}
                         />
-                        {eligible ? (checked ? "Berechtigt ✓" : "Klicken zum Aktivieren") : "Ab €10.000/Jahr freischaltbar"}
+                        {eligible ? (checked ? "Berechtigt ✓" : "Klicken zum Aktivieren") : lead.customerType === "Privat" ? "Privatkunden ausgeschlossen" : "Ab €10.000/Jahr freischaltbar"}
                       </label>
                     </div>
                   </div>
@@ -1856,7 +1861,8 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
   const [form, setForm] = useState(initialForm);
   const auditThreshold = 10000;
   const annualCostsValue = Number.parseFloat(form.annualCosts || 0) || 0;
-  const isAuditEligibleByCost = annualCostsValue >= auditThreshold;
+  const isPrivatCustomer = form.customerType === "Privat";
+  const isAuditEligibleByCost = annualCostsValue >= auditThreshold && !isPrivatCustomer;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -1980,7 +1986,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
               </label>
             </div>
             <div className={`form-group form-group-full audit-gate ${isAuditEligibleByCost ? "active" : "locked"}`}>
-              <label className="checkbox-label" title={isAuditEligibleByCost ? "Kriterium erfüllt" : "Ab 10.000 € Jahreskosten aktivierbar"}>
+              <label className="checkbox-label" title={isAuditEligibleByCost ? "Kriterium erfüllt" : isPrivatCustomer ? "Privatkunden ausgeschlossen" : "Ab 10.000 € Jahreskosten aktivierbar"}>
                 <input
                   type="checkbox"
                   name="energyAuditEligible"
@@ -1988,12 +1994,14 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                   onChange={handleChange}
                   disabled={loading || !isAuditEligibleByCost}
                 />
-                Energieaudit berechtigt (ab 10.000 € Netto/Jahr)
+                Energieaudit berechtigt (ab 10.000 € Netto/Jahr, nur Gewerbe/Großkunde)
               </label>
               <small className="audit-gate-hint">
-                {isAuditEligibleByCost
-                  ? "Kriterium erfüllt: Feld kann aktiviert werden."
-                  : `Noch gesperrt: Jahreskosten müssen mindestens ${formatEuro(auditThreshold)} betragen.`}
+                {isPrivatCustomer
+                  ? "Privatkunden sind vom Energieaudit ausgeschlossen."
+                  : isAuditEligibleByCost
+                    ? "Kriterium erfüllt: Feld kann aktiviert werden."
+                    : `Noch gesperrt: Jahreskosten müssen mindestens ${formatEuro(auditThreshold)} betragen.`}
               </small>
             </div>
             <div className="form-group form-group-full">
@@ -2075,6 +2083,9 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         >
           {temperature.label}
         </span>
+        {lead.energyAuditEligible && (
+          <span className="audit-pill" title="Energieaudit berechtigt">🔍 Audit</span>
+        )}
       </div>
       <div className="lead-row-main">
         <div className="lead-row-company">{lead.company || <em className="no-company">Kein Firmenname</em>}</div>
