@@ -1468,6 +1468,13 @@ textarea:focus {
   gap: 10px;
 }
 
+.cockpit-action-queue-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .cockpit-action-queue-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

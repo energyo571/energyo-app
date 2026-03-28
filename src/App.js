@@ -3505,6 +3505,7 @@ function App() {
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
     if (focus === "overdue" || focus === "today") {
+      setFocusPreset(focus);
       setSortMode("followUp");
       setSmartView("action");
       setFilterStatus("all");
@@ -3512,6 +3513,7 @@ function App() {
     }
     if (focus === "inactive48") {
       // Prevent hidden UI filters from blanking the inactive queue.
+      setFocusPreset("inactive48");
       setSortMode("activity");
       setSmartView("action");
       setFilterStatus("all");
@@ -3519,8 +3521,19 @@ function App() {
       setSearchTerm("");
       return;
     }
-    if (focus === "cancellation" || focus === "priorityA") { setSortMode("priority"); setSmartView("all"); return; }
-    if (focus === "won") { setSortMode("activity"); setSmartView("won"); return; }
+    if (focus === "cancellation" || focus === "priorityA") {
+      setFocusPreset(focus === "priorityA" ? "hot" : "cancellation");
+      setSortMode("priority");
+      setSmartView("all");
+      return;
+    }
+    if (focus === "won") {
+      setFocusPreset("won");
+      setSortMode("activity");
+      setSmartView("won");
+      return;
+    }
+    setFocusPreset("all");
     setSmartView("all");
   };
 
@@ -3531,6 +3544,7 @@ function App() {
       setKpiFocus("all");
       setFilterStatus("all");
       setFilterPriority("all");
+      setSortMode("priority");
       return;
     }
     if (preset === "mine") {
@@ -3571,6 +3585,15 @@ function App() {
       applyKpiFocus(preset);
     }
   };
+
+  const isFocusedView = useMemo(() => (
+    focusPreset !== "all"
+    || kpiFocus !== "all"
+    || smartView !== "all"
+    || filterPriority !== "all"
+    || filterStatus !== "all"
+    || !!searchTerm
+  ), [focusPreset, kpiFocus, smartView, filterPriority, filterStatus, searchTerm]);
 
   const selectedLead = useMemo(() => leads.find(l => l.id === selectedLeadId) || null, [leads, selectedLeadId]);
 
@@ -4217,6 +4240,11 @@ function App() {
               <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
                 {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
               </button>
+              {isFocusedView && (
+                <button type="button" className="ghost-btn-sm" onClick={() => applyFocusPreset("all")}>
+                  Zurück zur Standardansicht
+                </button>
+              )}
               <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} gewonnen gebündelt</span>
             </div>
 
@@ -4301,7 +4329,12 @@ function App() {
                 <div className="cockpit-action-queue">
                   <div className="cockpit-action-queue-head">
                     <strong>{stats.inactive48} Leads seit mehr als 48h ohne Aktivität</strong>
-                    <button type="button" className="ghost-btn-sm" onClick={() => applyKpiFocus("inactive48")}>Jetzt priorisieren</button>
+                    <div className="cockpit-action-queue-controls">
+                      <button type="button" className="ghost-btn-sm" onClick={() => applyKpiFocus("inactive48")}>Jetzt priorisieren</button>
+                      {kpiFocus === "inactive48" && (
+                        <button type="button" className="ghost-btn-sm" onClick={() => applyFocusPreset("all")}>Priorisierung beenden</button>
+                      )}
+                    </div>
                   </div>
                   <div className="cockpit-action-queue-list">
                     {actionQueueLeads.slice(0, 3).map((lead) => (
