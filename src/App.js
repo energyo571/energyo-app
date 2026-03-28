@@ -33,7 +33,7 @@ const initialForm = {
   company: "", person: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
   customerType: "Privat", postalCode: "", currentProvider: "",
-  bundleInquiry: false, followUp: "", attachments: [],
+  bundleInquiry: false, energyAuditEligible: false, followUp: "", attachments: [],
   energyType: "strom",
   energy: {
     strom: [{ zählernummer: "", maloId: "", lieferanschrift: "", kontaktanschrift: "" }],
@@ -78,6 +78,16 @@ const formatDateTime = (d) => {
   if (!d) return "";
   const dt = new Date(d);
   return dt.toLocaleDateString("de-DE") + " " + dt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+};
+const getHoursSince = (timestamp) => {
+  if (!timestamp) return Number.POSITIVE_INFINITY;
+  return (Date.now() - new Date(timestamp).getTime()) / (1000 * 60 * 60);
+};
+const formatEnergyVolume = (kwhRaw) => {
+  const kwh = Number.parseInt(kwhRaw || 0, 10) || 0;
+  if (kwh >= 1000000) return `${(kwh / 1000000).toFixed(2)} GWh`;
+  if (kwh >= 1000) return `${(kwh / 1000).toFixed(1)} MWh`;
+  return `${kwh.toLocaleString("de-DE")} kWh`;
 };
 const formatEuro = (value) => '€' + Math.round(value).toLocaleString('de-DE');
 const formatWaPhone = (phone) => {
@@ -130,12 +140,27 @@ const getLastActivityTimestamp = (lead) => {
   (lead.statusHistory || []).forEach((item) => timestamps.push(item.timestamp));
   return timestamps.filter(Boolean).sort((a, b) => new Date(b) - new Date(a))[0] || null;
 };
+const isLeadInactiveForHours = (lead, minHours = 48) => {
+  if (!lead) return false;
+  if (lead.status === "Gewonnen" || lead.status === "Verloren") return false;
+  const lastActivity = getLastActivityTimestamp(lead);
+  return getHoursSince(lastActivity) >= minHours;
+};
 const getLeadTemperature = (lead) => {
+  const inactivityHours = getHoursSince(getLastActivityTimestamp(lead));
   if (lead.status === "Gewonnen") return { label: "Won", tone: "won" };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost" };
   if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical" };
-  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "🔥 HOT FIRE", tone: "hot" };
-  if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "🌤 Warm", tone: "warm" };
+  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") {
+    if (inactivityHours >= 96) return { label: "❄️ COLD FROST", tone: "cold" };
+    if (inactivityHours >= 72) return { label: "🌤 Warm", tone: "warm" };
+    return { label: "🔥 HOT FIRE", tone: "hot" };
+  }
+  if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) {
+    if (inactivityHours >= 72) return { label: "❄️ COLD FROST", tone: "cold" };
+    return { label: "🌤 Warm", tone: "warm" };
+  }
+  if (inactivityHours >= 48) return { label: "❄️ COLD FROST", tone: "cold" };
   return { label: "❄️ COLD FROST", tone: "cold" };
 };
 const getNextActionPlan = (lead) => {
@@ -515,24 +540,64 @@ const detectDuplicates = (newLead, existingLeads) => {
   return null;
 };
 
-// ─── NEW: KI-Assistent Panel ─────────────────────────────────────────────────
-function AIAssistantPanel({ lead, userRole }) {
+// ─── UPDATED: KI-Assistent Panel (structured output + apply flow) ───────────
+function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus }) {
   const [mode, setMode] = useState(null); // 'prepare' | 'analyze' | 'nextSteps' | 'email'
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [resultRaw, setResultRaw] = useState("");
+  const [resultData, setResultData] = useState(null);
   const [error, setError] = useState(null);
+  const [applyBusy, setApplyBusy] = useState(false);
+  const [applyMsg, setApplyMsg] = useState("");
 
   const modes = [
-    { id: "prepare",   icon: "🎯", label: "Gesprächsvorbereitung" },
-    { id: "analyze",   icon: "🔍", label: "Lead analysieren" },
+    { id: "prepare", icon: "🎯", label: "Gesprächsvorbereitung" },
+    { id: "analyze", icon: "🔍", label: "Lead analysieren" },
     { id: "nextSteps", icon: "📋", label: "Nächste Schritte" },
-    { id: "email",     icon: "✉️",  label: "E-Mail-Entwurf" },
+    { id: "email", icon: "✉️", label: "E-Mail-Entwurf" },
   ];
+
+  const extractJsonFromText = (text) => {
+    const raw = String(text || "").trim();
+    if (!raw) return null;
+    const withoutFence = raw
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```$/, "")
+      .trim();
+
+    try {
+      return JSON.parse(withoutFence);
+    } catch {
+      const firstBrace = withoutFence.indexOf("{");
+      const lastBrace = withoutFence.lastIndexOf("}");
+      if (firstBrace >= 0 && lastBrace > firstBrace) {
+        const candidate = withoutFence.slice(firstBrace, lastBrace + 1);
+        try {
+          return JSON.parse(candidate);
+        } catch {
+          return null;
+        }
+      }
+      return null;
+    }
+  };
 
   const buildPrompt = (m) => {
     const leadScore = calculateLeadScore(lead);
     const closeProbability = getLeadWinProbability(lead);
     const nextAction = getNextActionPlan(lead);
+    const recentCalls = (lead.callLogs || []).slice(-2).map((c) => `${c.outcome} (${formatDate(c.timestamp)})`).join(", ") || "keine";
+    const recentNotes = (lead.comments || []).slice(-3).map((c) => c.text).join(" | ") || "keine";
+    const standardObjections = [
+      "Zu teuer",
+      "Kein Interesse",
+      "Ich entscheide später",
+      "Bin vertraglich noch gebunden",
+      "Schicken Sie erst mal Infos",
+      "Ich habe schon einen Anbieter",
+    ];
+
     const ctx = `
 Lead-Informationen:
 - Firma: ${lead.company || "—"}
@@ -547,30 +612,43 @@ Lead-Informationen:
 - Vertragsende: ${formatDate(lead.contractEnd)}
 - Kündigungsfenster: ${isOpenCancellationWindow(lead.contractEnd) ? "JA – DRINGEND" : "nein"}
 - Nachfassdatum: ${formatDate(lead.followUp)}
-  - Temperatur: ${getLeadTemperature(lead).label}
-  - Abschlussampel: ${getLeadReadiness(lead).label}
+- Temperatur: ${getLeadTemperature(lead).label}
+- Abschlussampel: ${getLeadReadiness(lead).label}
 - Empfohlene nächste Aktion: ${nextAction.label}
 - Kanal: ${nextAction.channel}
 - Timing: ${nextAction.when}
 - Grund: ${nextAction.reason}
-- Letzte Aktivitäten: ${(lead.callLogs || []).slice(-2).map(c => `${c.outcome} (${formatDate(c.timestamp)})`).join(", ") || "keine"}
-- Notizen: ${(lead.comments || []).slice(-3).map(c => c.text).join(" | ") || "keine"}
+- Letzte Aktivitäten: ${recentCalls}
+- Notizen: ${recentNotes}
+- Nutzerrolle: ${userRole || "agent"}
+- Standard-Einwände VP: ${standardObjections.join(", ")}
     `.trim();
 
-    if (m === "prepare") return `${ctx}\n\nErstelle eine prägnante Gesprächsvorbereitung für das nächste Kundengespräch auf Deutsch. Fokus: Einstieg, wichtigste Argumente für einen Wechsel, potenzielle Einwände und wie man sie entkräftet. Max. 200 Wörter, klar strukturiert.`;
-    if (m === "analyze") return `${ctx}\n\nAnalysiere diesen Lead auf Deutsch. Bewerte: Abschlusswahrscheinlichkeit (%), stärkste Signale, größte Risiken, Timing-Empfehlung. Sei direkt und konkret. Max. 200 Wörter.`;
-    if (m === "nextSteps") return `${ctx}\n\nGib 3–5 konkrete, priorisierte nächste Schritte für diesen Lead auf Deutsch. Jeder Schritt: klare Handlung + Zeitrahmen. Format: nummerierte Liste.`;
-    if (m === "email") return `${ctx}\n\nSchreibe einen professionellen, kurzen E-Mail-Entwurf auf Deutsch für die nächste Kontaktaufnahme. Ton: freundlich-professionell, fokussiert auf Mehrwert für den Kunden. Betreff + E-Mail-Text. Max. 150 Wörter.`;
+    const jsonRules = "Antworte ausschließlich als valides JSON (ohne Markdown, ohne Codeblock).";
+
+    if (m === "prepare") {
+      return `${ctx}\n\nAufgabe: Erstelle eine prägnante Gesprächsvorbereitung auf Deutsch. Gib konkrete Einwandbehandlung für die wichtigsten Standard-Einwände mit kurzen, schlagfertigen Antworten.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "opening": "string",\n  "valuePoints": ["string"],\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "closingQuestion": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+    }
+    if (m === "analyze") {
+      return `${ctx}\n\nAufgabe: Analysiere den Lead kurz und konkret auf Deutsch und nenne die 2 wichtigsten Einwand-Antwort-Paare für den nächsten Kontakt.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "priority": "low|mid|high",\n  "reason": "string",\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+    }
+    if (m === "nextSteps") {
+      return `${ctx}\n\nAufgabe: Gib 3–5 priorisierte nächste Schritte auf Deutsch. Ergänze am Ende eine kurze Einwandbehandlung für die 2 wahrscheinlichsten Standard-Einwände.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "nextSteps": ["string"],\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "draftNote": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+    }
+    if (m === "email") {
+      return `${ctx}\n\nAufgabe: Schreibe einen professionellen Follow-up-Mailentwurf auf Deutsch. Ergänze kurze Einwandbehandlung, falls der Empfänger zurückhaltend reagiert.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "subject": "string",\n  "emailText": "string",\n  "tone": "warm|professional|urgent",\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "reason": "string",\n  "suggestedUpdates": { "followUp": "YYYY-MM-DD|" }\n}`;
+    }
     return ctx;
   };
 
   const runAI = async (m) => {
     setMode(m);
     setLoading(true);
-    setResult(null);
+    setResultRaw("");
+    setResultData(null);
+    setApplyMsg("");
     setError(null);
     try {
-      // API key is server-side only — see api/ai-proxy.js
       const response = await fetch("/api/ai-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -581,8 +659,17 @@ Lead-Informationen:
         }),
       });
       const data = await response.json();
-      if (data.content?.[0]?.text) {
-        setResult(data.content[0].text);
+      if (!response.ok) {
+        setError(`KI-Fehler: ${data?.error || response.status}`);
+      } else if (data.content?.[0]?.text) {
+        const rawText = data.content[0].text;
+        const parsed = extractJsonFromText(rawText);
+        setResultRaw(rawText);
+        if (parsed && typeof parsed === "object") {
+          setResultData(parsed);
+        } else {
+          setError("KI-Antwort ist nicht als JSON parsebar. Bitte erneut versuchen.");
+        }
       } else if (data.error) {
         setError(`KI-Fehler: ${data.error.message || data.error}`);
       } else {
@@ -593,6 +680,68 @@ Lead-Informationen:
     }
     setLoading(false);
   };
+
+  const applySuggestion = async () => {
+    if (!resultData || !onUpdateField || !onUpdateStatus) return;
+    setApplyBusy(true);
+    setApplyMsg("");
+
+    try {
+      const updates = resultData.suggestedUpdates || {};
+      const nextComments = [...(lead.comments || [])];
+      const nextAiLog = [...(lead.aiActionLog || [])];
+      const now = new Date().toISOString();
+      let appliedCount = 0;
+
+      if (updates.followUp && /^\d{4}-\d{2}-\d{2}$/.test(updates.followUp)) {
+        await onUpdateField(lead.id, "followUp", updates.followUp);
+        appliedCount += 1;
+      }
+
+      if (updates.status && STATUS_OPTIONS.includes(updates.status) && updates.status !== lead.status) {
+        await onUpdateStatus(lead.id, updates.status);
+        appliedCount += 1;
+      }
+
+      const commentParts = [];
+      if (resultData.summary) commentParts.push(`Zusammenfassung: ${resultData.summary}`);
+      if (resultData.recommendedAction?.label) {
+        commentParts.push(
+          `Empfehlung: ${resultData.recommendedAction.label} (${resultData.recommendedAction.channel || "Kanal offen"}, ${resultData.recommendedAction.when || "Timing offen"})`
+        );
+      }
+      if (resultData.subject) commentParts.push(`Mail-Betreff: ${resultData.subject}`);
+      if (resultData.reason) commentParts.push(`Begründung: ${resultData.reason}`);
+
+      if (commentParts.length > 0) {
+        nextComments.push({
+          timestamp: now,
+          author: user?.email || "KI-System",
+          text: `[KI Copilot:${mode}] ${commentParts.join(" | ")}`,
+        });
+        await onUpdateField(lead.id, "comments", nextComments);
+        appliedCount += 1;
+      }
+
+      nextAiLog.push({
+        id: `ai-apply-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: "ai-copilot-applied",
+        mode,
+        by: user?.email || "unbekannt",
+        timestamp: now,
+        suggestedUpdates: updates,
+        title: resultData.title || modes.find((item) => item.id === mode)?.label || "KI Copilot",
+      });
+      await onUpdateField(lead.id, "aiActionLog", nextAiLog);
+
+      setApplyMsg(appliedCount > 0 ? "Vorschlag wurde ins CRM übernommen." : "Kein direkt übernehmbares Feld erkannt.");
+    } catch (e) {
+      setApplyMsg(`Übernahme fehlgeschlagen (${e?.code || "unknown"}).`);
+    }
+    setApplyBusy(false);
+  };
+
+  const copyPayload = resultData ? JSON.stringify(resultData, null, 2) : resultRaw;
 
   return (
     <div className="ai-panel">
@@ -609,6 +758,7 @@ Lead-Informationen:
         </span>
         <span className="ai-panel-title">KI-Assistent</span>
       </div>
+
       <div className="ai-mode-grid">
         {modes.map((m) => (
           <button
@@ -622,20 +772,79 @@ Lead-Informationen:
           </button>
         ))}
       </div>
+
       {loading && (
         <div className="ai-loading">
           <div className="ai-spinner" />
           <span>KI analysiert Lead...</span>
         </div>
       )}
+
       {error && <div className="ai-error">{error}</div>}
-      {result && !loading && (
+      {applyMsg && <div className="ai-apply-message">{applyMsg}</div>}
+
+      {(resultData || resultRaw) && !loading && (
         <div className="ai-result">
           <div className="ai-result-header">
-            <span>{modes.find(m => m.id === mode)?.icon} {modes.find(m => m.id === mode)?.label}</span>
-            <button className="ai-copy-btn" onClick={() => navigator.clipboard.writeText(result)} title="Kopieren">📋</button>
+            <span>{modes.find((m) => m.id === mode)?.icon} {modes.find((m) => m.id === mode)?.label}</span>
+            <button className="ai-copy-btn" onClick={() => navigator.clipboard.writeText(copyPayload)} title="Kopieren">📋</button>
           </div>
-          <div className="ai-result-text">{result}</div>
+
+          {resultData ? (
+            <div className="ai-result-structured">
+              {resultData.title && <h4 className="ai-result-title">{resultData.title}</h4>}
+              {resultData.summary && <p className="ai-result-line"><strong>Zusammenfassung:</strong> {resultData.summary}</p>}
+              {resultData.priority && <p className="ai-result-line"><strong>Priorität:</strong> {resultData.priority}</p>}
+              {resultData.reason && <p className="ai-result-line"><strong>Begründung:</strong> {resultData.reason}</p>}
+
+              {Array.isArray(resultData.nextSteps) && resultData.nextSteps.length > 0 && (
+                <div className="ai-result-list">
+                  <strong>Nächste Schritte</strong>
+                  <ul>{resultData.nextSteps.map((step, idx) => <li key={`${idx}-${step}`}>{step}</li>)}</ul>
+                </div>
+              )}
+
+              {resultData.recommendedAction && (
+                <div className="ai-result-card">
+                  <strong>Nächste Aktion</strong>
+                  <p><b>Label:</b> {resultData.recommendedAction.label || "—"}</p>
+                  <p><b>Kanal:</b> {resultData.recommendedAction.channel || "—"}</p>
+                  <p><b>Wann:</b> {resultData.recommendedAction.when || "—"}</p>
+                  <p><b>Warum:</b> {resultData.recommendedAction.reason || "—"}</p>
+                </div>
+              )}
+
+              {resultData.subject && <p className="ai-result-line"><strong>Betreff:</strong> {resultData.subject}</p>}
+              {resultData.emailText && <div className="ai-result-text-block">{resultData.emailText}</div>}
+
+              {resultData.opening && <p className="ai-result-line"><strong>Einstieg:</strong> {resultData.opening}</p>}
+              {Array.isArray(resultData.valuePoints) && resultData.valuePoints.length > 0 && (
+                <div className="ai-result-list">
+                  <strong>Nutzenargumente</strong>
+                  <ul>{resultData.valuePoints.map((point, idx) => <li key={`${idx}-${point}`}>{point}</li>)}</ul>
+                </div>
+              )}
+              {Array.isArray(resultData.objectionHandling) && resultData.objectionHandling.length > 0 && (
+                <div className="ai-result-list">
+                  <strong>Einwandbehandlung</strong>
+                  <ul>{resultData.objectionHandling.map((item, idx) => <li key={`${idx}-${item}`}>{item}</li>)}</ul>
+                </div>
+              )}
+
+              <div className="ai-result-card">
+                <strong>Vorgeschlagene CRM-Updates</strong>
+                <pre>{JSON.stringify(resultData.suggestedUpdates || {}, null, 2)}</pre>
+              </div>
+
+              <div className="ai-result-actions">
+                <button className="primary-btn-sm" onClick={applySuggestion} disabled={applyBusy || !onUpdateField || !onUpdateStatus}>
+                  {applyBusy ? "Übernehme..." : "Vorschlag ins CRM übernehmen"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="ai-result-text">{resultRaw}</div>
+          )}
         </div>
       )}
     </div>
@@ -1509,7 +1718,13 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: KI-Assistent */}
         {drawerTab === "ai" && (
           <div className="drawer-tab-content">
-            <AIAssistantPanel lead={lead} userRole={userRole} />
+            <AIAssistantPanel
+              lead={lead}
+              user={user}
+              userRole={userRole}
+              onUpdateField={onUpdateField}
+              onUpdateStatus={onUpdateStatus}
+            />
           </div>
         )}
 
@@ -1617,9 +1832,21 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
 // ─── NewLeadModal ─────────────────────────────────────────────────────────────
 function NewLeadModal({ onClose, onSubmit, loading }) {
   const [form, setForm] = useState(initialForm);
+  const auditThreshold = 10000;
+  const annualCostsValue = Number.parseFloat(form.annualCosts || 0) || 0;
+  const isAuditEligibleByCost = annualCostsValue >= auditThreshold;
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setForm(prev => {
+      const nextValue = type === "checkbox" ? checked : value;
+      const next = { ...prev, [name]: nextValue };
+      if (name === "annualCosts") {
+        const nextCosts = Number.parseFloat(value || 0) || 0;
+        if (nextCosts < auditThreshold) next.energyAuditEligible = false;
+      }
+      return next;
+    });
   };
   const handleFile = (e) => {
     const selectedFiles = Array.from(e.target.files || []);
@@ -1729,6 +1956,23 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                 <input type="checkbox" name="bundleInquiry" checked={form.bundleInquiry} onChange={handleChange} disabled={loading} />
                 Bündelanfrage (mehrere Lieferstellen)
               </label>
+            </div>
+            <div className={`form-group form-group-full audit-gate ${isAuditEligibleByCost ? "active" : "locked"}`}>
+              <label className="checkbox-label" title={isAuditEligibleByCost ? "Kriterium erfüllt" : "Ab 10.000 € Jahreskosten aktivierbar"}>
+                <input
+                  type="checkbox"
+                  name="energyAuditEligible"
+                  checked={form.energyAuditEligible}
+                  onChange={handleChange}
+                  disabled={loading || !isAuditEligibleByCost}
+                />
+                Energieaudit berechtigt (ab 10.000 € Netto/Jahr)
+              </label>
+              <small className="audit-gate-hint">
+                {isAuditEligibleByCost
+                  ? "Kriterium erfüllt: Feld kann aktiviert werden."
+                  : `Noch gesperrt: Jahreskosten müssen mindestens ${formatEuro(auditThreshold)} betragen.`}
+              </small>
             </div>
             <div className="form-group form-group-full">
               <div className="file-upload-zone">
@@ -2952,6 +3196,7 @@ function App() {
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
     if (focus === "overdue" || focus === "today") { setSortMode("followUp"); setSmartView("action"); return; }
+    if (focus === "inactive48") { setSortMode("activity"); setSmartView("action"); return; }
     if (focus === "cancellation" || focus === "priorityA") { setSortMode("priority"); setSmartView("all"); return; }
     if (focus === "won") { setSortMode("activity"); setSmartView("won"); return; }
     setSmartView("all");
@@ -3267,6 +3512,7 @@ function App() {
       if (smartView === "won" && l.status !== "Gewonnen") return false;
       if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
       if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
+      if (kpiFocus === "inactive48" && !isLeadInactiveForHours(l, 48)) return false;
       if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
       if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
       if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
@@ -3279,11 +3525,54 @@ function App() {
     wonLeads: leads.filter(l => l.status === "Gewonnen").length,
     overdue: leads.filter(l => isOverdue(l.followUp)).length,
     dueToday: leads.filter(l => isTodayDue(l.followUp)).length,
+    inactive48: leads.filter(l => isLeadInactiveForHours(l, 48)).length,
     priorityA: leads.filter(l => calculatePriority(l) === "A").length,
     openCancellation: leads.filter(l => isOpenCancellationWindow(l.contractEnd)).length,
+    movedEnergyKwh: leads.reduce((sum, lead) => sum + (Number.parseInt(lead.consumption || 0, 10) || 0), 0),
     totalUmsatzPotential: leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0),
     closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "Gewonnen").length / leads.length) * 100) : 0,
   }), [leads]);
+
+  const actionQueueLeads = useMemo(() =>
+    leads
+      .filter((lead) => isLeadInactiveForHours(lead, 48))
+      .sort((a, b) => getHoursSince(getLastActivityTimestamp(b)) - getHoursSince(getLastActivityTimestamp(a)))
+      .slice(0, 5),
+  [leads]);
+
+  const closingRateCoach = useMemo(() => {
+    if (stats.closingRate < 15) {
+      return {
+        tone: "alert",
+        title: "Closing unter 15%: jetzt aktiv eingreifen",
+        tips: [
+          "Überfällige Leads heute priorisiert anrufen.",
+          "Angebots-Leads ohne Touchpoint >48h zuerst bearbeiten.",
+          "Jeden Kontakt mit konkretem Follow-up-Datum abschließen.",
+        ],
+      };
+    }
+    if (stats.closingRate < 25) {
+      return {
+        tone: "warning",
+        title: "Closing 15-24%: Disziplin erhöht Conversion",
+        tips: [
+          "Follow-ups konsequent im 24-48h Rhythmus setzen.",
+          "Einwandbehandlung im KI-Tab vor Calls vorbereiten.",
+          "Pipeline-Mitte (Angebot/Nachfassen) täglich bewegen.",
+        ],
+      };
+    }
+    return {
+      tone: "success",
+      title: "Closing stark: Erfolgsroutine skalieren",
+      tips: [
+        "Top-Argumente aus gewonnenen Leads als Script sichern.",
+        "High-Potential-Leads mit gleichem Playbook spiegeln.",
+        "Hot-Leads weiter mit kurzen 24h-Zyklen bearbeiten.",
+      ],
+    };
+  }, [stats.closingRate]);
 
   if (!user) return <LoginPage onLogin={setUser} user={user} />;
 
@@ -3393,14 +3682,45 @@ function App() {
             </div>
 
             <div className="kpi-strip">
+              <button type="button" className="kpi-item kpi-umsatz clickable" onClick={() => applyKpiFocus("all")}>
+                <span className="kpi-val">{formatEnergyVolume(stats.movedEnergyKwh)}</span>
+                <span className="kpi-label">Bewegte Energiemenge</span>
+              </button>
               <button type="button" className={`kpi-item kpi-warning clickable ${kpiFocus === "overdue" ? "active" : ""}`} onClick={() => applyKpiFocus("overdue")}><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></button>
               <button type="button" className={`kpi-item kpi-today clickable ${kpiFocus === "today" ? "active" : ""}`} onClick={() => applyKpiFocus("today")}><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></button>
+              <button type="button" className={`kpi-item clickable ${kpiFocus === "inactive48" ? "active" : ""}`} onClick={() => applyKpiFocus("inactive48")}><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">>48h ohne Aktivität</span></button>
               <button type="button" className={`kpi-item kpi-alert clickable ${kpiFocus === "cancellation" ? "active" : ""}`} onClick={() => applyKpiFocus("cancellation")}><span className="kpi-val">{stats.openCancellation}</span><span className="kpi-label">Kündigungsfenster</span></button>
               <button type="button" className={`kpi-item kpi-prio clickable ${kpiFocus === "priorityA" ? "active" : ""}`} onClick={() => applyKpiFocus("priorityA")}><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></button>
               <button type="button" className={`kpi-item clickable ${kpiFocus === "won" ? "active" : ""}`} onClick={() => applyKpiFocus("won")}><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></button>
               <button type="button" className="kpi-action-btn dialer" onClick={() => setShowPowerDialer(true)}>⚡ Power Dialer</button>
               <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
               <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
+            </div>
+
+            <div className={`cockpit-action-card ${closingRateCoach.tone}`}>
+              <div className="cockpit-action-head">
+                <strong>{closingRateCoach.title}</strong>
+                <span>Closing Rate: {stats.closingRate}%</span>
+              </div>
+              <ul className="cockpit-action-list">
+                {closingRateCoach.tips.map((tip) => <li key={tip}>{tip}</li>)}
+              </ul>
+              {stats.inactive48 > 0 && (
+                <div className="cockpit-action-queue">
+                  <div className="cockpit-action-queue-head">
+                    <strong>{stats.inactive48} Leads seit mehr als 48h ohne Aktivität</strong>
+                    <button type="button" className="ghost-btn-sm" onClick={() => applyKpiFocus("inactive48")}>Jetzt priorisieren</button>
+                  </div>
+                  <div className="cockpit-action-queue-list">
+                    {actionQueueLeads.map((lead) => (
+                      <button key={lead.id} type="button" className="cockpit-action-lead" onClick={() => setSelectedLeadId(lead.id)}>
+                        <span>{lead.company || lead.person || "Lead"}</span>
+                        <small>Letzte Aktivität vor {Math.round(getHoursSince(getLastActivityTimestamp(lead)))}h</small>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {viewMode === "list" ? (

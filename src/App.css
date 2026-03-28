@@ -1257,6 +1257,91 @@ textarea:focus {
   font-weight: 700;
 }
 
+.cockpit-action-card {
+  border-radius: 16px;
+  border: 1px solid var(--line-soft);
+  background: #ffffff;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cockpit-action-card.alert {
+  background: linear-gradient(180deg, #fff4f3 0%, #ffffff 100%);
+  border-color: #ffd1cd;
+}
+
+.cockpit-action-card.warning {
+  background: linear-gradient(180deg, #fff9ed 0%, #ffffff 100%);
+  border-color: #f5ddac;
+}
+
+.cockpit-action-card.success {
+  background: linear-gradient(180deg, #effcf4 0%, #ffffff 100%);
+  border-color: #bee9ce;
+}
+
+.cockpit-action-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.cockpit-action-head span {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+.cockpit-action-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cockpit-action-queue {
+  border-top: 1px dashed #d6deea;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cockpit-action-queue-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cockpit-action-queue-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.cockpit-action-lead {
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  background: #f8fbff;
+  padding: 10px 12px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cockpit-action-lead small {
+  font-size: 11px;
+  color: #64748b;
+}
+
 .selection-mode-btn {
   padding: 8px 14px;
   border-radius: 12px;
@@ -2973,6 +3058,15 @@ select {
   font-size: 13px;
 }
 
+.ai-apply-message {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
 .ai-result {
   background: #f8fafc;
   border: 1.5px solid #e2e8f0;
@@ -3013,6 +3107,73 @@ select {
   word-break: break-word;
   max-height: 380px;
   overflow-y: auto;
+}
+
+.ai-result-structured {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #334155;
+}
+
+.ai-result-title {
+  margin: 0;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.ai-result-line {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ai-result-card {
+  background: #ffffff;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ai-result-card p {
+  margin: 4px 0;
+}
+
+.ai-result-card pre {
+  margin: 8px 0 0;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.ai-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-result-list ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ai-result-text-block {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #ffffff;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ai-result-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .appointment-modal {
@@ -3633,6 +3794,29 @@ select {
 .checkbox-label input[type="checkbox"] {
   width: auto;
   accent-color: var(--primary);
+}
+
+.audit-gate {
+  border: 1px dashed #d6deea;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+}
+
+.audit-gate.locked {
+  opacity: 0.9;
+}
+
+.audit-gate.active {
+  border-color: #1f9f5d;
+  background: linear-gradient(180deg, #eafaf0 0%, #ffffff 100%);
+  box-shadow: 0 0 0 1px rgba(31, 159, 93, 0.12);
+}
+
+.audit-gate-hint {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #64748b;
 }
 
 .file-input {
