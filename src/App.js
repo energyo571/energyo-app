@@ -3700,7 +3700,6 @@ function App() {
     }
     return {
       tone: "success",
-                { id: "renewals", label: "Renewals" },
       title: "Closing stark: Erfolgsroutine skalieren",
       tips: [
         "Top-Argumente aus gewonnenen Leads als Script sichern.",
@@ -3790,6 +3789,7 @@ function App() {
                 { id: "mine",   label: "Meine Leads" },
                 { id: "action", label: "Action Queue" },
                 { id: "hot",    label: "Hot Deals" },
+                { id: "renewals", label: "Renewals" },
                 { id: "won",    label: "Gewonnen" },
               ].map(item => (
                 <button
