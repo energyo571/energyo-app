@@ -134,9 +134,9 @@ const getLeadTemperature = (lead) => {
   if (lead.status === "Gewonnen") return { label: "Won", tone: "won" };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost" };
   if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical" };
-  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "🔥 Feuer", tone: "hot" };
+  if (isOpenCancellationWindow(lead.contractEnd) || calculatePriority(lead) === "A") return { label: "🔥 HOT FIRE", tone: "hot" };
   if ((lead.callLogs?.length || 0) > 0 || (lead.comments?.length || 0) > 1) return { label: "🌤 Warm", tone: "warm" };
-  return { label: "🧊 Eisig", tone: "cold" };
+  return { label: "🧊 COLD FROST", tone: "cold" };
 };
 const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
@@ -322,7 +322,7 @@ const getLeadScoreTone = (probability) => {
 const getLeadReadiness = (lead) => {
   if (lead.status === "Gewonnen") {
     return {
-      label: "Gruen",
+      label: "🚦 Angebotsfaehig",
       tone: "green",
       reason: "Abschluss bereits erfolgt.",
       missing: [],
@@ -330,50 +330,39 @@ const getLeadReadiness = (lead) => {
   }
   if (lead.status === "Verloren") {
     return {
-      label: "Rot",
+      label: "🚦 Daten fehlen",
       tone: "red",
       reason: "Lead ist als verloren markiert.",
       missing: [],
     };
   }
 
-  const coreMissing = [];
-  const qualityMissing = [];
+  const missing = [];
   const hasIdentity = !!(String(lead.company || "").trim() || String(lead.person || "").trim());
   const hasContactChannel = !!(String(lead.phone || "").trim() || String(lead.email || "").trim());
   const hasConsumption = Number.parseInt(String(lead.consumption || ""), 10) > 0;
   const hasContractEnd = !!lead.contractEnd && lead.contractEnd !== "unknown";
   const deliveryPoints = getTotalDeliveryPoints(lead);
 
-  if (!hasIdentity) coreMissing.push("Kontakt/Firma");
-  if (!hasContactChannel) coreMissing.push("Telefon oder E-Mail");
-  if (!hasConsumption) coreMissing.push("Verbrauch");
-  if (!hasContractEnd) coreMissing.push("Vertragsende");
+  if (!hasIdentity) missing.push("Kontakt/Firma");
+  if (!hasContactChannel) missing.push("Telefon oder E-Mail");
+  if (!hasConsumption) missing.push("Verbrauch");
+  if (!hasContractEnd) missing.push("Vertragsende");
+  if (!String(lead.currentProvider || "").trim()) missing.push("Anbieter");
+  if (!String(lead.postalCode || "").trim()) missing.push("PLZ");
+  if (deliveryPoints === 0) missing.push("Zähler/Lieferstelle");
 
-  if (!String(lead.currentProvider || "").trim()) qualityMissing.push("Anbieter");
-  if (!String(lead.postalCode || "").trim()) qualityMissing.push("PLZ");
-  if (deliveryPoints === 0) qualityMissing.push("Zähler/Lieferstelle");
-
-  if (coreMissing.length > 0) {
+  if (missing.length > 0) {
     return {
-      label: "Rot",
+      label: "🚦 Daten fehlen",
       tone: "red",
-      reason: `Nicht angebotsfaehig: ${coreMissing.slice(0, 2).join(", ")}`,
-      missing: coreMissing,
-    };
-  }
-
-  if (qualityMissing.length > 0) {
-    return {
-      label: "Gelb",
-      tone: "yellow",
-      reason: `Daten nachziehen: ${qualityMissing.slice(0, 2).join(", ")}`,
-      missing: qualityMissing,
+      reason: `Nicht angebotsfaehig: ${missing.slice(0, 2).join(", ")}`,
+      missing,
     };
   }
 
   return {
-    label: "Gruen",
+    label: "🚦 Angebotsfaehig",
     tone: "green",
     reason: "Angebotsfaehig und bereit fuer Abschlussarbeit.",
     missing: [],
@@ -1820,7 +1809,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints} Lieferstellen</span>)}
       </div>
       <div className="lead-row-health">
-        <span className={`ampel-pill ${readiness.tone}`} title={readiness.reason}>Ampel: {readiness.label}</span>
+        <span className={`ampel-pill ${readiness.tone}`} title={readiness.reason}>{readiness.label}</span>
         <span className={`lead-score-pill ${scoreTone}`}>Deal {closeProbability}%</span>
         <span className={`next-action-pill ${nextAction.tone}`}>{nextAction.label}</span>
       </div>
