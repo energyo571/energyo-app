@@ -21,7 +21,9 @@ function ImapSetup({ onConfigured }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imapUser, imapPassword, imapHost }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { throw new Error("Server-Antwort ungültig"); }
       if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
       onConfigured(data.imapUser);
     } catch (err) {
