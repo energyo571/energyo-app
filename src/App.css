@@ -8383,3 +8383,68 @@ select {
   to { transform: rotate(360deg); }
 }
 .spin { animation: spin 0.7s linear infinite; }
+
+/* ── IMAP Setup form ── */
+.imap-setup-form {
+  padding: 24px 20px;
+  max-width: 400px;
+}
+.imap-setup-info {
+  font-size: 13px;
+  color: var(--gray-500, #6b7280);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+.imap-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.imap-field span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-600, #4b5563);
+}
+.imap-field input {
+  padding: 8px 10px;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  background: var(--gray-50, #f9fafb);
+}
+.imap-field input:focus {
+  border-color: var(--blue-500, #3b82f6);
+  background: #fff;
+}
+.imap-save-btn {
+  margin-top: 8px;
+  padding: 10px 20px;
+  background: var(--blue-500, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.imap-save-btn:hover { background: var(--blue-600, #2563eb); }
+.imap-save-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Mailbox header actions ── */
+.mailbox-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mailbox-connected-user {
+  font-size: 11px;
+  color: var(--gray-400, #9ca3af);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

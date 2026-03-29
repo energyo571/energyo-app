@@ -2,6 +2,8 @@ const { ImapFlow } = require("imapflow");
 const { simpleParser } = require("mailparser");
 const { verifyAuth } = require("./_lib/auth");
 const { rateLimit } = require("./_lib/rateLimit");
+const { getDb } = require("./_lib/firebaseAdmin");
+const { decrypt } = require("./_lib/crypto");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
@@ -9,10 +11,23 @@ module.exports = async function handler(req, res) {
   const user = await verifyAuth(req, res);
   if (!user) return;
 
-  const { IMAP_USER, IMAP_PASSWORD, IMAP_HOST } = process.env;
-  if (!IMAP_USER || !IMAP_PASSWORD) {
-    return res.status(500).json({ error: "E-Mail-Konfiguration fehlt" });
+  // Read per-user IMAP credentials from Firestore
+  const db = getDb();
+  const snap = await db.collection("users").doc(user.uid).get();
+  const userData = snap.data() || {};
+
+  if (!userData.imapUser || !userData.imapPassword) {
+    return res.status(400).json({ error: "E-Mail nicht konfiguriert", code: "IMAP_NOT_CONFIGURED" });
   }
+
+  let IMAP_PASSWORD;
+  try {
+    IMAP_PASSWORD = decrypt(userData.imapPassword);
+  } catch (e) {
+    return res.status(500).json({ error: "E-Mail-Konfiguration fehlerhaft" });
+  }
+  const IMAP_USER = userData.imapUser;
+  const IMAP_HOST = userData.imapHost || "imap.ionos.de";
 
   const folder = req.query.folder || "INBOX";
   const page = Math.max(1, parseInt(req.query.page) || 1);

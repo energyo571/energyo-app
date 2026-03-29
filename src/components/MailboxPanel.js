@@ -1,8 +1,85 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { authFetch } from "../utils/authFetch";
-import { IconMail, IconRefresh, IconPaperclip, IconArrowRight, IconX } from "./Icons";
+import { IconMail, IconRefresh, IconPaperclip } from "./Icons";
 
 const API = process.env.REACT_APP_API_BASE_URL || "";
+
+function ImapSetup({ onConfigured }) {
+  const [imapUser, setImapUser] = useState("");
+  const [imapPassword, setImapPassword] = useState("");
+  const [imapHost, setImapHost] = useState("imap.ionos.de");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      const res = await authFetch(`${API}/api/email-settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imapUser, imapPassword, imapHost }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
+      onConfigured(data.imapUser);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="mailbox-panel">
+      <div className="mailbox-header">
+        <h2><IconMail size={18} /> E-Mail einrichten</h2>
+      </div>
+      <form className="imap-setup-form" onSubmit={handleSave}>
+        <p className="imap-setup-info">
+          Gib deine IMAP-Zugangsdaten ein, um dein E-Mail-Postfach zu verbinden.
+          Das Passwort wird verschlüsselt gespeichert.
+        </p>
+        <label className="imap-field">
+          <span>E-Mail-Adresse</span>
+          <input
+            type="email"
+            value={imapUser}
+            onChange={(e) => setImapUser(e.target.value)}
+            placeholder="name@energyo.de"
+            required
+            autoComplete="email"
+          />
+        </label>
+        <label className="imap-field">
+          <span>IMAP-Passwort</span>
+          <input
+            type="password"
+            value={imapPassword}
+            onChange={(e) => setImapPassword(e.target.value)}
+            placeholder="Dein E-Mail-Passwort"
+            required
+            autoComplete="current-password"
+          />
+        </label>
+        <label className="imap-field">
+          <span>IMAP-Server</span>
+          <input
+            type="text"
+            value={imapHost}
+            onChange={(e) => setImapHost(e.target.value)}
+            placeholder="imap.ionos.de"
+          />
+        </label>
+        {error && <div className="mailbox-error">{error}</div>}
+        <button type="submit" className="imap-save-btn" disabled={saving}>
+          {saving ? "Speichern…" : "Postfach verbinden"}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 function MailboxPanel() {
   const [emails, setEmails] = useState([]);
@@ -13,7 +90,24 @@ function MailboxPanel() {
   const [selectedUid, setSelectedUid] = useState(null);
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [imapConfigured, setImapConfigured] = useState(null); // null = loading, true/false
+  const [imapUser, setImapUser] = useState("");
   const limit = 20;
+
+  // Check if IMAP is configured for this user
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await authFetch(`${API}/api/email-settings`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setImapConfigured(data.configured);
+        setImapUser(data.imapUser || "");
+      } catch {
+        setImapConfigured(false);
+      }
+    })();
+  }, []);
 
   const fetchEmails = useCallback(async (pg = 1) => {
     setLoading(true);
@@ -22,6 +116,10 @@ function MailboxPanel() {
       const res = await authFetch(`${API}/api/email-inbox?page=${pg}&limit=${limit}`);
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (data.code === "IMAP_NOT_CONFIGURED") {
+          setImapConfigured(false);
+          return;
+        }
         throw new Error(data.error || `HTTP ${res.status}`);
       }
       const data = await res.json();
@@ -35,7 +133,7 @@ function MailboxPanel() {
     }
   }, []);
 
-  useEffect(() => { fetchEmails(1); }, [fetchEmails]);
+  useEffect(() => { if (imapConfigured) fetchEmails(1); }, [imapConfigured, fetchEmails]);
 
   const openMail = async (uid) => {
     setSelectedUid(uid);
@@ -72,6 +170,22 @@ function MailboxPanel() {
     const match = from.match(/^(.+?)\s*<.+>$/);
     return match ? match[1].trim() : from.replace(/<|>/g, "");
   };
+
+  // ─── Loading config check ─────────────────────────────────────────────
+  if (imapConfigured === null) {
+    return (
+      <div className="mailbox-panel">
+        <div className="mailbox-loading">E-Mail-Konfiguration wird geprüft…</div>
+      </div>
+    );
+  }
+
+  // ─── Setup view ───────────────────────────────────────────────────────
+  if (!imapConfigured) {
+    return (
+      <ImapSetup onConfigured={(user) => { setImapConfigured(true); setImapUser(user); }} />
+    );
+  }
 
   // ─── Detail view ──────────────────────────────────────────────────────
   if (selectedUid) {
@@ -123,9 +237,12 @@ function MailboxPanel() {
     <div className="mailbox-panel">
       <div className="mailbox-header">
         <h2><IconMail size={18} /> Posteingang</h2>
-        <button className="ghost-btn mailbox-refresh-btn" onClick={() => fetchEmails(page)} disabled={loading} title="Aktualisieren">
-          <IconRefresh size={15} className={loading ? "spin" : ""} />
-        </button>
+        <div className="mailbox-header-actions">
+          {imapUser && <span className="mailbox-connected-user">{imapUser}</span>}
+          <button className="ghost-btn mailbox-refresh-btn" onClick={() => fetchEmails(page)} disabled={loading} title="Aktualisieren">
+            <IconRefresh size={15} className={loading ? "spin" : ""} />
+          </button>
+        </div>
       </div>
 
       {error && <div className="mailbox-error">{error}</div>}
