@@ -3304,6 +3304,7 @@ function SavingsCalculator({ lead }) {
     return { ap, gp };
   };
 
+  // eslint-disable-next-line no-unused-vars
   const importApGpFromClipboard = async (sector) => {
     try {
       if (!navigator?.clipboard?.readText) {
@@ -3470,6 +3471,7 @@ function SavingsCalculator({ lead }) {
     return url.toString();
   };
 
+  // eslint-disable-next-line no-unused-vars
   const openTariffKalkulator = () => {
     if (!effectivePostalCode) {
       setReferenceError("PLZ fehlt im Lead. Bitte zuerst PLZ pflegen.");
@@ -4274,6 +4276,7 @@ function App() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const isFocusedView = useMemo(() => (
     focusPreset !== "all"
     || kpiFocus !== "all"
@@ -4753,6 +4756,7 @@ function App() {
     closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "CLOSED").length / leads.length) * 100) : 0,
   }), [leads]);
 
+  // eslint-disable-next-line no-unused-vars
   const actionQueueLeads = useMemo(() =>
     leads
       .filter((lead) => isLeadInactiveForHours(lead, 48))
