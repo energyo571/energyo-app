@@ -10,6 +10,7 @@ import "./mobile.css";
 
 // ─── Custom Hooks ─────────────────────────────────────────────────────────────
 import useLeads from "./hooks/useLeads";
+import useCalendarEvents from "./hooks/useCalendarEvents";
 
 // ─── Constants & Utils ────────────────────────────────────────────────────────
 import { STATUS_OPTIONS, RENEWAL_RESURFACE_MONTHS } from "./constants";
@@ -88,6 +89,8 @@ function App() {
     logCall, deleteLead, bulkDeleteLeads: bulkDeleteLeadsById,
     addLeadAttachment, removeLeadAttachment,
   } = useLeads(user, teamId, userRole);
+
+  const { events: calendarEvents, addEvent: addCalendarEvent, removeEvent: removeCalendarEvent } = useCalendarEvents(user, teamId);
 
   const applyKpiFocus = (focus) => {
     setKpiFocus(focus);
@@ -654,10 +657,16 @@ function App() {
         )}
 
         {activeTab === "calendar" && (
-          <CalendarView leads={leads} onOpenLead={(leadId) => {
-            setSelectedLeadId(leadId);
-            setActiveTab("leads");
-          }} />
+          <CalendarView
+            leads={leads}
+            externalEvents={calendarEvents}
+            onOpenLead={(leadId) => {
+              setSelectedLeadId(leadId);
+              setActiveTab("leads");
+            }}
+            onAddEvent={addCalendarEvent}
+            onRemoveEvent={removeCalendarEvent}
+          />
         )}
 
         {activeTab === "team" && (
@@ -710,6 +719,12 @@ function App() {
 
       {activeTab === "leads" && !showNewLeadModal && !selectedLeadId && !showPowerDialer && (
         <button className="mobile-fab" onClick={() => setShowNewLeadModal(true)} aria-label="Neuer Lead">＋</button>
+      )}
+
+      {activeTab === "leads" && !showNewLeadModal && (
+        <button className="desktop-fab" onClick={() => setShowNewLeadModal(true)} title="Neuer Lead (N)">
+          <IconPlus size={18} />
+        </button>
       )}
     </div>
   );

@@ -657,6 +657,176 @@ button {
   text-overflow: ellipsis;
 }
 
+/* ── Calendar: Day Add Button ─────────────────────────────────────────────── */
+.cal-day-add-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-left: auto;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.calendar-day-cell:hover .cal-day-add-btn {
+  display: inline-flex;
+}
+.cal-day-add-btn:hover {
+  color: var(--primary);
+}
+
+/* ── Calendar: External Event Chip ────────────────────────────────────────── */
+.calendar-event-chip.external {
+  background: rgba(0, 113, 227, 0.10);
+  border-left: 2px solid var(--primary);
+  cursor: default;
+  position: relative;
+}
+.cal-evt-del {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.calendar-event-chip.external:hover .cal-evt-del {
+  opacity: 1;
+}
+.cal-evt-del:hover {
+  color: var(--danger);
+}
+
+/* ── Calendar: Upcoming External Items ────────────────────────────────────── */
+.calendar-upcoming-item.external {
+  border-left: 2px solid var(--primary);
+  position: relative;
+  cursor: default;
+}
+.cal-upcoming-del {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.calendar-upcoming-item.external:hover .cal-upcoming-del {
+  opacity: 1;
+}
+.cal-upcoming-del:hover {
+  color: var(--danger);
+}
+
+/* ── Calendar: Add Event Modal ────────────────────────────────────────────── */
+.cal-add-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-add-modal {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  width: 380px;
+  max-width: 90vw;
+}
+.cal-add-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.cal-add-header strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.cal-add-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cal-add-input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: var(--surface-muted);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.cal-add-input:focus {
+  border-color: var(--primary);
+}
+.cal-add-textarea {
+  resize: vertical;
+  min-height: 48px;
+  font-family: inherit;
+}
+.cal-add-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+}
+.primary-btn-sm {
+  padding: 6px 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.primary-btn-sm:hover { opacity: 0.88; }
+.primary-btn-sm:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Desktop FAB: Neuer Lead ──────────────────────────────────────────────── */
+.desktop-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.30);
+  z-index: 50;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.desktop-fab:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 24px rgba(0, 113, 227, 0.40);
+}
+
 .main-content {
   padding: 32px 40px;
   min-width: 0;
@@ -717,7 +887,7 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: var(--text-soft);
+  background: var(--primary);
   border: none;
   font-size: 11px;
   font-weight: 600;
@@ -3440,16 +3610,20 @@ textarea:focus {
   z-index: 50;
 }
 
+.modal-backdrop {
+  z-index: 200;
+}
+
 .drawer {
   position: absolute;
   top: 0;
   right: 0;
-  width: min(760px, 94vw);
+  width: min(calc(100vw - 240px), 94vw);
   height: 100vh;
   overflow-y: auto;
   background: var(--surface);
   border-left: 1px solid var(--line);
-  padding: 24px 28px;
+  padding: 24px 32px;
   animation: drawerIn 200ms var(--ease);
 }
 
@@ -3469,6 +3643,7 @@ textarea:focus {
   position: fixed;
   top: 0;
   right: 0;
+  width: calc(100vw - 620px);
   z-index: 52;
   box-shadow: -12px 0 36px rgba(16, 23, 38, 0.22);
 }
@@ -3514,13 +3689,14 @@ textarea:focus {
 }
 
 .drawer-address {
-  margin: 2px 0 0;
-  font-size: 0.85em;
+  margin: 4px 0 0;
+  font-size: 0.82em;
   color: var(--text-soft);
-  opacity: 0.8;
+  letter-spacing: 0.01em;
 }
 
 .drawer-header-badges {
+  margin-top: 6px;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -3709,6 +3885,7 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  align-self: flex-start;
   gap: 6px;
   flex-shrink: 0;
 }
@@ -4945,24 +5122,27 @@ select {
 
 .details-grid {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.drawer.drawer--dialer .details-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
 }
 
 .inline-field {
   background: white;
   border: 1px solid var(--line-soft);
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 8px;
+  padding: 8px 10px;
 }
 
 .inline-label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
+  margin-bottom: 2px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--text-soft);
 }
 
@@ -4975,7 +5155,8 @@ select {
 }
 
 .inline-value {
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .inline-empty {
@@ -4989,8 +5170,8 @@ select {
 }
 
 .details-energy-section {
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
 .details-energy-section h3 {
@@ -6920,7 +7101,7 @@ select {
 }
 .dialer-person {
   font-size: 0.82rem;
-  color: #64748b;
+  color: #cbd5e1;
   margin: 0;
 }
 .dialer-call-btn {
@@ -7719,6 +7900,7 @@ select {
 }
 .objection-title-icon {
   font-size: 1.3rem;
+  color: #f1f5f9;
 }
 .objection-title {
   font-size: 0.88rem;
@@ -7888,12 +8070,13 @@ select {
 .power-dialer-panel {
   position: fixed;
   top: 0;
-  left: 290px;
+  left: 240px;
   width: 380px;
   height: 100vh;
   overflow-y: auto;
-  background: #0f172a;
-  box-shadow: 4px 0 24px rgba(16, 23, 38, 0.32);
+  background: var(--surface-strong);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
   padding: 20px 18px;
   z-index: 45;
   animation: dialerPanelIn 200ms ease-out;

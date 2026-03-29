@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef } from "react";
+import ReactDOM from "react-dom";
 import { STATUS_OPTIONS, STATUS_META, CALL_OUTCOMES, getAttachmentHref } from "../constants";
 import { formatDate, formatDateTime, isOverdue, isTodayDue, isOpenCancellationWindow, addDaysToIso } from "../utils/dates";
 import { formatEuro, formatWaPhone, formatMeterAddress } from "../utils/format";
@@ -278,7 +279,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
           <div className="drawer-header-info">
             <h2 className="drawer-company">{lead.company || <em>Kein Firmenname</em>}</h2>
             <p className="drawer-person">
-              {[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ")}{lead.customerType ? ` · ${lead.customerType}` : ""}{lead.postalCode ? ` · PLZ ${lead.postalCode}` : ""}
+              {[lead.anrede, lead.titel, lead.person].filter(Boolean).join(" ")}{lead.geburtsdatum ? ` · geb. ${formatDate(lead.geburtsdatum)}` : ""}{lead.customerType ? ` · ${lead.customerType}` : ""}
             </p>
             {(() => {
               const addr = lead.deliveryAddress || {};
@@ -454,17 +455,6 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
               })()}
               <InlineField label="Vertragsende" value={lead.contractEnd === "unknown" ? "" : lead.contractEnd} onSave={v => onUpdateField(lead.id, "contractEnd", v || "unknown")} type="date" render={v => (!v || v === "unknown") ? "Unbekannt" : formatDate(v)} />
               <InlineField label="Geburtsdatum" value={lead.geburtsdatum} onSave={v => onUpdateField(lead.id, "geburtsdatum", v)} type="date" render={v => v ? formatDate(v) : null} />
-              <div className="inline-field">
-                <label className="inline-label">Nächster Termin</label>
-                <div className="inline-value-row" onClick={() => setShowAppointmentModal(true)}>
-                  <span className="inline-value">
-                    {lead.appointmentDate
-                      ? `${formatDate(lead.appointmentDate)}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`
-                      : <em className="inline-empty">Klicken zum Planen</em>}
-                  </span>
-                  <span className="inline-edit-icon"><IconCalendar size={14} /></span>
-                </div>
-              </div>
             </div>
 
             <div className="details-energy-section">
@@ -769,13 +759,14 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
       </div>
 
       {/* Termin Modal */}
-      {showAppointmentModal && (
+      {showAppointmentModal && ReactDOM.createPortal(
         <AppointmentModal
           lead={lead}
           currentUserEmail={user?.email || ""}
           onClose={() => setShowAppointmentModal(false)}
           onSave={handleSaveAppointment}
-        />
+        />,
+        document.body
       )}
     </Wrapper>
   );

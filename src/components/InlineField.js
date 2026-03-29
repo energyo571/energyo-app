@@ -31,7 +31,6 @@ function InlineField({ label, value, onSave, type = "text", options = null, rend
           <span className="inline-value">
             {render ? render(value) : (value || <em className="inline-empty">Klicken zum Bearbeiten</em>)}
           </span>
-          <span className="inline-edit-icon">✎</span>
         </div>
       )}
     </div>

@@ -53,6 +53,7 @@ export const IconCrown      = (p) => <I d={<><path d="M2 4l3 12h14l3-12-5 4-5-4-
 export const IconLoader     = (p) => <I d={<><line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" /><line x1="4.93" y1="4.93" x2="7.76" y2="7.76" /><line x1="16.24" y1="16.24" x2="19.07" y2="19.07" /><line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" /><line x1="4.93" y1="19.07" x2="7.76" y2="16.24" /><line x1="16.24" y1="7.76" x2="19.07" y2="4.93" /></>} {...p} />;
 export const IconLightbulb  = (p) => <I d={<><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z" /></>} {...p} />;
 export const IconPin        = (p) => <I d={<><path d="M12 17v5" /><path d="M9 10.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6h1V3H8v3h1z" /></>} {...p} />;
+export const IconTrash      = (p) => <I d={<><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></>} {...p} />;
 
 /* ── Rank badges (filled, no stroke) ── */
 export const RankBadge = ({ rank }) => {
