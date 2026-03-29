@@ -685,6 +685,7 @@ function App() {
         avatarUploading={avatarUploading}
         onAvatarUpload={uploadUserAvatar}
         onSignOut={() => signOut(auth)}
+        onCloseDrawer={closeLeadDrawer}
       />
 
       <div className="main-content">

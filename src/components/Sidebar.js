@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import logo from "../logo.png";
 import { formatEnergyVolume, formatEuro, getClosingRateClass } from "../utils/format";
 
-function Sidebar({ activeTab, setActiveTab, stats, user, userRole, userProfile, avatarUploading, onAvatarUpload, onSignOut }) {
+function Sidebar({ activeTab, setActiveTab, stats, user, userRole, userProfile, avatarUploading, onAvatarUpload, onSignOut, onCloseDrawer }) {
   const avatarInputRef = useRef(null);
   const avatarUrl = userProfile?.avatarDataUrl || "";
 
@@ -21,6 +21,7 @@ function Sidebar({ activeTab, setActiveTab, stats, user, userRole, userProfile, 
 
   const handleNavClick = (id) => {
     setActiveTab(id);
+    if (onCloseDrawer) onCloseDrawer();
     if (id === "leads") {
       setTimeout(() => {
         document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth" });
