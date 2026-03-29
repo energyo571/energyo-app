@@ -1,0 +1,1196 @@
+Stufe;Versorger;Tarif;Tarif-ID;Sparte;Typ;Verbrauch von;Verbrauch bis;gültig von;gültig bis;Provision in Euro;Provision in Euro je kWh;Folgeprovision in Euro;Folgeprovision in Euro je kWh;Sonderprovision
+Stufe 21;Aras Energy GmbH;Aras Horizon 24;18922;Strom;Privatkunde;1;100000;2025-07-01;2999-06-30;195.00;;;;
+Stufe 21;Aras Energy GmbH;Aras Pulse 24;18921;Strom;Privatkunde;1;100000;2025-07-01;2999-06-30;96.00;;;;
+Stufe 21;badenova;Erdgas24;2859;Gas;Privatkunde;1;1500000;2025-07-01;2999-04-30;128.00;;;;
+Stufe 21;badenova;Erdgas24;2859;Gas;Privatkunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Erdgas24 Gewerbe V1 (A - 0);17652;Gas;Gewerbekunde;1;1500000;2026-02-01;2999-01-31;124.00;;;;
+Stufe 21;badenova;Erdgas24 Gewerbe V1 (A - 0);17652;Gas;Gewerbekunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Erdgas24-Bio10;18227;Gas;Privatkunde;1;1500000;2025-07-01;2999-04-30;128.00;;;;
+Stufe 21;badenova;Erdgas24-Bio10;18227;Gas;Privatkunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Erdgas24-Bio15;18259;Gas;Privatkunde;1;1500000;2025-07-01;2999-04-30;128.00;;;;
+Stufe 21;badenova;Erdgas24-Bio15;18259;Gas;Privatkunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Ökostrom24;2858;Strom;Privatkunde;1;100000;2026-03-01;2999-01-31;100.00;;;;
+Stufe 21;badenova;Ökostrom24;2858;Strom;Privatkunde;0;0;2026-03-16;2026-03-31;;;;;45.00 on Top 
+Stufe 21;badenova;Ökostrom24 Gewerbe V1 (A - 0);17651;Strom;Gewerbekunde;1;100000;2026-02-01;2999-01-31;100.00;;;;
+Stufe 21;badenova;Ökostrom24 Gewerbe V1 (A - 0);17651;Strom;Gewerbekunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Ökostrom24 Gewerbe V1 (A - 0);17651;Strom;Gewerbekunde;0;0;2026-02-13;2026-03-31;;;;;20.00 on Top 
+Stufe 21;badenova;Ökostrom24 Marktpreis V2;18716;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;100.00;;;;
+Stufe 21;badenova;Ökostrom24 Marktpreis V2;18716;Strom;Privatkunde;0;0;2026-02-02;2026-03-31;;;;;30.00 on Top 
+Stufe 21;badenova;Ökostrom24 Marktpreis V2;18716;Strom;Privatkunde;0;0;2026-02-13;2026-03-31;;;;;20.00 on Top 
+Stufe 21;Brillant Energie GmbH;Gas Natur 24 - 320;18052;Gas;Privatkunde;1000;49999;2024-12-01;2999-12-31;92.00;;;;
+Stufe 21;Brillant Energie GmbH;Gas Natur 24 - 321;18051;Gas;Privatkunde;1000;49999;2024-12-01;2999-12-31;160.00;;;;
+Stufe 21;Brillant Energie GmbH;Strom Natur 24 - 312;18054;Strom;Privatkunde;250;12000;2024-12-01;2999-12-31;73.00;;;;
+Stufe 21;Brillant Energie GmbH;Strom Natur 24 - 314;18053;Strom;Privatkunde;250;12000;2024-12-01;2999-12-31;130.00;;;;
+Stufe 21;DEW21;Erdgas Direkt;18027;Gas;Privatkunde;8000;50000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;DEW21;Erdgas Direkt;18027;Gas;Privatkunde;0;0;2025-07-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;DEW21;Erdgas Direkt;18028;Gas;Privatkunde;8000;50000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;DEW21;Erdgas Direkt;18028;Gas;Privatkunde;0;0;2025-07-01;2026-03-31;;;;;75.00 on Top 
+Stufe 21;DEW21;Erdgas Lokal;17341;Gas;Privatkunde;8000;50000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;DEW21;Strom Direkt;18029;Strom;Privatkunde;1500;30000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;DEW21;Strom Direkt;18029;Strom;Privatkunde;0;0;2025-07-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;DEW21;Strom Direkt;18030;Strom;Privatkunde;1500;30000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;DEW21;Strom Direkt;18030;Strom;Privatkunde;0;0;2025-07-01;2026-03-31;;;;;75.00 on Top 
+Stufe 21;DEW21;Strom Lokal;17339;Strom;Privatkunde;1500;30000;2025-07-01;2999-05-31;56.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24;9385;Strom;Privatkunde;500;30000;2025-02-19;2999-08-31;104.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gas;9387;Gas;Privatkunde;1000;100000;2025-02-19;2999-08-31;104.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gas Gewerbe;9388;Gas;Gewerbekunde;1000;100000;2025-02-19;2999-08-31;104.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gas Gewerbe S;14416;Gas;Gewerbekunde;1000;100000;2025-02-19;2999-08-31;129.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gas S;14415;Gas;Privatkunde;1000;100000;2025-02-19;2999-08-31;129.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gewerbe;9386;Strom;Gewerbekunde;500;30000;2025-02-19;2999-08-31;104.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 Gewerbe S;14417;Strom;Gewerbekunde;500;30000;2025-02-19;2999-08-31;129.00;;;;
+Stufe 21;E WIE EINFACH;EinPreisTarif 24 S;12382;Strom;Privatkunde;500;30000;2025-02-19;2999-08-31;129.00;;;;
+Stufe 21;E.ON;E.ON Direkt Erdgas 24;18611;Gas;Privatkunde;1;1999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON Direkt Erdgas 24;18611;Gas;Privatkunde;2000;300000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON Erdgas Basis 24;19357;Gas;Privatkunde;1;1999;2025-11-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON Erdgas Basis 24;19357;Gas;Privatkunde;2000;300000;2025-11-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON Ökostrom Basis 24;19356;Strom;Privatkunde;1;999;2025-11-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON Ökostrom Basis 24;19356;Strom;Privatkunde;1000;100000;2025-11-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Heizen Fix DT;17317;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Heizen Fix DT;17317;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Nachtspeicher Fix DT;17318;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Nachtspeicher Fix DT;17318;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Nachtspeicher Fix ET;17319;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Nachtspeicher Fix ET;17319;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Wärmepumpe Fix DT 24;17320;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Wärmepumpe Fix DT 24;17320;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Wärmepumpe Fix ET 24;17321;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON ÖkoStrom Wärmepumpe Fix ET 24;17321;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON Strom 24;18610;Strom;Privatkunde;1;999;2025-09-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON Strom 24;18610;Strom;Privatkunde;1000;100000;2025-09-01;2999-02-28;153.00;;;;
+Stufe 21;E.ON;E.ON Strom Extra;18523;Strom;Privatkunde;1;999;2026-03-01;2999-02-28;48.00;;;;
+Stufe 21;E.ON;E.ON Strom Extra;18523;Strom;Privatkunde;1000;100000;2026-03-01;2999-02-28;133.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerGas Fix 24;15953;Gas;Gewerbekunde;1;4999;2025-03-06;2999-11-30;113.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerGas Fix 24;15953;Gas;Gewerbekunde;5000;19999;2025-03-06;2999-11-30;233.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerGas Fix 24;15953;Gas;Gewerbekunde;20000;39999;2025-03-06;2999-11-30;323.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerGas Fix 24;15953;Gas;Gewerbekunde;40000;300000;2025-03-06;2999-10-31;413.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerStrom eFix 36 ET;15951;Strom;Gewerbekunde;1;999;2025-03-06;2999-11-30;113.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerStrom eFix 36 ET;15951;Strom;Gewerbekunde;1000;4999;2025-03-06;2999-02-28;183.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerStrom eFix 36 ET;15951;Strom;Gewerbekunde;5000;9999;2025-03-06;2999-11-30;233.00;;;;
+Stufe 21;E.ON;E.ON UnternehmerStrom eFix 36 ET;15951;Strom;Gewerbekunde;10000;100000;2025-03-06;2999-11-30;323.00;;;;
+Stufe 21;E.ON Energie Österreich GmbH;E.ON Erdgas Fix;14235;Gas;Privatkunde;1;1500000;2025-09-01;2999-10-31;55.00;;;;
+Stufe 21;E.ON Energie Österreich GmbH;E.ON Erdgas Fix Gewerbe;14236;Gas;Gewerbekunde;1;1500000;2025-09-01;2999-10-31;55.00;;;;
+Stufe 21;E.ON Energie Österreich GmbH;E.ON ÖkoStrom Fix;14237;Strom;Privatkunde;1;100000;2025-09-01;2999-10-31;55.00;;;;
+Stufe 21;E.ON Energie Österreich GmbH;E.ON ÖkoStrom Fix Gewerbe;14238;Strom;Gewerbekunde;1;100000;2025-09-01;2999-10-31;55.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Gas  (12M);17684;Gas;Privatkunde;10000;2000000;2025-03-29;2999-11-30;165.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Gas  (12M) Gewerbe;17685;Gas;Gewerbekunde;10000;2000000;2025-03-29;2999-11-30;165.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Gas  (24M);17686;Gas;Privatkunde;10000;2000000;2025-03-29;2999-11-30;290.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Gas  (24M) Gewerbe;17687;Gas;Gewerbekunde;10000;2000000;2025-03-29;2999-11-30;290.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Öko-Strom 12 Gewerbe ET;17689;Strom;Gewerbekunde;10000;150000;2025-03-29;2999-11-30;129.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Öko-Strom 12 Privat ET;17688;Strom;Privatkunde;3000;150000;2025-03-29;2999-11-30;104.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Öko-Strom 24 Gewerbe ET;17693;Strom;Gewerbekunde;10000;150000;2025-03-29;2999-11-30;290.00;;;;
+Stufe 21;E.VITA;E.VITA - CPO Öko-Strom 24 Privat ET;17692;Strom;Privatkunde;3000;150000;2025-03-29;2999-11-30;148.00;;;;
+Stufe 21;EAM;EAM Gewerbestrom;12856;Strom;Gewerbekunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;EAM Gewerbestrom Plus;12857;Strom;Gewerbekunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM AutoStrom;12891;Strom;Privatkunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM Erdgas;12853;Gas;Privatkunde;1;100000;2024-08-01;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM Heizstrom;12851;Strom;Privatkunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM Heizstrom;12852;Strom;Privatkunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM Strom;12849;Strom;Privatkunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EAM;Mein EAM Strom Plus;12850;Strom;Privatkunde;1;100000;2024-07-09;2999-07-31;100.00;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;0.01050000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;;;0.01050000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;50001;60000;2023-02-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;0.00730000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;;;0.00730000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;0.00590000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;;;0.00590000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;0.00465000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;;;0.00465000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;0.00370000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;;;0.00370000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;0.00289000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;;;0.00289000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas RLM 12;10874;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;0.01050000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;;;0.01050000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;0.00730000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;;;0.00730000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;0.00590000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;;;0.00590000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;0.00465000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;;;0.00465000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;0.00370000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;;;0.00370000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;0.00289000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Gas SLP 12;9875;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;;;0.00289000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;20000;60000;2023-02-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;0.00730000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;;;0.00730000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;0.00590000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;;;0.00590000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;0.00465000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;;;0.00465000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;0.00370000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;;;0.00370000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;0.00289000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;;;0.00289000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas RLM;18689;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;20000;60000;2023-02-01;2999-09-30;;0.00750000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;0.00730000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;60001;100000;2023-02-01;2999-09-30;;;;0.00730000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;0.00590000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;100001;300000;2023-02-01;2999-09-30;;;;0.00590000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;0.00465000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;300001;500000;2023-02-01;2999-09-30;;;;0.00465000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;0.00370000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;500001;1000000;2023-02-01;2999-09-30;;;;0.00370000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;0.00289000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;1000001;10000000;2023-02-01;2999-09-30;;;;0.00289000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Gas SLP;18690;Gas;Gewerbekunde;50000;60000;2023-02-01;2999-09-30;;;;0.00750000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;20000;60000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom RLM;18687;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;20000;60000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Plus Strom SLP;18688;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;0.01500000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;;;0.01500000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;500001;1000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom RLM 12;9339;Strom;Gewerbekunde;1000001;10000000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;0.01500000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;20000;40000;2025-04-01;2999-09-30;;;;0.01500000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;40001;50000;2025-04-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;50001;60000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;60001;100000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;0.01300000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;100001;300000;2024-03-01;2999-09-30;;;;0.01300000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;0.00900000;;;
+Stufe 21;EGT Energievertrieb GmbH;EGT Spot Strom SLP 12;9340;Strom;Gewerbekunde;300001;500000;2024-03-01;2999-09-30;;;;0.00900000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15906;Gas;Privatkunde;5001;12000;2025-04-04;2999-08-31;66.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15906;Gas;Privatkunde;12001;18000;2025-04-04;2999-08-31;114.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15906;Gas;Privatkunde;18001;100000;2025-04-04;2999-08-31;144.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15907;Gas;Gewerbekunde;5001;12000;2025-04-04;2999-08-31;66.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15907;Gas;Gewerbekunde;12001;18000;2025-04-04;2999-08-31;114.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort;15907;Gas;Gewerbekunde;18001;100000;2025-04-04;2999-08-31;144.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17565;Gas;Privatkunde;5001;12000;2025-04-05;2999-08-31;66.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17565;Gas;Privatkunde;12001;42000;2025-04-05;2999-08-31;85.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17565;Gas;Privatkunde;42001;100000;2025-04-05;2999-08-31;104.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17566;Gas;Gewerbekunde;5001;12000;2025-04-05;2999-08-31;66.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17566;Gas;Gewerbekunde;12001;42000;2025-04-05;2999-08-31;85.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einserdgas Komfort 12;17566;Gas;Gewerbekunde;42001;100000;2025-04-05;2999-08-31;104.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;14855;Strom;Privatkunde;1001;2500;2025-04-05;2999-03-31;85.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;14855;Strom;Privatkunde;2501;4000;2025-04-05;2999-03-31;110.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;14855;Strom;Privatkunde;4001;10000;2025-04-05;2999-03-31;129.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;15245;Strom;Gewerbekunde;1001;2500;2025-04-04;2999-03-31;85.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;15245;Strom;Gewerbekunde;2501;4000;2025-04-04;2999-03-31;110.00;;;;
+Stufe 21;eins energie in sachsen GmbH & Co. KG;einsstrom Komfort Klassik;15245;Strom;Gewerbekunde;4001;10000;2025-04-04;2999-03-31;129.00;;;;
+Stufe 21;Elli;Volkswagen Naturstrom Komfort 12;16627;Strom;Privatkunde;1;100000;2026-01-28;2999-06-30;82.00;;;;
+Stufe 21;Elli;Volkswagen Naturstrom Komfort 12;16627;Strom;Privatkunde;0;0;2026-02-17;2026-03-31;;;;;40.00 on Top 
+Stufe 21;Elli;Volkswagen Naturstrom Komfort 24;16628;Strom;Privatkunde;1;100000;2026-01-28;2999-06-30;110.00;;;;
+Stufe 21;Elli;Volkswagen Naturstrom Komfort 24;16628;Strom;Privatkunde;0;0;2026-02-17;2026-03-31;;;;;40.00 on Top 
+Stufe 21;Elli;Volkswagen Naturstrom Pur 12;19829;Strom;Privatkunde;1;100000;2026-03-01;2999-06-30;36.00;;;;
+Stufe 21;Elli;Volkswagen Naturstrom Pur 24;19830;Strom;Privatkunde;1;100000;2026-03-01;2999-06-30;54.00;;;;
+Stufe 21;Elli;Volkswagen Naturstrom Vario 12;18124;Strom;Privatkunde;1;100000;2025-11-21;2999-06-30;82.00;;;;
+Stufe 21;Emscher Lippe Energie GmbH;ELE erdgasFair;16697;Gas;Privatkunde;5000;75000;2026-03-01;2999-10-31;110.00;;;;
+Stufe 21;Emscher Lippe Energie GmbH;ELE stromFair;16698;Strom;Privatkunde;1000;50000;2026-03-01;2999-10-31;87.00;;;;
+Stufe 21;Emscher Lippe Energie GmbH;ELE stromFair Gewerbe mit Bonus;9519;Strom;Gewerbekunde;1000;50000;2026-03-01;2999-10-31;110.00;;;;
+Stufe 21;Emscher Lippe Energie GmbH;ELE stromFair K5;19750;Strom;Privatkunde;1000;50000;2026-02-01;2999-10-31;110.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;4001;12500;2026-03-02;2026-04-28;;;;;15.00 on Top 
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;12501;21250;2026-03-02;2026-04-28;;;;;35.00 on Top 
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;21251;27500;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas;19597;Gas;Gewerbekunde;27501;200000;2026-03-02;2026-04-28;;;;;75.00 on Top 
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;4001;12500;2026-03-02;2026-04-28;;;;;15.00 on Top 
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;12501;21250;2026-03-02;2026-04-28;;;;;35.00 on Top 
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;21251;27500;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas;11921;Gas;Privatkunde;27501;200000;2026-03-02;2026-04-28;;;;;75.00 on Top 
+Stufe 21;Enercity;Enercity Gas PLZ;18595;Gas;Privatkunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;18595;Gas;Privatkunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;18595;Gas;Privatkunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;18595;Gas;Privatkunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;18595;Gas;Privatkunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;19642;Gas;Gewerbekunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;19642;Gas;Gewerbekunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;19642;Gas;Gewerbekunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;19642;Gas;Gewerbekunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas PLZ;19642;Gas;Gewerbekunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;12501;21250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;4001;12500;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;21251;27500;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19593;Gas;Privatkunde;27501;200000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;12501;21250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;4001;12500;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;21251;27500;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL;19595;Gas;Gewerbekunde;27501;200000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;12501;21250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;4001;12500;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;21251;27500;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19609;Gas;Privatkunde;27501;200000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;1;4000;2026-01-01;2999-03-31;86.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;4001;12500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;12501;21250;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;21251;27500;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;27501;200000;2026-01-01;2999-03-31;81.00;;;;
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;12501;21250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;4001;12500;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;21251;27500;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Gas XL PLZ;19644;Gas;Gewerbekunde;27501;200000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;500;2250;2026-03-02;2026-04-28;;;;;15.00 on Top 
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;2251;4750;2026-03-02;2026-04-28;;;;;35.00 on Top 
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;4751;7250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom;11588;Strom;Privatkunde;7251;30000;2026-03-02;2026-04-28;;;;;75.00 on Top 
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;500;2250;2026-03-02;2026-04-28;;;;;15.00 on Top 
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;2251;4750;2026-03-02;2026-04-28;;;;;35.00 on Top 
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;4751;7250;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom;19596;Strom;Gewerbekunde;7251;30000;2026-03-02;2026-04-28;;;;;75.00 on Top 
+Stufe 21;Enercity;Enercity Strom PLZ;18594;Strom;Privatkunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;18594;Strom;Privatkunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;18594;Strom;Privatkunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;18594;Strom;Privatkunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;18594;Strom;Privatkunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;19641;Strom;Gewerbekunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;19641;Strom;Gewerbekunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;19641;Strom;Gewerbekunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;19641;Strom;Gewerbekunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom PLZ;19641;Strom;Gewerbekunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;2251;4750;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;500;2250;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;4751;7250;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19592;Strom;Privatkunde;7251;30000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;2251;4750;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;500;2250;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;4751;7250;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL;19594;Strom;Gewerbekunde;7251;30000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;2251;4750;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;500;2250;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;4751;7250;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;7251;30000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19608;Strom;Privatkunde;0;0;2026-03-02;2026-04-28;;;;;70.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;1;499;2026-01-01;2999-03-31;67.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;500;2250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;2251;4750;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;4751;7250;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;7251;30000;2026-01-01;2999-03-31;62.00;;;;
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;2251;4750;2026-03-02;2026-04-28;;;;;55.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;500;2250;2026-03-02;2026-04-28;;;;;25.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;4751;7250;2026-03-02;2026-04-28;;;;;85.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;7251;30000;2026-03-02;2026-04-28;;;;;115.00 on Top 
+Stufe 21;Enercity;Enercity Strom XL PLZ;19643;Strom;Gewerbekunde;0;0;2026-03-02;2026-04-28;;;;;70.00 on Top 
+Stufe 21;Energie Brandenburg;Ökogas Fix Gewerbe;17129;Gas;Gewerbekunde;10000;99999;2025-06-19;2999-01-31;92.00;;;;
+Stufe 21;Energie Brandenburg;Ökogas Fix Gewerbe;17129;Gas;Gewerbekunde;100000;499999;2025-06-19;2999-01-31;140.00;;;;
+Stufe 21;Energie Brandenburg;Ökogas Fix Gewerbe;17129;Gas;Gewerbekunde;500000;1500000;2025-06-19;2999-01-31;380.00;;;;
+Stufe 21;Energie Brandenburg;Ökogas Fix Privat;17128;Gas;Privatkunde;0;11999;2026-01-01;2999-01-31;173.00;;;;
+Stufe 21;Energie Brandenburg;Ökogas Fix Privat;17128;Gas;Privatkunde;12000;39999;2026-01-01;2999-01-31;203.00;;;;
+Stufe 21;Energie Brandenburg;Ökogas Fix Privat;17128;Gas;Privatkunde;40000;100000;2026-01-01;2999-01-31;243.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Gewerbe;17127;Strom;Gewerbekunde;1000;9999;2025-06-19;2999-01-31;68.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Gewerbe;17127;Strom;Gewerbekunde;10000;29999;2025-06-19;2999-01-31;115.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Gewerbe;17127;Strom;Gewerbekunde;30000;100000;2025-06-19;2999-01-31;190.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Privat;17126;Strom;Privatkunde;1500;2499;2026-01-01;2999-01-31;118.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Privat;17126;Strom;Privatkunde;2500;3999;2026-01-01;2999-01-31;163.00;;;;
+Stufe 21;Energie Brandenburg;STROM Fix Privat;17126;Strom;Privatkunde;4000;30000;2026-01-01;2999-01-31;203.00;;;;
+Stufe 21;Energie von nebenan;Gas von nebenan fix²;19825;Gas;Privatkunde;2500;1499999;2026-03-28;2999-07-31;168.00;;;;
+Stufe 21;Energie von nebenan;Gas von nebenan fix² Bestand;19831;Gas;Privatkunde;2500;1499999;2026-03-28;2999-07-31;150.00;;;;
+Stufe 21;Energie von nebenan;Gas von nebenan fix² Gewerbe;19826;Gas;Gewerbekunde;2500;1499999;2026-03-28;2999-07-31;168.00;;;;
+Stufe 21;Energie von nebenan;Strom von nebenan fix²;19827;Strom;Privatkunde;750;99999;2026-03-28;2999-07-31;168.00;;;;
+Stufe 21;Energie von nebenan;Strom von nebenan fix² Bestand;19832;Strom;Privatkunde;750;99999;2026-03-28;2999-07-31;150.00;;;;
+Stufe 21;Energie von nebenan;Strom von nebenan fix² Gewerbe;19828;Strom;Gewerbekunde;750;99999;2026-03-28;2999-07-31;168.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V12 GW;18641;Gas;Gewerbekunde;0;100000;2025-05-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V12 GW;18641;Gas;Gewerbekunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V12 HH;18640;Gas;Privatkunde;0;100000;2025-05-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V12 HH;18640;Gas;Privatkunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V15 GW;18904;Gas;Gewerbekunde;0;100000;2025-06-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V15 GW;18904;Gas;Gewerbekunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V15 HH;18903;Gas;Privatkunde;0;100000;2025-06-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V15 HH;18903;Gas;Privatkunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V6 GW;18647;Gas;Gewerbekunde;0;100000;2026-03-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V6 GW;18647;Gas;Gewerbekunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V6 HH;18646;Gas;Privatkunde;0;100000;2026-03-01;2999-04-30;209.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabigas24 08.2027 V6 HH;18646;Gas;Privatkunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V5 GW;18887;Strom;Gewerbekunde;1;100000;2025-06-01;2999-03-31;140.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V5 GW;18887;Strom;Gewerbekunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V5 HH;18886;Strom;Privatkunde;1;100000;2025-06-01;2999-03-31;140.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V5 HH;18886;Strom;Privatkunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V7 GW;18386;Strom;Gewerbekunde;1;100000;2026-03-01;2999-03-31;140.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V7 GW;18386;Strom;Gewerbekunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V7 HH;18385;Strom;Privatkunde;1;100000;2026-03-01;2999-03-31;140.00;;;;
+Stufe 21;Energieversorgung Mittelrhein AG;Stabistrom24 08.2027 V7 HH;18385;Strom;Privatkunde;0;0;2026-02-22;2026-03-31;;;;;30.00 on Top 
+Stufe 21;Energrün;Ladestrom plus;19017;Strom;Privatkunde;1;100000;2026-01-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Ladestrom plus;19017;Strom;Privatkunde;1;100000;2026-01-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ladestrom plus (Gewerbe);19018;Strom;Gewerbekunde;1;100000;2026-01-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Ladestrom plus (Gewerbe);19018;Strom;Gewerbekunde;1;100000;2026-01-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ladestrom pur;19035;Strom;Privatkunde;1;100000;2026-01-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Ladestrom pur;19035;Strom;Privatkunde;1;100000;2026-01-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ladestrom pur (Gewerbe);19036;Strom;Gewerbekunde;1;100000;2026-01-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Ladestrom pur (Gewerbe);19036;Strom;Gewerbekunde;1;100000;2026-01-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ökogas E-24;18214;Gas;Privatkunde;1;1500000;2025-08-01;2999-08-31;155.00;;;;
+Stufe 21;Energrün;Ökogas E-24 (Gewerbe);18215;Gas;Gewerbekunde;1;1500000;2025-08-01;2999-08-31;155.00;;;;
+Stufe 21;Energrün;Ökogas plus;17955;Gas;Privatkunde;1;1500000;2024-09-01;2999-09-30;;0.00850000;;;
+Stufe 21;Energrün;Ökogas plus;17955;Gas;Privatkunde;1;1500000;2024-09-01;2999-09-30;;;;0.00850000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökogas plus (Gewerbe);17956;Gas;Gewerbekunde;1;1500000;2024-09-01;2999-09-30;;0.00850000;;;
+Stufe 21;Energrün;Ökogas plus (Gewerbe);17956;Gas;Gewerbekunde;1;1500000;2024-09-01;2999-09-30;;;;0.00850000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökostrom E-24;18216;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;155.00;;;;
+Stufe 21;Energrün;Ökostrom E-24 (Gewerbe);18217;Strom;Gewerbekunde;1;100000;2025-08-01;2999-08-31;155.00;;;;
+Stufe 21;Energrün;Ökostrom plus;17957;Strom;Privatkunde;1;100000;2024-09-01;2999-09-30;;0.00830000;;;
+Stufe 21;Energrün;Ökostrom plus;17957;Strom;Privatkunde;1;100000;2024-09-01;2999-09-30;;;;0.00830000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökostrom plus (Gewerbe);17958;Strom;Gewerbekunde;1;100000;2024-09-01;2999-09-30;;0.00830000;;;
+Stufe 21;Energrün;Ökostrom plus (Gewerbe);17958;Strom;Gewerbekunde;1;100000;2024-09-01;2999-09-30;;;;0.00830000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökostrom plus 24;19029;Strom;Privatkunde;1;100000;2025-08-01;2999-09-30;;0.00690000;;;
+Stufe 21;Energrün;Ökostrom plus 24;19029;Strom;Privatkunde;1;100000;2025-08-01;2999-09-30;;;;0.00690000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökostrom plus 24 (Gewerbe);19030;Strom;Gewerbekunde;1;100000;2025-08-01;2999-09-30;;0.00690000;;;
+Stufe 21;Energrün;Ökostrom plus 24 (Gewerbe);19030;Strom;Gewerbekunde;1;100000;2025-08-01;2999-09-30;;;;0.00690000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Energrün;Ökostrom pro;19033;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;44.00;;;;
+Stufe 21;Energrün;Ökostrom pro;19033;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;;;44.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ökostrom pro (Gewerbe);19034;Strom;Gewerbekunde;1;100000;2025-08-01;2999-08-31;44.00;;;;
+Stufe 21;Energrün;Ökostrom pro (Gewerbe);19034;Strom;Gewerbekunde;1;100000;2025-08-01;2999-08-31;;;44.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Ökostrom Wechselwunder 24;19794;Strom;Privatkunde;1;100000;2026-03-02;2026-03-31;92.00;;;;
+Stufe 21;Energrün;Ökostrom Wechselwunder 24 (Gewerbe);19795;Strom;Gewerbekunde;1;100000;2026-03-02;2026-03-31;92.00;;;;
+Stufe 21;Energrün;Wärmestrom plus;19019;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Wärmestrom plus;19019;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energrün;Wärmestrom plus;19021;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;45.50;;;;
+Stufe 21;Energrün;Wärmestrom plus;19021;Strom;Privatkunde;1;100000;2025-08-01;2999-08-31;;;45.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET;19447;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET;19447;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET;19447;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET Gewerbe;19451;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET Gewerbe;19451;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMET Gewerbe;19451;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT;19448;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT;19448;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT;19448;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT Gewerbe;19452;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT Gewerbe;19452;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgemMZT Gewerbe;19452;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET;18391;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET;18391;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET;18391;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET Gewerbe;18395;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET Gewerbe;18395;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMET Gewerbe;18395;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT;18392;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT;18392;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT;18392;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT Gewerbe;18396;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT Gewerbe;18396;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 NSgetrMZT Gewerbe;18396;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET;19449;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET;19449;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET;19449;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET Gewerbe;19453;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET Gewerbe;19453;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMET Gewerbe;19453;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT;19450;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT;19450;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT;19450;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT Gewerbe;19454;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT Gewerbe;19454;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgemMZT Gewerbe;19454;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET;18393;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET;18393;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET;18393;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET Gewerbe;18397;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET Gewerbe;18397;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMET Gewerbe;18397;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT;18394;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT;18394;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT;18394;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT Gewerbe;18398;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT Gewerbe;18398;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPgetrMZT Gewerbe;18398;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET;19455;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET;19455;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET;19455;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET Gewerbe;19457;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET Gewerbe;19457;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMET Gewerbe;19457;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT;19456;Strom;Privatkunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT;19456;Strom;Privatkunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT;19456;Strom;Privatkunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT Gewerbe;19458;Strom;Gewerbekunde;1000;4999;2026-01-01;2999-03-31;110.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT Gewerbe;19458;Strom;Gewerbekunde;5000;9999;2026-01-01;2999-03-31;130.00;;;;
+Stufe 21;Energy Market Solutions;SimplyGreen 24 WPM1gemMZT Gewerbe;19458;Strom;Gewerbekunde;10000;99999;2026-01-01;2999-03-31;160.00;;;;
+Stufe 21;Energy2day GmbH;Garantiert24;17355;Strom;Privatkunde;800;30000;2024-08-01;2999-05-31;160.00;;;;
+Stufe 21;Energy2day GmbH;GarantiertGas24;17356;Gas;Privatkunde;2500;75000;2024-08-01;2999-05-31;168.00;;;;
+Stufe 21;Energy2day GmbH;Sicher24;17354;Strom;Privatkunde;0;20000;2024-08-01;2999-05-31;78.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.landgas;16147;Gas;Privatkunde;5000;1500000;2026-01-01;2999-03-31;180.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.landstrom;16146;Strom;Privatkunde;500;100000;2025-07-01;2999-03-31;165.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.landstrom;16146;Strom;Privatkunde;0;0;2026-01-06;2026-03-31;;;;;15.00 on Top 
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.landstrom öko;17338;Strom;Privatkunde;500;100000;2025-07-01;2999-03-31;165.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.landstrom öko;17338;Strom;Privatkunde;0;0;2026-01-06;2026-03-31;;;;;15.00 on Top 
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.niederrheingas;19602;Gas;Privatkunde;5000;100000;2026-01-01;2999-03-31;129.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.niederrheinstrom;19603;Strom;Privatkunde;500;100000;2026-01-01;2999-03-31;129.00;;;;
+Stufe 21;ENNI Energie & Umwelt Niederrhein GmbH;enni.niederrheinstrom Öko;19604;Strom;Privatkunde;500;100000;2026-01-01;2999-03-31;129.00;;;;
+Stufe 21;Enstroga;Fairpower24;19833;Strom;Privatkunde;1;24999;2026-03-28;2999-03-31;110.00;;;;
+Stufe 21;Enstroga;Fairpower24;19836;Strom;Gewerbekunde;1;24999;2026-03-28;2999-03-31;110.00;;;;
+Stufe 21;Enstroga;Fairpower24 Extra;19835;Strom;Privatkunde;1;24999;2026-03-28;2999-03-31;228.00;;;;
+Stufe 21;Enstroga;Fairpower24 Extra;19838;Strom;Gewerbekunde;1;24999;2026-03-28;2999-03-31;228.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas;19839;Gas;Privatkunde;1;24999;2026-03-28;2999-03-31;110.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas;19842;Gas;Gewerbekunde;1;24999;2026-03-28;2999-03-31;110.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas Extra;19841;Gas;Privatkunde;1;99999;2026-03-28;2999-03-31;228.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas Extra;19844;Gas;Gewerbekunde;1;99999;2026-03-28;2999-03-31;228.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas Plus;19840;Gas;Privatkunde;1;99999;2026-03-28;2999-03-31;190.00;;;;
+Stufe 21;Enstroga;Fairpower24 Gas Plus;19843;Gas;Gewerbekunde;1;99999;2026-03-28;2999-03-31;190.00;;;;
+Stufe 21;Enstroga;Fairpower24 Plus;19834;Strom;Privatkunde;1;24999;2026-03-28;2999-03-31;190.00;;;;
+Stufe 21;Enstroga;Fairpower24 Plus;19837;Strom;Gewerbekunde;1;24999;2026-03-28;2999-03-31;190.00;;;;
+Stufe 21;enviaM;enviaM BusinessStrom energie 24M;19294;Strom;Gewerbekunde;10000;100000;2025-10-21;2999-10-31;;0.00760000;;;
+Stufe 21;enviaM;enviaM BusinessStrom energie 24M;19294;Strom;Gewerbekunde;10000;100000;2025-10-21;2999-10-31;;;;0.00760000 ab dem 25. Belieferungsmonat jährlich;
+Stufe 21;enviaM;enviaM MEIN STROM best 12;16573;Strom;Privatkunde;1;100000;2025-11-01;2999-07-31;39.00;;;;
+Stufe 21;enviaM;enviaM MEIN STROM best 24;16574;Strom;Privatkunde;1;100000;2025-11-04;2999-07-31;103.00;;;;
+Stufe 21;enviaM;enviaM MEIN STROM best 24;16574;Strom;Privatkunde;0;0;2026-03-22;2026-03-31;;;;;55.00 on Top 
+Stufe 21;enviaM;enviaM MEIN STROM relax 24;18686;Strom;Privatkunde;800;100000;2026-03-15;2999-07-31;48.00;;;;
+Stufe 21;enviaM;enviaM MEIN STROM relax 24 GVG;18684;Strom;Privatkunde;800;100000;2026-03-15;2999-07-31;48.00;;;;
+Stufe 21;enviaM;enviaM ProfiStrom bonus;16577;Strom;Gewerbekunde;1;5000;2025-07-01;2999-12-31;39.00;;;;
+Stufe 21;enviaM;enviaM ProfiStrom bonus;16577;Strom;Gewerbekunde;5001;15000;2025-07-01;2999-07-31;133.00;;;;
+Stufe 21;enviaM;enviaM ProfiStrom bonus;16577;Strom;Gewerbekunde;15001;30000;2025-07-01;2999-12-31;233.00;;;;
+Stufe 21;enviaM;enviaM ProfiStrom bonus;16577;Strom;Gewerbekunde;30001;100000;2025-07-01;2999-12-31;323.00;;;;
+Stufe 21;enviaM;enviaM Wärmepumpenstrom getr. Messung;16575;Strom;Privatkunde;1;100000;2025-03-01;2999-07-31;78.00;;;;
+Stufe 21;enviaM;enviaM Wärmepumpenstrom getr. Messung M2;18702;Strom;Privatkunde;1;100000;2025-06-01;2999-07-31;78.00;;;;
+Stufe 21;enviaM;enviaM Wärmespeicherstrom getr. Messung;16576;Strom;Privatkunde;1;100000;2025-03-01;2999-07-31;78.00;;;;
+Stufe 21;eprimo;eprimoGas mit Bonus;7777;Gas;Privatkunde;3500;500000;2026-01-01;2999-09-30;86.00;;;;
+Stufe 21;eprimo;eprimoGas ohne Bonus;7776;Gas;Privatkunde;3500;500000;2026-01-01;2999-05-31;120.00;;;;
+Stufe 21;eprimo;eprimoGas Stabil;19695;Gas;Privatkunde;3500;500000;2026-02-13;2999-05-31;164.00;;;;
+Stufe 21;eprimo;eprimoStrom PrimaKlima mit Bonus;7775;Strom;Privatkunde;500;100000;2026-02-13;2999-01-31;83.00;;;;
+Stufe 21;eprimo;eprimoStrom PrimaKlima ohne Bonus;7774;Strom;Privatkunde;500;100000;2026-02-13;2999-10-31;119.00;;;;
+Stufe 21;eprimo;eprimoStrom PrimaKlima Pur Stabil;17866;Strom;Privatkunde;500;100000;2026-02-13;2999-05-31;164.00;;;;
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD Gas 24 öko;17464;Gas;Privatkunde;10000;59999;2024-03-01;2999-09-30;150.00;;;;
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD Gas 24 öko;17464;Gas;Privatkunde;0;0;2025-11-01;2026-03-31;;;;;40.00 on Top 
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD gas direkt 24;16867;Gas;Privatkunde;10000;59999;2024-01-11;2999-09-30;141.00;;;;
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD Strom 24 öko;16926;Strom;Privatkunde;1500;7499;2025-10-24;2999-09-30;124.00;;;;
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD Strom 24 Safe;18660;Strom;Privatkunde;2000;7499;2025-11-04;2999-09-30;73.00;;;;
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD Strom 24 Safe;18660;Strom;Privatkunde;0;0;2025-11-04;2026-03-31;;;;;170.00 on Top 
+Stufe 21;EVD EnergieVersorgung Deutschland Privat;EVD strom direkt 24;16868;Strom;Privatkunde;2000;7499;2024-03-01;2999-09-30;141.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom;17836;Strom;Gewerbekunde;1;10000;2025-01-01;2999-07-31;116.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom;17836;Strom;Gewerbekunde;10001;30000;2025-01-01;2999-07-31;166.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom;17836;Strom;Gewerbekunde;30001;50000;2025-07-01;2999-07-31;205.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom;17836;Strom;Gewerbekunde;50001;70000;2025-01-01;2999-07-31;285.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom;17836;Strom;Gewerbekunde;70001;100000;2025-07-01;2999-07-31;365.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;1;10000;2025-07-01;2999-07-31;130.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;10001;30000;2025-07-01;2999-07-31;180.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;30001;50000;2025-07-01;2999-07-31;230.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;50001;70000;2025-07-01;2999-07-31;300.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;70001;100000;2025-07-01;2999-07-31;390.00;;;;
+Stufe 21;EWE;EWE  business Grünstrom 24;18633;Strom;Gewerbekunde;0;0;2026-01-13;2026-03-31;;;;;20.00 on Top 
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;1;25000;2025-01-01;2999-07-31;135.00;;;;
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;25001;100000;2025-01-01;2999-07-31;185.00;;;;
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;100001;200000;2025-01-01;2999-07-31;230.00;;;;
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;200001;300000;2025-01-01;2999-07-31;305.00;;;;
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;300001;1500000;2025-01-01;2999-07-31;395.00;;;;
+Stufe 21;EWE;EWE business Gas;17832;Gas;Gewerbekunde;0;0;2026-01-13;2026-03-31;;;;;20.00 on Top 
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;1;25000;2025-01-01;2999-07-31;125.00;;;;
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;25001;100000;2025-01-01;2999-07-31;175.00;;;;
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;100001;200000;2025-01-01;2999-07-31;225.00;;;;
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;200001;300000;2025-01-01;2999-07-31;300.00;;;;
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;300001;1500000;2025-01-01;2999-07-31;385.00;;;;
+Stufe 21;EWE;EWE business Gas basis;17833;Gas;Gewerbekunde;0;0;2026-01-13;2026-03-31;;;;;20.00 on Top 
+Stufe 21;EWE;EWE business Grünstrom basis;17837;Strom;Gewerbekunde;1;10000;2025-01-01;2999-07-31;106.00;;;;
+Stufe 21;EWE;EWE business Grünstrom basis;17837;Strom;Gewerbekunde;10001;30000;2025-01-01;2999-07-31;155.00;;;;
+Stufe 21;EWE;EWE business Grünstrom basis;17837;Strom;Gewerbekunde;30001;50000;2025-01-01;2999-07-31;205.00;;;;
+Stufe 21;EWE;EWE business Grünstrom basis;17837;Strom;Gewerbekunde;50001;70000;2025-01-01;2999-07-31;275.00;;;;
+Stufe 21;EWE;EWE business Grünstrom basis;17837;Strom;Gewerbekunde;70001;100000;2025-01-01;2999-07-31;357.00;;;;
+Stufe 21;EWE;EWE Gas basis;17831;Gas;Privatkunde;1;1500000;2026-01-13;2999-07-31;144.00;;;;
+Stufe 21;EWE;EWE Grünstrom basis;17835;Strom;Privatkunde;1;100000;2026-01-01;2999-07-31;110.00;;;;
+Stufe 21;EWE;EWE Zuhause+ Gas;17772;Gas;Privatkunde;1;1500000;2026-01-01;2999-07-31;155.00;;;;
+Stufe 21;EWE;EWE Zuhause+ Grünstrom 12;17776;Strom;Privatkunde;1;100000;2026-01-13;2999-07-31;119.00;;;;
+Stufe 21;EWE;EWE Zuhause+ Grünstrom 12;17776;Strom;Privatkunde;0;0;2026-03-02;2026-03-31;;;;;20.00 on Top 
+Stufe 21;EWE;EWE Zuhause+ Grünstrom 24;18619;Strom;Privatkunde;1;100000;2026-01-01;2999-07-31;159.00;;;;
+Stufe 21;ExtraGrün GmbH;EGR Gas 24;19516;Gas;Privatkunde;12000;59999;2025-12-01;2999-05-31;100.00;;;;
+Stufe 21;ExtraGrün GmbH;EGR gas 24 direkt;19316;Gas;Privatkunde;10000;59999;2026-01-11;2999-05-31;184.00;;;;
+Stufe 21;ExtraGrün GmbH;EGR Strom 24;19331;Strom;Privatkunde;1500;7499;2026-01-11;2999-05-31;119.00;;;;
+Stufe 21;ExtraGrün GmbH;EGR Strom 24;19331;Strom;Privatkunde;0;0;2026-02-13;2026-03-30;;;;;110.00 on Top 
+Stufe 21;ExtraGrün GmbH;EGR Strom 24 Direkt;19301;Strom;Privatkunde;1500;7499;2026-01-11;2999-05-31;184.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Gewerbe Fremdmarkt;18276;Gas;Gewerbekunde;10000;99999;2025-02-01;2999-06-30;100.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Gewerbe Fremdmarkt;18276;Gas;Gewerbekunde;100000;499999;2025-02-01;2999-06-30;149.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Gewerbe Fremdmarkt;18276;Gas;Gewerbekunde;500000;1500000;2025-02-01;2999-06-30;390.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Privat Fremdmarkt;18275;Gas;Privatkunde;5000;11999;2026-01-01;2999-06-30;124.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Privat Fremdmarkt;18275;Gas;Privatkunde;12000;39999;2026-01-01;2999-06-30;202.00;;;;
+Stufe 21;GASAG;GASAG | Ökogas Fix Privat Fremdmarkt;18275;Gas;Privatkunde;40000;100000;2026-01-01;2999-06-30;242.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Gewerbe Fremdmarkt;18274;Strom;Gewerbekunde;1000;9999;2025-02-01;2216-08-31;76.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Gewerbe Fremdmarkt;18274;Strom;Gewerbekunde;10000;29999;2025-02-01;2216-08-31;123.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Gewerbe Fremdmarkt;18274;Strom;Gewerbekunde;30000;100000;2025-02-01;2216-08-31;190.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Privat Fremdmarkt;18273;Strom;Privatkunde;1500;2499;2026-01-01;2999-06-30;118.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Privat Fremdmarkt;18273;Strom;Privatkunde;2500;3999;2026-01-01;2999-06-30;162.00;;;;
+Stufe 21;GASAG;GASAG | STROM Fix Privat Fremdmarkt;18273;Strom;Privatkunde;4000;30000;2026-01-01;2999-06-30;202.00;;;;
+Stufe 21;GENO Energie GmbH;GENO Strom Natur Direkt;16944;Strom;Privatkunde;500;10000;2026-01-01;2999-11-30;129.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;5000;11999;2024-07-23;2999-09-30;73.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;5000;11999;2024-07-23;2999-09-30;;;2.80 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;12000;15000;2024-07-23;2999-09-30;130.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;12000;15000;2024-07-23;2999-09-30;;;8.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;15001;40000;2024-07-01;2999-09-30;170.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;15001;40000;2024-07-01;2999-09-30;;;34.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;40001;1500000;2024-07-01;2999-09-30;230.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24;18260;Gas;Privatkunde;40001;1500000;2024-07-01;2999-09-30;;;58.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;5000;11999;2024-07-23;2999-09-30;73.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;5000;11999;2024-07-23;2999-09-30;;;2.80 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;12000;15000;2024-07-23;2999-09-30;130.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;12000;15000;2024-07-23;2999-09-30;;;8.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;15001;40000;2024-07-01;2999-09-30;170.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;15001;40000;2024-07-01;2999-09-30;;;34.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;40001;1500000;2024-07-01;2999-09-30;230.00;;;;
+Stufe 21;goldgas;Gas goldgas spar24 duo;18261;Gas;Privatkunde;40001;1500000;2024-07-01;2999-09-30;;;58.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;1500;1999;2025-05-27;2999-09-30;27.00;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;2000;2499;2025-05-27;2999-09-30;92.00;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;2500;2999;2025-05-27;2999-09-30;111.00;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;3000;3999;2025-05-27;2999-09-30;130.00;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;4000;100000;2025-05-27;2999-09-30;150.00;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;1500;2499;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;1500;2499;2025-02-01;2999-09-30;;;8.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;2500;3999;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;2500;3999;2025-02-01;2999-09-30;;;22.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;4000;30000;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;4000;30000;2025-02-01;2999-09-30;;;26.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;30001;100000;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24;18262;Strom;Privatkunde;30001;100000;2025-02-01;2999-09-30;;;30.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;1500;1999;2025-05-27;2999-09-30;42.00;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;2000;2499;2025-05-27;2999-09-30;108.00;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;2500;2999;2025-05-27;2999-09-30;127.00;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;3000;3999;2025-05-27;2999-09-30;147.00;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;4000;100000;2025-05-01;2999-09-30;167.00;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;1500;2499;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;1500;2499;2025-02-01;2999-09-30;;;8.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;2500;3999;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;2500;3999;2025-02-01;2999-09-30;;;22.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;4000;30000;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;4000;30000;2025-02-01;2999-09-30;;;26.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;30001;100000;2025-02-01;2999-09-30;;;;;
+Stufe 21;goldgas;Strom spar24 duo;18263;Strom;Privatkunde;30001;100000;2025-02-01;2999-09-30;;;30.00 ab dem 36. Belieferungsmonat jährlich;;
+Stufe 21;Green Planet Energy;Gewerbe 30;16099;Strom;Gewerbekunde;1;30000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Mobilstrom aktiv;17456;Strom;Privatkunde;1;30000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Mobilstrom aktiv;17457;Strom;Gewerbekunde;1;30000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Ökostrom aktiv;16098;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv gemeinsame Messung NSP;17461;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv gemeinsame Messung WP;17458;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv getrennte Messung (Eintarifzähler) NSP;17462;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv getrennte Messung (Eintarifzähler) WP;17459;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv getrennte Messung (Zweitarifzähler) NSP;17463;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Green Planet Energy;Wärmestrom aktiv getrennte Messung (Zweitarifzähler) WP;17460;Strom;Privatkunde;1;100000;2025-07-01;2999-05-31;62.00;;;;
+Stufe 21;Grünwelt Energie;direkt basic;18820;Gas;Privatkunde;5000;100000;2025-11-06;2999-11-30;130.00;;;;
+Stufe 21;Grünwelt Energie;direkt basic 24;18823;Strom;Privatkunde;1500;100000;2025-11-06;2999-11-30;110.00;;;;
+Stufe 21;Grünwelt Energie;direkt eco;18821;Gas;Privatkunde;5000;100000;2025-11-06;2999-11-30;204.00;;;;
+Stufe 21;Grünwelt Energie;direkt eco 24;18824;Strom;Privatkunde;1500;100000;2025-11-06;2999-11-30;194.00;;;;
+Stufe 21;Grünwelt Energie;direkt premium;18822;Gas;Privatkunde;5000;100000;2025-11-06;2999-11-30;219.00;;;;
+Stufe 21;Grünwelt Energie;direkt premium 24;18825;Strom;Privatkunde;1500;100000;2025-11-06;2999-11-30;219.00;;;;
+Stufe 21;KELAG;Kelag Erdgas;17322;Gas;Privatkunde;1;19999;2025-03-01;2999-05-31;45.00;;;;
+Stufe 21;KELAG;Kelag Erdgas;17322;Gas;Privatkunde;20000;400000;2025-03-01;2999-05-31;;0.00170000;;;
+Stufe 21;KELAG;Kelag Erdgas;17323;Gas;Gewerbekunde;1;19999;2025-03-01;2999-05-31;45.00;;;;
+Stufe 21;KELAG;Kelag Erdgas;17323;Gas;Gewerbekunde;20000;400000;2025-03-01;2999-05-31;;0.00170000;;;
+Stufe 21;Leu Energie GmbH & Co. KG;Leu Erdgas Relax 24;17824;Gas;Privatkunde;2000;100000;2024-07-12;2999-07-31;170.00;;;;
+Stufe 21;Leu Energie GmbH & Co. KG;Leu Erdgas Relax 24 klimafreundlich;17825;Gas;Privatkunde;2000;100000;2024-07-12;2999-07-31;170.00;;;;
+Stufe 21;LEW Lechwerke;LEW Business Strom Fix Natur 12;19303;Strom;Gewerbekunde;1000;10000;2025-10-01;2999-08-31;150.00;;;;
+Stufe 21;LEW Lechwerke;LEW Business Strom Fix Natur 12;19303;Strom;Gewerbekunde;10001;30000;2025-10-01;2999-08-31;170.00;;;;
+Stufe 21;LEW Lechwerke;LEW Business Strom Fix Natur 12;19303;Strom;Gewerbekunde;30001;60000;2025-10-01;2999-08-31;200.00;;;;
+Stufe 21;LEW Lechwerke;LEW Business Strom Fix Natur 12;19303;Strom;Gewerbekunde;60001;100000;2025-10-01;2999-08-31;220.00;;;;
+Stufe 21;LEW Lechwerke;LEW Strom Garant Natur;19119;Strom;Privatkunde;1000;100000;2025-08-26;2999-08-31;111.00;;;;
+Stufe 21;LEW Lechwerke;LEW Wärmestrom Fix Natur (SP) ET getr;19121;Strom;Privatkunde;1000;100000;2025-08-26;2999-08-31;111.00;;;;
+Stufe 21;LEW Lechwerke;LEW Wärmestrom Fix Natur (WP) ET getr;19122;Strom;Privatkunde;1000;100000;2025-08-26;2999-08-31;111.00;;;;
+Stufe 21;LEW Lechwerke;LEW Wärmestrom Fix Natur (WP) getr;19123;Strom;Privatkunde;1000;100000;2025-08-26;2999-08-31;111.00;;;;
+Stufe 21;LichtBlick;LichtBlick Gas 24;18296;Gas;Privatkunde;1;100000;2025-11-01;2999-01-31;182.00;;;;
+Stufe 21;LichtBlick;LichtBlick ÖkoStrom Relax 24;18852;Strom;Privatkunde;1;50000;2025-12-01;2999-01-31;203.00;;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Gas 24;16429;Gas;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Gas 24;16429;Gas;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Gas 36;16431;Gas;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Gas 36;16431;Gas;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Gas 36;16431;Gas;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 25. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 24 RLM;16330;Strom;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 24 RLM;16330;Strom;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 24 SLP;16327;Strom;Gewerbekunde;50000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 24 SLP;16327;Strom;Gewerbekunde;50000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 RLM;16331;Strom;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 RLM;16331;Strom;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 RLM;16331;Strom;Gewerbekunde;10000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 25. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 SLP;16328;Strom;Gewerbekunde;50000;10000000;2025-09-01;2999-05-31;;0.01000000;;;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 SLP;16328;Strom;Gewerbekunde;50000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 13. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;Lichtblick Spotmarkt Strom 36 SLP;16328;Strom;Gewerbekunde;50000;10000000;2025-09-01;2999-05-31;;;;0.01000000 ab dem 25. Belieferungsmonat einmalig;
+Stufe 21;LichtBlick;ÖkoStrom 24;18302;Strom;Privatkunde;1;50000;2025-09-01;2999-01-31;182.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 12 DT;18320;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 12 DT;18320;Strom;Privatkunde;0;0;2026-01-01;2026-04-29;;;;;35.00 on Top 
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 12 ET;18316;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 12 ET;18316;Strom;Privatkunde;0;0;2026-01-01;2026-04-29;;;;;35.00 on Top 
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 24 DT;18322;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;183.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung 24 ET;18318;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;183.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung inkl. Haushaltsstrom  12 DT;18324;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung inkl. Haushaltsstrom  12 DT;18324;Strom;Privatkunde;0;0;2026-01-01;2026-04-29;;;;;35.00 on Top 
+Stufe 21;LichtBlick;ÖkoStrom Nachtspeicherheizung inkl. Haushaltsstrom 24 DT;18326;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;183.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 12 DT;18312;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 12 DT;18312;Strom;Privatkunde;0;0;2026-01-01;2026-04-29;;;;;35.00 on Top 
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 12 ET;18308;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 12 ET;18308;Strom;Privatkunde;0;0;2026-01-01;2026-04-29;;;;;35.00 on Top 
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 24 DT;18314;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;183.00;;;;
+Stufe 21;LichtBlick;ÖkoStrom Wärmepumpe 24 ET;18310;Strom;Privatkunde;1;99999;2025-03-05;2999-01-31;183.00;;;;
+Stufe 21;LichtBlick;Strom für Doppeltarifzähler (2T);15457;Strom;Privatkunde;1;29999;2023-06-01;2999-06-30;63.00;;;;
+Stufe 21;LichtBlick SE;Lichtblick Gas 12;12769;Gas;Privatkunde;1;1000000;2024-10-01;2999-01-31;67.00;;;;
+Stufe 21;LichtBlick SE;LichtBlick Gas Plus 24;18694;Gas;Privatkunde;1;100000;2025-05-01;2999-01-31;182.00;;;;
+Stufe 21;LichtBlick SE;Lichtblick_Gas Relax 24;16539;Gas;Privatkunde;1000;100000;2026-01-01;2999-01-31;182.00;;;;
+Stufe 21;LichtBlick SE;ÖkoStrom 12;12774;Strom;Privatkunde;1;5000;2025-05-15;2999-01-31;67.00;;;;
+Stufe 21;Mainova AG;Mainova Fix Pur Plus RLM Gas;18228;Gas;Gewerbekunde;250000;1500000;2025-01-01;2999-01-31;;0.01000000;;;
+Stufe 21;Mainova AG;Mainova Fix Pur Plus RLM Gas;18228;Gas;Gewerbekunde;250000;1500000;2025-01-01;2999-01-31;;;;0.01000000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Mainova AG;Mainova Fix Pur Plus RLM Strom;18229;Strom;Gewerbekunde;10000;1500000;2025-01-01;2999-01-31;;0.01000000;;;
+Stufe 21;Mainova AG;Mainova Fix Pur Plus RLM Strom;18229;Strom;Gewerbekunde;10000;1500000;2025-01-01;2999-01-31;;;;0.01000000 ab dem 13. Belieferungsmonat jährlich;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;5000;7999;2023-07-01;2999-01-31;49.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;5000;7999;2023-07-01;2999-01-31;;;49.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;8000;9999;2023-07-01;2999-01-31;62.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;8000;9999;2023-07-01;2999-01-31;;;62.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;10000;14999;2023-07-01;2999-01-31;85.50;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;10000;14999;2023-07-01;2999-01-31;;;85.50 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;15000;19999;2023-07-01;2999-01-31;104.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;15000;19999;2023-07-01;2999-01-31;;;104.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;20000;24999;2023-07-01;2999-01-31;128.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;20000;24999;2023-07-01;2999-01-31;;;128.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;25000;29999;2023-07-01;2999-01-31;149.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;25000;29999;2023-07-01;2999-01-31;;;149.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;30000;39999;2023-07-01;2999-01-31;183.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;30000;39999;2023-07-01;2999-01-31;;;183.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;40000;49999;2023-07-01;2999-04-30;233.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;40000;49999;2023-07-01;2999-04-30;;;233.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;50000;59999;2023-07-01;2999-04-30;280.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;50000;59999;2023-07-01;2999-04-30;;;280.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;60000;79999;2023-07-01;2999-01-31;330.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;60000;79999;2023-07-01;2999-01-31;;;330.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;80000;100000;2023-07-01;2999-01-31;430.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24;12148;Strom;Gewerbekunde;80000;100000;2023-07-01;2999-01-31;;;430.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;5000;7999;2023-07-01;2999-01-31;49.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;5000;7999;2023-07-01;2999-01-31;;;49.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;8000;9999;2023-07-01;2999-01-31;62.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;8000;9999;2023-07-01;2999-01-31;;;62.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;10000;14999;2023-07-01;2999-01-31;85.50;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;10000;14999;2023-07-01;2999-01-31;;;85.50 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;15000;19999;2023-07-01;2999-01-31;104.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;15000;19999;2023-07-01;2999-01-31;;;104.00 ab dem 1. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;20000;24999;2023-07-01;2999-01-31;128.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;20000;24999;2023-07-01;2999-01-31;;;128.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;25000;29999;2023-07-01;2999-01-31;149.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;25000;29999;2023-07-01;2999-01-31;;;149.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;30000;39999;2023-07-01;2999-01-31;183.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;30000;39999;2023-07-01;2999-01-31;;;183.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;40000;49999;2023-07-01;2999-04-30;233.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;40000;49999;2023-07-01;2999-04-30;;;233.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;50000;59999;2023-07-01;2999-04-30;280.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;50000;59999;2023-07-01;2999-04-30;;;280.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;60000;79999;2023-07-01;2999-01-31;330.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;60000;79999;2023-07-01;2999-01-31;;;330.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;80000;100000;2023-07-01;2999-01-31;430.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 Intern;13523;Strom;Gewerbekunde;80000;100000;2023-07-01;2999-01-31;;;430.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;5000;7999;2024-01-01;2999-01-31;53.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;5000;7999;2024-01-01;2999-01-31;;;53.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;8000;9999;2024-01-01;2999-01-31;70.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;8000;9999;2024-01-01;2999-01-31;;;70.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;10000;14999;2024-01-01;2999-01-31;95.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;10000;14999;2024-01-01;2999-01-31;;;95.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;15000;19999;2024-01-01;2999-01-31;120.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;15000;19999;2024-01-01;2999-01-31;;;120.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;20000;24999;2024-01-01;2999-01-31;149.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;20000;24999;2024-01-01;2999-01-31;;;149.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;25000;29999;2024-01-01;2999-01-31;173.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;25000;29999;2024-01-01;2999-01-31;;;173.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;30000;39999;2024-01-01;2999-01-31;210.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;30000;39999;2024-01-01;2999-01-31;;;210.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;40000;49999;2024-01-01;2999-01-31;270.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;40000;49999;2024-01-01;2999-01-31;;;270.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;50000;59999;2024-01-01;2999-01-31;330.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;50000;59999;2024-01-01;2999-01-31;;;330.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;60000;79999;2024-01-01;2999-01-31;380.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;60000;79999;2024-01-01;2999-01-31;;;380.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;80000;100000;2024-01-01;2999-01-31;500.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium;12150;Strom;Gewerbekunde;80000;100000;2024-01-01;2999-01-31;;;500.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;5000;7999;2024-01-01;2999-01-31;53.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;5000;7999;2024-01-01;2999-01-31;;;53.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;8000;9999;2024-01-01;2999-01-31;70.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;8000;9999;2024-01-01;2999-01-31;;;70.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;10000;14999;2024-01-01;2999-01-31;95.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;10000;14999;2024-01-01;2999-01-31;;;95.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;15000;19999;2024-01-01;2999-01-31;120.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;15000;19999;2024-01-01;2999-01-31;;;120.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;20000;24999;2024-01-01;2999-01-31;149.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;20000;24999;2024-01-01;2999-01-31;;;149.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;25000;29999;2024-01-01;2999-01-31;173.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;25000;29999;2024-01-01;2999-01-31;;;173.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;30000;39999;2024-01-01;2999-01-31;210.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;30000;39999;2024-01-01;2999-01-31;;;210.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;40000;49999;2024-01-01;2999-01-31;270.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;40000;49999;2024-01-01;2999-01-31;;;270.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;50000;59999;2024-01-01;2999-01-31;330.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;50000;59999;2024-01-01;2999-01-31;;;330.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;60000;79999;2024-01-01;2999-01-31;380.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;60000;79999;2024-01-01;2999-01-31;;;380.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;80000;100000;2024-01-01;2999-01-31;500.00;;;;
+Stufe 21;Mainova AG;Strom Business Fix 24 ÖkoPremium Intern;13525;Strom;Gewerbekunde;80000;100000;2024-01-01;2999-01-31;;;500.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;Mainova AG;Strom Direkt+ 24;11130;Strom;Privatkunde;1000;2999;2025-09-01;2999-01-31;54.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24;11130;Strom;Privatkunde;3000;5999;2025-09-01;2999-10-31;82.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24;11130;Strom;Privatkunde;6000;10000;2025-09-01;2999-12-31;110.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 (RM);15272;Strom;Privatkunde;1000;2999;2025-09-01;2999-01-31;54.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 (RM);15272;Strom;Privatkunde;3000;5999;2025-09-01;2999-10-31;82.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 (RM);15272;Strom;Privatkunde;6000;10000;2025-09-01;2999-12-31;110.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium;12141;Strom;Privatkunde;1000;2999;2025-09-01;2999-01-31;57.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium;12141;Strom;Privatkunde;3000;5999;2025-09-01;2999-10-31;90.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium;12141;Strom;Privatkunde;6000;10000;2025-09-01;2999-12-31;125.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium (RM);15273;Strom;Privatkunde;1000;2999;2025-09-01;2999-01-31;57.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium (RM);15273;Strom;Privatkunde;3000;5999;2025-09-01;2999-10-31;90.00;;;;
+Stufe 21;Mainova AG;Strom Direkt+ 24 ÖkoPremium (RM);15273;Strom;Privatkunde;6000;10000;2025-09-01;2999-12-31;125.00;;;;
+Stufe 21;Mark-E;Business Fix Strom;19801;Strom;Gewerbekunde;5000;99999;2026-03-22;2999-07-31;165.00;;;;
+Stufe 21;Mark-E;Fix Strom;13454;Strom;Privatkunde;1000;20000;2026-03-22;2999-07-31;92.00;;;;
+Stufe 21;Mark-E;Fix Strom Direkt;13455;Strom;Privatkunde;1000;20000;2026-03-22;2999-07-31;120.00;;;;
+Stufe 21;Mark-E;Top Strom;15834;Strom;Privatkunde;1000;20000;2026-03-16;2999-07-31;55.00;;;;
+Stufe 21;MITGAS;MITGAS MEIN ERDGAS best 12;16585;Gas;Privatkunde;1;300000;2025-07-01;2999-12-31;89.00;;;;
+Stufe 21;MITGAS;MITGAS MEIN ERDGAS best 12 Gewerbe;16583;Gas;Gewerbekunde;20000;300000;2025-07-01;2999-12-31;89.00;;;;
+Stufe 21;MITGAS;MITGAS MEIN ERDGAS best 24;16586;Gas;Privatkunde;1;300000;2025-08-01;2999-12-31;108.00;;;;
+Stufe 21;MITGAS;MITGAS MEIN ERDGAS best 24 Gewerbe;16584;Gas;Gewerbekunde;20000;300000;2025-07-01;2999-12-31;128.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom;15635;Strom;Privatkunde;2000;100000;2026-03-01;2999-11-30;154.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom Gewerbe;15636;Strom;Gewerbekunde;2000;100000;2026-03-01;2999-11-30;154.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom Gewerbe L;19803;Strom;Gewerbekunde;2000;100000;2026-03-01;2999-03-31;134.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom Gewerbe S;19263;Strom;Gewerbekunde;2000;100000;2026-03-01;2999-11-30;115.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom Gewerbe S L;19805;Strom;Gewerbekunde;2000;100000;2026-03-01;2999-03-31;96.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom L;19802;Strom;Privatkunde;2000;100000;2026-03-01;2999-03-31;134.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom S;19262;Strom;Privatkunde;2000;100000;2026-03-01;2999-11-30;115.00;;;;
+Stufe 21;MVV Energie AG;DIREKT Ökostrom S L;19804;Strom;Privatkunde;2000;100000;2026-03-01;2999-03-31;96.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;1000;2499;2025-03-01;2999-03-31;41.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;2500;4999;2025-03-01;2999-11-30;55.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;5000;9999;2025-03-01;2999-11-30;92.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;10000;24999;2025-03-01;2999-11-30;170.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;25000;49999;2025-03-01;2999-11-30;310.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;50000;74999;2025-03-01;2999-11-30;450.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct;16717;Strom;Privatkunde;75000;100000;2025-03-01;2999-11-30;685.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;1000;2499;2025-03-01;2999-03-31;41.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;2500;4999;2023-11-01;2999-11-30;55.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;5000;9999;2025-03-01;2999-11-30;92.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;10000;24999;2025-03-01;2999-11-30;170.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;25000;49999;2025-03-01;2999-11-30;310.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;50000;74999;2025-03-01;2999-11-30;450.00;;;;
+Stufe 21;oekostrom AG AT;oekostrom Direct Business;16718;Strom;Gewerbekunde;75000;100000;2025-03-01;2999-11-30;685.00;;;;
+Stufe 21;PrimaEnergy;Energy Bonus 24;18990;Strom;Privatkunde;0;800;2025-08-01;2999-08-31;27.00;;;;
+Stufe 21;PrimaEnergy;Energy Bonus 24;18990;Strom;Privatkunde;801;20000;2025-08-01;2999-08-31;151.00;;;;
+Stufe 21;PrimaEnergy;Energy Gas Bonus 24;18992;Gas;Privatkunde;0;1999;2025-08-01;2999-08-31;27.00;;;;
+Stufe 21;PrimaEnergy;Energy Gas Bonus 24;18992;Gas;Privatkunde;2000;50000;2025-08-01;2999-08-31;151.00;;;;
+Stufe 21;PrimaEnergy;Energy Gas Premium Bonus 24;18993;Gas;Privatkunde;0;1999;2025-08-01;2999-08-31;27.00;;;;
+Stufe 21;PrimaEnergy;Energy Gas Premium Bonus 24;18993;Gas;Privatkunde;2000;50000;2025-08-01;2999-08-31;281.00;;;;
+Stufe 21;PrimaEnergy;Energy Gas Premium S;19470;Gas;Privatkunde;1;10000;2025-11-01;2999-08-31;170.00;;;;
+Stufe 21;PrimaEnergy;Energy Premium Bonus 24;18991;Strom;Privatkunde;0;800;2025-08-01;2999-08-31;27.00;;;;
+Stufe 21;PrimaEnergy;Energy Premium Bonus 24;18991;Strom;Privatkunde;801;20000;2025-08-01;2999-08-31;271.00;;;;
+Stufe 21;PrimaEnergy;Energy Premium Bonus 24 L;19281;Strom;Privatkunde;0;800;2025-10-01;2999-08-31;27.00;;;;
+Stufe 21;PrimaEnergy;Energy Premium Bonus 24 L;19281;Strom;Privatkunde;801;20000;2025-10-01;2999-08-31;271.00;;;;
+Stufe 21;PrimaEnergy;Energy Premium S;19469;Strom;Privatkunde;1;5000;2025-11-01;2999-08-31;170.00;;;;
+Stufe 21;prioenergie;prio gas 24 öko;19785;Gas;Privatkunde;10000;59999;2026-02-01;2999-11-30;200.00;;;;
+Stufe 21;prioenergie;prio gas direkt 24;19253;Gas;Privatkunde;10000;59999;2025-11-05;2999-11-30;67.00;;;;
+Stufe 21;prioenergie;prio gas direkt 24;19253;Gas;Privatkunde;0;0;2025-12-01;2026-03-31;;;;;25.00 on Top 
+Stufe 21;prioenergie;prio strom 24 öko;19249;Strom;Privatkunde;1500;7499;2025-11-05;2999-11-30;133.00;;;;
+Stufe 21;prioenergie;prio strom 24 öko;19249;Strom;Privatkunde;0;0;2025-12-01;2026-03-31;;;;;25.00 on Top 
+Stufe 21;prioenergie;prio strom direkt 24;19250;Strom;Privatkunde;1500;7499;2025-11-05;2999-11-30;67.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 12;17869;Strom;Gewerbekunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 12;17869;Strom;Gewerbekunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 12;17869;Strom;Gewerbekunde;1;10000;2024-09-01;2026-03-31;;;;;25.00 on Top 
+Stufe 21;Prokon;Prokon Gewerbestrom 12;17869;Strom;Gewerbekunde;10001;99999;2024-09-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Prokon;Prokon Gewerbestrom 24;17870;Strom;Gewerbekunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 24;17870;Strom;Gewerbekunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 24;17870;Strom;Gewerbekunde;1;10000;2024-09-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Prokon;Prokon Gewerbestrom 24;17870;Strom;Gewerbekunde;10001;99999;2024-09-01;2026-03-31;;;;;100.00 on Top 
+Stufe 21;Prokon;Prokon Gewerbestrom 36;17871;Strom;Gewerbekunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 36;17871;Strom;Gewerbekunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Gewerbestrom 36;17871;Strom;Gewerbekunde;1;10000;2024-09-01;2026-03-31;;;;;75.00 on Top 
+Stufe 21;Prokon;Prokon Gewerbestrom 36;17871;Strom;Gewerbekunde;10001;99999;2024-09-01;2026-03-31;;;;;150.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 12;17647;Strom;Privatkunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 12;17647;Strom;Privatkunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 12;17647;Strom;Privatkunde;1;10000;2024-09-01;2026-03-31;;;;;25.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 12;17647;Strom;Privatkunde;10001;99999;2024-09-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 12 PG25;17867;Strom;Privatkunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 12 PG25;17867;Strom;Privatkunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 12 PG25;17867;Strom;Privatkunde;1;10000;2024-09-01;2026-03-31;;;;;25.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 12 PG25;17867;Strom;Privatkunde;10001;99999;2024-09-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 24;17868;Strom;Privatkunde;1;10000;2024-09-01;2999-09-30;82.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 24;17868;Strom;Privatkunde;10001;99999;2024-09-01;2999-09-30;129.00;;;;
+Stufe 21;Prokon;Prokon Windstrom 24;17868;Strom;Privatkunde;1;10000;2024-09-01;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Prokon;Prokon Windstrom 24;17868;Strom;Privatkunde;10001;99999;2024-09-01;2026-03-31;;;;;100.00 on Top 
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Erdgas Direkt;2976;Gas;Privatkunde;100;300000;2025-09-01;2999-04-30;100.00;;;;
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Erdgas Direkt;2976;Gas;Privatkunde;0;0;2026-02-09;2026-03-31;;;;;55.00 on Top 
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Erdgas Fix;2977;Gas;Privatkunde;100;300000;2025-03-01;2999-04-30;36.00;;;;
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Strom Direkt;2974;Strom;Privatkunde;100;100000;2025-09-01;2999-04-30;81.00;;;;
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Strom Direkt;2974;Strom;Privatkunde;0;0;2026-02-09;2026-03-31;;;;;75.00 on Top 
+Stufe 21;R(H)EINPOWER;R(H)EINPOWER Strom Fix;2975;Strom;Privatkunde;100;100000;2025-03-01;2999-04-30;27.00;;;;
+Stufe 21;rabot.energy;rabot. smart12 Pricecap;19078;Strom;Privatkunde;1500;3000;2025-08-05;2999-01-31;56.00;;;;
+Stufe 21;rabot.energy;rabot. smart12 Pricecap;19078;Strom;Privatkunde;3001;5000;2025-08-05;2999-01-31;75.00;;;;
+Stufe 21;rabot.energy;rabot. smart12 Pricecap;19078;Strom;Privatkunde;5001;30000;2025-08-05;2999-01-31;103.00;;;;
+Stufe 21;rabot.energy;rabot. smart12 Pricecap;19078;Strom;Privatkunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;rabot.energy;rabot.fix12;18439;Strom;Privatkunde;1500;3000;2025-04-01;2999-01-31;56.00;;;;
+Stufe 21;rabot.energy;rabot.fix12;18439;Strom;Privatkunde;3001;5000;2025-04-01;2999-01-31;75.00;;;;
+Stufe 21;rabot.energy;rabot.fix12;18439;Strom;Privatkunde;5001;30000;2025-04-01;2999-01-31;103.00;;;;
+Stufe 21;rabot.energy;rabot.fix12;18439;Strom;Privatkunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;rabot.energy;rabot.fix12 Business;18441;Strom;Gewerbekunde;1500;3000;2025-04-01;2999-01-31;56.00;;;;
+Stufe 21;rabot.energy;rabot.fix12 Business;18441;Strom;Gewerbekunde;3001;5000;2025-04-01;2999-01-31;75.00;;;;
+Stufe 21;rabot.energy;rabot.fix12 Business;18441;Strom;Gewerbekunde;5001;30000;2025-04-01;2999-01-31;103.00;;;;
+Stufe 21;rabot.energy;rabot.fix12 Business;18441;Strom;Gewerbekunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;rabot.energy;rabot.fix24;18440;Strom;Privatkunde;1500;3000;2025-10-01;2999-01-31;92.00;;;;
+Stufe 21;rabot.energy;rabot.fix24;18440;Strom;Privatkunde;3001;5000;2025-10-01;2999-01-31;111.00;;;;
+Stufe 21;rabot.energy;rabot.fix24;18440;Strom;Privatkunde;5001;30000;2025-10-01;2999-01-31;155.00;;;;
+Stufe 21;rabot.energy;rabot.fix24;18440;Strom;Privatkunde;0;0;2026-02-03;2026-03-31;;;;;10.00 on Top 
+Stufe 21;rabot.energy;rabot.fix24 Business;18442;Strom;Gewerbekunde;1500;3000;2025-10-01;2999-01-31;92.00;;;;
+Stufe 21;rabot.energy;rabot.fix24 Business;18442;Strom;Gewerbekunde;3001;5000;2025-10-01;2999-01-31;111.00;;;;
+Stufe 21;rabot.energy;rabot.fix24 Business;18442;Strom;Gewerbekunde;5001;30000;2025-10-01;2999-01-31;155.00;;;;
+Stufe 21;rabot.energy;rabot.fix24 Business;18442;Strom;Gewerbekunde;0;0;2026-02-03;2026-03-31;;;;;10.00 on Top 
+Stufe 21;rabot.energy;rabot.smart12 Business Pricecap;19077;Strom;Gewerbekunde;1500;3000;2025-08-05;2999-01-31;56.00;;;;
+Stufe 21;rabot.energy;rabot.smart12 Business Pricecap;19077;Strom;Gewerbekunde;3001;5000;2025-08-05;2999-01-31;75.00;;;;
+Stufe 21;rabot.energy;rabot.smart12 Business Pricecap;19077;Strom;Gewerbekunde;5001;30000;2025-08-05;2999-01-31;103.00;;;;
+Stufe 21;rabot.energy;rabot.smart12 Business Pricecap;19077;Strom;Gewerbekunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;1500;3000;2025-08-05;2999-04-30;92.00;;;;
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;3001;5000;2025-08-05;2999-04-30;110.00;;;;
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;5001;30000;2025-08-05;2999-04-30;155.00;;;;
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;30001;50000;2025-08-05;2999-04-30;255.00;;;;
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;50001;100000;2025-08-05;2999-04-30;325.00;;;;
+Stufe 21;rabot.energy;rabot.smart24;19079;Strom;Privatkunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;1500;3000;2025-08-05;2999-04-30;92.00;;;;
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;3001;5000;2025-08-05;2999-04-30;110.00;;;;
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;5001;30000;2025-08-05;2999-04-30;155.00;;;;
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;30001;50000;2025-08-05;2999-04-30;255.00;;;;
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;50001;100000;2025-08-05;2999-04-30;325.00;;;;
+Stufe 21;rabot.energy;rabot.smart24 Business;19076;Strom;Gewerbekunde;0;0;2026-02-03;2026-03-31;;;;;25.00 on Top 
+Stufe 21;RheinEnergie AG;Fair Gas 12;14126;Gas;Privatkunde;1;1500000;2025-08-24;2999-05-31;104.00;;;;
+Stufe 21;RheinEnergie AG;Fair Gas 24;14127;Gas;Privatkunde;1;1500000;2025-08-01;2999-05-31;144.00;;;;
+Stufe 21;RheinEnergie AG;Fair Ökostrom 12;14130;Strom;Privatkunde;1;100000;2025-08-15;2999-05-31;104.00;;;;
+Stufe 21;RheinEnergie AG;Fair Ökostrom 24;14131;Strom;Privatkunde;1;100000;2026-02-15;2999-05-31;135.00;;;;
+Stufe 21;RheinEnergie AG;Fair Ökostrom 24;14131;Strom;Privatkunde;0;0;2026-03-08;2026-03-31;;;;;30.00 on Top 
+Stufe 21;RheinEnergie AG;Fair Ökostrom 24 D GV;19476;Strom;Privatkunde;1;100000;2025-12-01;2999-05-31;144.00;;;;
+Stufe 21;RheinEnergie AG;Fair Ökostrom 24 D GV;19476;Strom;Privatkunde;0;0;2025-12-03;2026-03-31;;;;;40.00 on Top 
+Stufe 21;RheinEnergie AG;Fair Ökostrom 24 D GV;19476;Strom;Privatkunde;0;0;2026-03-08;2026-03-31;;;;;30.00 on Top 
+Stufe 21;RheinEnergie AG;FairBest plus;14138;Gas;Privatkunde;1;1500000;2025-08-06;2999-05-31;67.00;;;;
+Stufe 21;RheinEnergie AG;FairBest plus;14139;Strom;Privatkunde;1;100000;2025-08-06;2999-05-31;44.00;;;;
+Stufe 21;RheinEnergie AG;Trade Gas 12;15806;Gas;Gewerbekunde;1;1500000;2025-08-25;2999-05-31;104.00;;;;
+Stufe 21;RheinEnergie AG;Trade Gas 24;15807;Gas;Gewerbekunde;1;1500000;2025-08-25;2999-05-31;144.00;;;;
+Stufe 21;RheinEnergie AG;Trade Ökostrom 12;15804;Strom;Gewerbekunde;1;100000;2025-08-25;2999-05-31;104.00;;;;
+Stufe 21;RheinEnergie AG;Trade Ökostrom 24;15805;Strom;Gewerbekunde;1;100000;2026-02-15;2999-05-31;135.00;;;;
+Stufe 21;RheinEnergie AG;Trade Ökostrom 24;15805;Strom;Gewerbekunde;0;0;2026-03-08;2026-03-31;;;;;30.00 on Top 
+Stufe 21;rhenag;rhenag erdgasSMART24;17904;Gas;Privatkunde;7501;12000;2024-08-01;2999-03-31;59.00;;;;
+Stufe 21;rhenag;rhenag erdgasSMART24;17904;Gas;Privatkunde;12001;50000;2024-08-01;2999-03-31;106.00;;;;
+Stufe 21;rhenag;rhenag erdgasSMART24;17904;Gas;Privatkunde;50001;300000;2024-08-01;2999-03-31;125.00;;;;
+Stufe 21;rhenag;rhenag stromSMART24;17902;Strom;Privatkunde;2501;3000;2024-08-01;2999-03-31;59.00;;;;
+Stufe 21;rhenag;rhenag stromSMART24;17902;Strom;Privatkunde;3001;30000;2024-08-01;2999-03-31;106.00;;;;
+Stufe 21;rhenag;rhenag stromSMART24;17902;Strom;Privatkunde;30001;100000;2024-08-01;2999-03-31;125.00;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Business;8178;Gas;Gewerbekunde;7500;15000;2019-01-15;2999-01-31;24.18;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Business;8178;Gas;Gewerbekunde;15001;30000;2019-01-15;2999-01-31;41.00;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Business;8178;Gas;Gewerbekunde;30001;60000;2019-01-15;2999-01-31;57.66;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Business;8178;Gas;Gewerbekunde;60001;100000;2019-01-15;2999-01-31;99.51;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Business;8178;Gas;Gewerbekunde;100001;150000;2019-01-15;2999-01-31;162.75;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Direkt;8179;Gas;Privatkunde;7500;15000;2019-01-15;2999-01-31;24.18;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Direkt;8179;Gas;Privatkunde;15001;30000;2019-01-15;2999-01-31;40.92;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Direkt;8179;Gas;Privatkunde;30001;60000;2019-01-15;2999-01-31;57.66;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Direkt;8179;Gas;Privatkunde;60001;100000;2019-01-15;2999-01-31;99.51;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönGas Direkt;8179;Gas;Privatkunde;100001;150000;2019-01-15;2999-01-31;162.75;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Business;4466;Strom;Gewerbekunde;1;1000;2017-09-01;2999-09-30;20.46;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Business;4466;Strom;Gewerbekunde;1001;2500;2017-09-01;2999-09-30;37.20;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Business;4466;Strom;Gewerbekunde;2501;5000;2017-09-01;2999-09-30;57.66;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Business;4466;Strom;Gewerbekunde;5001;100000;2017-09-01;2999-09-30;79.05;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur;7035;Strom;Privatkunde;1;1000;2019-01-01;2999-09-30;20.46;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur;7035;Strom;Privatkunde;1001;2500;2019-01-01;2999-09-30;37.20;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur;7035;Strom;Privatkunde;2501;5000;2019-01-01;2999-09-30;57.66;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur;7035;Strom;Privatkunde;5001;100000;2019-01-01;2999-09-30;79.05;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur GSL;7034;Strom;Privatkunde;1;1000;2019-01-01;2999-09-30;20.46;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur GSL;7034;Strom;Privatkunde;1001;2500;2019-01-01;2999-09-30;37.20;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur GSL;7034;Strom;Privatkunde;2501;5000;2019-01-01;2999-09-30;57.66;;;;
+Stufe 21;RhönEnergie Fulda GmbH;RhönStrom Natur GSL;7034;Strom;Privatkunde;5001;100000;2019-01-01;2999-09-30;79.05;;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 RLM;18798;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 RLM;18798;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 RLM;18804;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 RLM;18804;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 SLP;18792;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 SLP;18792;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 SLP;18793;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 12 SLP;18793;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 RLM;18795;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 RLM;18795;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 RLM;18803;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 RLM;18803;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 SLP;18789;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 SLP;18789;Strom;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 SLP;18790;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;0.00085000;;;
+Stufe 21;SGB Energie GmbH;VZ Flex Plus 24 SLP;18790;Gas;Gewerbekunde;1;10000000;2025-06-01;2999-01-31;;;;0.00085000 ab dem 2. Belieferungsmonat monatlich;
+Stufe 21;Städtische Werke Kassel;Herkules Gas;11148;Gas;Privatkunde;5000;100000;2024-08-20;2999-01-31;53.01;;;;
+Stufe 21;Städtische Werke Kassel;Herkules Strom;11149;Strom;Privatkunde;1000;100000;2024-08-20;2999-01-31;53.01;;;;
+Stufe 21;Städtische Werke Kassel;Sicher Gas;5272;Gas;Privatkunde;500;800000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Sicher Gas;5274;Gas;Gewerbekunde;500;800000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Sicher Strom;5268;Strom;Privatkunde;800;100000;2024-09-11;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Sicher Strom;5270;Strom;Gewerbekunde;800;100000;2024-09-11;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Speicherheizung Natur getr. ET;3057;Strom;Privatkunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Speicherheizung Natur getr. ET;3058;Strom;Gewerbekunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Wärmepumpe Natur getr. ET;1744;Strom;Privatkunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Wärmepumpe Natur getr. ET;1745;Strom;Gewerbekunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Wärmepumpe Natur getr. ZT;1710;Strom;Privatkunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Städtische Werke Kassel;Wärmepumpe Natur getr. ZT;1711;Strom;Gewerbekunde;200;100000;2024-08-20;2999-01-31;88.00;;;;
+Stufe 21;Stadtwerke Augsburg;swa Strom Fest24 natur DB;18876;Strom;Privatkunde;1000;2999;2025-11-09;2999-11-30;108.00;;;;
+Stufe 21;Stadtwerke Augsburg;swa Strom Fest24 natur DB;18876;Strom;Privatkunde;3000;5999;2025-11-09;2999-11-30;127.00;;;;
+Stufe 21;Stadtwerke Augsburg;swa Strom Fest24 natur DB;18876;Strom;Privatkunde;6000;9999;2025-11-09;2999-11-30;147.00;;;;
+Stufe 21;Stadtwerke Augsburg;swa Strom Fest24 natur DB;18876;Strom;Privatkunde;10000;100000;2025-11-09;2999-11-30;167.00;;;;
+Stufe 21;Stadtwerke Dessau;DessauErdgas Regio;19204;Gas;Privatkunde;5000;99000;2026-01-01;2999-09-30;189.00;;;;
+Stufe 21;Stadtwerke Dessau;DessauStrom Regio;19205;Strom;Privatkunde;1000;99000;2026-01-01;2999-09-30;189.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 12;12475;Gas;Gewerbekunde;2001;10000;2021-03-01;2999-03-31;67.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 12;12475;Gas;Gewerbekunde;10001;50000;2021-03-01;2999-03-31;91.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 12;12475;Gas;Gewerbekunde;50001;80000;2021-03-01;2999-03-31;155.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 12;12475;Gas;Gewerbekunde;80001;100000;2021-03-01;2999-03-31;195.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 24;12476;Gas;Gewerbekunde;2001;10000;2021-03-01;2999-03-31;76.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 24;12476;Gas;Gewerbekunde;10001;50000;2021-03-01;2999-03-31;145.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 24;12476;Gas;Gewerbekunde;50001;80000;2021-03-01;2999-03-31;193.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 24;12476;Gas;Gewerbekunde;80001;100000;2021-03-01;2999-03-31;242.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 36;12477;Gas;Gewerbekunde;2001;10000;2021-03-01;2999-03-31;86.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 36;12477;Gas;Gewerbekunde;10001;50000;2021-03-01;2999-03-31;199.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 36;12477;Gas;Gewerbekunde;50001;80000;2021-03-01;2999-03-31;232.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbegas 36;12477;Gas;Gewerbekunde;80001;100000;2021-03-01;2999-03-31;290.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;2001;5000;2021-03-01;2999-03-31;53.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;5001;10000;2021-03-01;2999-03-31;57.50;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;10001;20000;2021-03-01;2999-03-31;76.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;20001;30000;2021-03-01;2999-03-31;105.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;30001;50000;2022-05-01;2999-03-31;144.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;50001;70000;2022-05-01;2999-03-31;199.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 12;12481;Strom;Gewerbekunde;70001;99999;2022-05-01;2999-03-31;249.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;2001;5000;2021-03-01;2999-03-31;76.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;5001;10000;2021-03-01;2999-03-31;95.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;10001;20000;2021-03-01;2999-03-31;124.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;20001;30000;2021-03-01;2999-03-31;172.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;30001;50000;2022-05-01;2999-03-31;213.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;50001;70000;2022-05-01;2999-03-31;278.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 24;12482;Strom;Gewerbekunde;70001;99999;2022-05-01;2999-03-31;322.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;2001;5000;2021-03-01;2999-03-31;95.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;5001;10000;2021-03-01;2999-03-31;115.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;10001;20000;2021-03-01;2999-03-31;145.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;20001;30000;2021-03-01;2999-03-31;195.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;30001;50000;2022-05-01;2999-03-31;233.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;50001;70000;2022-05-01;2999-03-31;299.00;;;;
+Stufe 21;Stadtwerke Duisburg;Mein Gewerbestrom 36;12483;Strom;Gewerbekunde;70001;99999;2022-05-01;2999-03-31;343.00;;;;
+Stufe 21;Stadtwerke Stuttgart;Ökostrom 12;19416;Strom;Privatkunde;1;100000;2025-11-01;2999-09-30;67.00;;;;
+Stufe 21;Stadtwerke Stuttgart;Ökostrom 12;19417;Strom;Gewerbekunde;1;100000;2025-11-01;2999-09-30;67.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom;14442;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom Gewerbe;14451;Strom;Gewerbekunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Strom HT/NT;14443;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom;14444;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (gem.);14445;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;1500;5000;2022-11-01;2999-11-30;20.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;5001;10000;2022-11-01;2999-11-30;39.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;10001;15000;2022-11-01;2999-11-30;48.50;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;15001;30000;2022-11-01;2999-11-30;86.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;30001;50000;2022-11-01;2999-11-30;114.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;50001;80000;2022-11-01;2999-11-30;144.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;80001;90000;2022-12-01;2999-11-30;164.00;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;15001;50000;2022-11-01;2999-11-30;;;17.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;;;
+Stufe 21;Stadtwerke Troisdorf;Unser.Wärmestrom HT/NT (get.);14446;Strom;Privatkunde;50001;100000;2022-11-01;2999-11-30;;;36.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;0;2999;2023-05-01;2999-03-31;55.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;0;2999;2023-05-01;2999-03-31;;;13.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;3000;19999;2023-05-01;2999-03-31;101.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;3000;19999;2023-05-01;2999-03-31;;;22.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;20000;49999;2023-05-01;2999-03-31;141.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;20000;49999;2023-05-01;2999-03-31;;;31.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;50000;69999;2023-05-01;2999-03-31;211.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;50000;69999;2023-05-01;2999-03-31;;;41.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;70000;100000;2023-05-01;2999-03-31;260.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom (BKP);13297;Strom;Gewerbekunde;70000;100000;2023-05-01;2999-03-31;;;73.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;0;2999;2023-05-01;2999-03-31;55.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;0;2999;2023-05-01;2999-03-31;;;13.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;3000;19999;2023-05-01;2999-03-31;101.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;3000;19999;2023-05-01;2999-03-31;;;22.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;20000;49999;2023-05-01;2999-03-31;141.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;20000;49999;2023-05-01;2999-03-31;;;31.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;50000;69999;2023-05-01;2999-03-31;211.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;50000;69999;2023-05-01;2999-03-31;;;41.00 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;70000;100000;2023-05-01;2999-03-31;260.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinPROFI Strom Öko (BKP);16396;Strom;Gewerbekunde;70000;100000;2023-05-01;2999-03-31;;;73.50 ab dem 13. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Gas (SB);19341;Gas;Privatkunde;0;300000;2026-01-01;2999-03-31;140.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Gas (SB);19341;Gas;Privatkunde;0;300000;2026-01-01;2999-03-31;;;20.00 ab dem 25. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Strom (SB);19414;Strom;Privatkunde;0;30000;2026-01-01;2999-03-31;140.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Strom (SB);19414;Strom;Privatkunde;0;30000;2026-01-01;2999-03-31;;;20.00 ab dem 25. Belieferungsmonat jährlich;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Strom öko (SB);19415;Strom;Privatkunde;0;30000;2026-01-01;2999-03-31;140.00;;;;
+Stufe 21;SWK STADTWERKE KREFELD;meinSTADT Strom öko (SB);19415;Strom;Privatkunde;0;30000;2026-01-01;2999-03-31;;;20.00 ab dem 25. Belieferungsmonat jährlich;;
+Stufe 21;SWU Energie GmbH;SWU NaturStrom - Onlinetarif;5046;Strom;Privatkunde;500;100000;2020-01-01;2999-04-30;32.55;;;;
+Stufe 21;SWU Energie GmbH;SWU SchwabenGas  - Onlinetarif;5047;Gas;Privatkunde;0;40000;2023-05-29;2999-05-31;36.00;;;;
+Stufe 21;SWU Energie GmbH;SWU SchwabenStrom - Onlinetarif;5045;Strom;Privatkunde;500;100000;2022-05-01;2999-04-30;32.55;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18583;Gas;Privatkunde;5001;12000;2025-04-01;2999-10-31;50.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18583;Gas;Privatkunde;12001;18000;2025-04-01;2999-10-31;59.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18583;Gas;Privatkunde;18001;80000;2025-04-01;2999-10-31;68.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18584;Gas;Gewerbekunde;5001;12000;2025-04-01;2999-10-31;50.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18584;Gas;Gewerbekunde;12001;18000;2025-04-01;2999-10-31;59.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas direkt;18584;Gas;Gewerbekunde;18001;80000;2025-04-01;2999-10-31;68.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas easy;17746;Gas;Privatkunde;900;80000;2025-09-01;2999-10-31;165.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas easy;17752;Gas;Gewerbekunde;900;80000;2025-09-01;2999-10-31;165.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas easy Bonus;18023;Gas;Privatkunde;900;80000;2025-09-01;2999-10-31;140.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Gas easy Bonus;18025;Gas;Gewerbekunde;900;80000;2025-09-01;2999-10-31;140.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom direkt;19206;Strom;Privatkunde;900;100000;2025-09-01;2999-10-31;50.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom direkt;19206;Strom;Privatkunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom direkt;19207;Strom;Gewerbekunde;900;100000;2025-09-01;2999-10-31;50.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom direkt;19207;Strom;Gewerbekunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy;17747;Strom;Privatkunde;500;100000;2025-09-01;2999-10-31;165.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy;17747;Strom;Privatkunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy;17753;Strom;Gewerbekunde;500;100000;2025-09-01;2999-10-31;165.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy;17753;Strom;Gewerbekunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy Bonus;18024;Strom;Privatkunde;500;100000;2025-09-01;2999-10-31;140.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy Bonus;18024;Strom;Privatkunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy Bonus;18026;Strom;Gewerbekunde;500;100000;2025-09-01;2999-10-31;140.00;;;;
+Stufe 21;TEAG Thüringer Energie AG;TEAG.Strom easy Bonus;18026;Strom;Gewerbekunde;0;0;2026-02-02;2026-03-30;;;;;20.00 on Top 
+Stufe 21;Vattenfall Europe Sales;Bio24 Gas 15;18224;Gas;Privatkunde;1;1500000;2025-01-01;2999-06-30;130.00;;;;
+Stufe 21;Vattenfall Europe Sales;Easy24 Gas PUR;13023;Gas;Privatkunde;1;1500000;2021-05-01;2999-06-30;140.00;;;;
+Stufe 21;Vattenfall Europe Sales;Easy24 Gas PUR;13023;Gas;Privatkunde;0;0;2026-03-16;2026-03-31;;;;;50.00 on Top 
+Stufe 21;Vattenfall Europe Sales;Easy24 Gas PUR rNKB;13025;Gas;Privatkunde;1;1500000;2026-02-01;2999-06-30;100.00;;;;
+Stufe 21;Vattenfall Europe Sales;ÖkoStrom24 Best;17142;Strom;Privatkunde;1;100000;2024-01-01;2999-06-30;220.00;;;;
+Stufe 21;Vattenfall Europe Sales;ÖkoStrom24 Direkt;18590;Strom;Privatkunde;1;100000;2026-01-15;2999-06-30;35.00;;;;
+Stufe 21;Vattenfall Europe Sales;ÖkoStrom24 Pur;16363;Strom;Privatkunde;1;100000;2026-01-02;2999-06-30;179.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;1;3999;2025-02-01;2999-01-31;110.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;4000;9999;2025-02-01;2999-01-31;178.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;10000;14999;2024-08-01;2999-01-31;238.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;15000;19999;2024-08-01;2999-01-31;270.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;20000;24999;2024-08-01;2999-01-31;285.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;25000;29999;2024-08-01;2999-01-31;310.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;30000;39999;2024-08-01;2999-01-31;350.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;40000;49999;2024-08-01;2999-01-31;410.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;50000;59999;2024-08-01;2999-01-31;460.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;60000;69999;2024-08-01;2999-01-31;530.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi ÖkoStrom24 L;17847;Strom;Gewerbekunde;70000;100000;2024-08-01;2999-01-31;560.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi24 Gas Vario Gewerbe;18285;Gas;Gewerbekunde;1;29999;2025-02-01;2999-04-30;190.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi24 Gas Vario Gewerbe;18285;Gas;Gewerbekunde;30000;49999;2025-02-01;2999-04-30;254.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi24 Gas Vario Gewerbe;18285;Gas;Gewerbekunde;50000;79999;2025-02-01;2999-04-30;302.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi24 Gas Vario Gewerbe;18285;Gas;Gewerbekunde;80000;1500000;2025-02-01;2999-04-30;350.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi_ÖkoStrom24 L;18178;Strom;Gewerbekunde;1;1999;2025-02-01;2999-01-31;73.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi_ÖkoStrom24 L;18178;Strom;Gewerbekunde;2000;5999;2025-02-01;2999-01-31;101.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi_ÖkoStrom24 L;18178;Strom;Gewerbekunde;6000;10999;2025-02-01;2999-01-31;130.00;;;;
+Stufe 21;Vattenfall Europe Sales;Profi_ÖkoStrom24 L;18178;Strom;Gewerbekunde;11000;100000;2025-02-01;2999-01-31;160.00;;;;
+Stufe 21;Vattenfall Europe Sales;Wärmepumpe Natur12;13050;Strom;Gewerbekunde;1;100000;2021-05-01;2999-11-30;83.00;;;;
+Stufe 21;Vattenfall Europe Sales;Wärmepumpe Natur12;13051;Strom;Privatkunde;1;100000;2021-05-01;2999-11-30;83.00;;;;
+Stufe 21;Vattenfall Europe Sales;Wärmepumpe Natur24;13052;Strom;Privatkunde;1;100000;2021-05-01;2999-11-30;120.00;;;;
+Stufe 21;WEMAG;WEMAG Erdgas Natur;1583;Gas;Privatkunde;500;300000;2022-01-25;2999-06-30;49.50;;;;
+Stufe 21;WEMAG;WEMAG Erdgas Natur;1583;Gas;Privatkunde;500;300000;2022-01-25;2999-06-30;;;17.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Erdgas Natur;1583;Gas;Privatkunde;500;300000;2022-01-25;2999-06-30;;;41.00 ab dem 25. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Erdgas Natur;1583;Gas;Privatkunde;0;0;2026-02-01;2026-03-31;;;;;90.00 on Top 
+Stufe 21;WEMAG;WEMAG Ökonachtstrom;19799;Strom;Privatkunde;500;100000;2026-03-01;2999-04-30;28.00;;;;
+Stufe 21;WEMAG;WEMAG Ökostrom;1579;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;30.50;;;;
+Stufe 21;WEMAG;WEMAG Ökostrom;1579;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;;;13.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Ökostrom;1579;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;;;31.50 ab dem 25. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Ökostrom;1579;Strom;Privatkunde;0;0;2026-02-01;2026-03-31;;;;;90.00 on Top 
+Stufe 21;WEMAG;WEMAG Ökostrom Aktiv;1580;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;30.50;;;;
+Stufe 21;WEMAG;WEMAG Ökostrom Aktiv;1580;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;;;13.00 ab dem 13. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Ökostrom Aktiv;1580;Strom;Privatkunde;1;100000;2022-01-25;2999-04-30;;;31.50 ab dem 25. Belieferungsmonat einmalig;;
+Stufe 21;WEMAG;WEMAG Ökostrom Aktiv;1580;Strom;Privatkunde;0;0;2026-02-01;2026-03-31;;;;;90.00 on Top 
+Stufe 21;WEMAG;WEMAG Ökostrom Wärmepumpe unterbrechbar;19246;Strom;Privatkunde;1;100000;2025-10-01;2999-04-30;30.50;;;;
+Stufe 21;WEMAG;WEMAG Ökostrom Wärmepumpe unterbrechbar;19246;Strom;Privatkunde;0;0;2025-10-05;2026-03-31;;;;;120.00 on Top 

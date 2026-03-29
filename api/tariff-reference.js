@@ -1,4 +1,5 @@
 const io = require("socket.io-client");
+const PROVISION_DATA = require("./_lib/provision-data");
 
 const DEFAULT_BASE_URL = process.env.TARIFKALKULATOR_BASE_URL || "https://tarifrechner.software";
 const DEFAULT_SERVICE_ROOT_PATH = process.env.TARIFKALKULATOR_SERVICE_ROOT_PATH || "whitelabel";
@@ -7,28 +8,28 @@ const DEFAULT_COUNTRY = process.env.TARIFKALKULATOR_COUNTRY || "de";
 const DEFAULT_COUNTRY_CODE = process.env.TARIFKALKULATOR_COUNTRY_CODE || "81";
 const DEFAULT_HOUSE_NUMBER = process.env.TARIFKALKULATOR_HOUSE_NUMBER || "1";
 
-const REF_PRODUCTS = {
-  privat: {
-    strom: [
-      { reseller: "lichtblick", service: "okostrom24" },
-      { reseller: "lichtblick", service: "okostrom 24" },
-    ],
-    gas: [
-      { reseller: "lichtblick", service: "gas relax 24" },
-      { reseller: "lichtblick", service: "gasrelax24" },
-    ],
-  },
-  business: {
-    strom: [
-      { reseller: "vattenfall", service: "profi okostrom24 l" },
-      { reseller: "vattenfall", service: "profi okostrom 24 l" },
-    ],
-    gas: [
-      { reseller: "ewe", service: "business gas" },
-      { reseller: "ewe", service: "ewe business gas" },
-    ],
-  },
-};
+// Providers excluded from "höchste Provision" recommendation due to poor reviews
+const BLACKLISTED_PROVIDERS = new Set([
+  "immergrün", "immergrun",
+  "primastrom",
+  "voxenergie",
+  "grünwelt energie", "grunwelt energie",
+  "extraenergie", "extragrün", "extragrun", "extragrün gmbh",
+  "hitstrom", "hitenergie",
+  "almado",
+  "fuxx", "fuxx sparenergie",
+  "365 ag",
+  "stromio",
+  "gas.de",
+  "energy2day", "energy2day gmbh",
+  "enstroga",
+  "brillant energie", "brillant energie gmbh",
+  "sgb energie", "sgb energie gmbh",
+  "leu energie", "leu energie gmbh", "leu energie gmbh & co. kg",
+  "primaenergy", "prima energy", "primaenergie", "primagas", "primastrom",
+  "evd", "evd energieversorgung", "evd energieversorgung deutschland",
+  "evm", "evm energie", "energieversorgung mittelrhein", "energieversorgung mittelrhein ag",
+].map(n => n.toLowerCase()));
 
 function normalize(text) {
   return String(text || "")
@@ -142,23 +143,184 @@ async function requestRatecalc({
   }
 }
 
-function pickReferenceService(services, customerGroup, sector) {
-  const list = Array.isArray(services) ? services : [];
-  if (!list.length) return null;
+// ── Provision matching ────────────────────────────────────────────────────────
 
-  // Sortiere alle Tarife nach Gesamtpreis (totalPrice, total_cost_minus_bonuses, total_cost)
-  const sorted = list.slice().sort((a, b) => {
-    const priceA = Number.parseFloat(a.totalPrice || a.total_cost_minus_bonuses || a.total_cost || 0) || 0;
-    const priceB = Number.parseFloat(b.totalPrice || b.total_cost_minus_bonuses || b.total_cost || 0) || 0;
-    return priceA - priceB;
+function inferContractMonths(tarifName) {
+  const name = String(tarifName || "");
+  if (/\b36\b/.test(name)) return 36;
+  if (/\b24\b/.test(name)) return 24;
+  if (/\b12\b/.test(name)) return 12;
+  return 24; // default assumption
+}
+
+function matchProvision(providerName, rateName, sector, customerGroup, consumption, today) {
+  const normP = normalize(providerName);
+  const normR = normalize(rateName);
+  const todayStr = today || new Date().toISOString().split("T")[0];
+
+  let bestMatch = null;
+  let bestSonder = 0;
+
+  for (const row of PROVISION_DATA) {
+    if (row.sparte !== sector) continue;
+    if (row.typ !== customerGroup) continue;
+
+    const rowProvider = normalize(row.versorger);
+    if (!normP.includes(rowProvider) && !rowProvider.includes(normP)) continue;
+
+    const rowTarif = normalize(row.tarif);
+    if (!normR.includes(rowTarif) && !rowTarif.includes(normR)) continue;
+
+    // Date validity check
+    if (row.gueltigVon && todayStr < row.gueltigVon) continue;
+    if (row.gueltigBis && todayStr > row.gueltigBis) continue;
+
+    // Sonderprovision entries (verbrauchVon=0, verbrauchBis=0)
+    if (row.verbrauchVon === 0 && row.verbrauchBis === 0 && row.sonderprovision) {
+      const sonderMatch = row.sonderprovision.match(/([\d.,]+)/);
+      if (sonderMatch) bestSonder += parseFloat(sonderMatch[1].replace(",", ".")) || 0;
+      continue;
+    }
+
+    // Consumption band check
+    if (consumption < row.verbrauchVon || consumption > row.verbrauchBis) continue;
+
+    // Pick the row with the highest base provision
+    const rowProv = row.provisionEuro + (row.provisionEuroJeKwh * consumption);
+    if (!bestMatch || rowProv > bestMatch._totalProv) {
+      bestMatch = { ...row, _totalProv: rowProv };
+    }
+  }
+
+  if (!bestMatch) return null;
+  return {
+    provisionEuro: bestMatch._totalProv + bestSonder,
+    contractMonths: inferContractMonths(bestMatch.tarif),
+  };
+}
+
+function isBlacklisted(providerName) {
+  const norm = normalize(providerName);
+  for (const bl of BLACKLISTED_PROVIDERS) {
+    const normBl = normalize(bl);
+    if (norm.includes(normBl) || normBl.includes(norm)) return true;
+  }
+  return false;
+}
+
+function isSpottarif(service, allServices) {
+  const totalCost = parseFloat(service.totalPrice || service.total_cost_minus_bonuses || service.total_cost || 0) || 0;
+  if (totalCost <= 0) return true;
+
+  // Calculate median
+  const costs = allServices
+    .map(s => parseFloat(s.totalPrice || s.total_cost_minus_bonuses || s.total_cost || 0) || 0)
+    .filter(c => c > 0)
+    .sort((a, b) => a - b);
+  if (!costs.length) return true;
+  const median = costs[Math.floor(costs.length / 2)];
+
+  // If total cost is more than 30% below median → Spottarif
+  return totalCost < median * 0.7;
+}
+
+function extractServiceFields(svc) {
+  return {
+    resellerName: svc.providerName || svc.reseller_name || "",
+    serviceName: svc.rateName || svc.service_name || "",
+    workingPriceCt: parseFloat(svc.workPrice || svc.working_price || 0) || 0,
+    basePriceEurYear: parseFloat(svc.basePriceYear || svc.base_price || 0) || 0,
+    totalCostEurYear: parseFloat(svc.totalPrice || svc.total_cost_minus_bonuses || svc.total_cost || 0) || 0,
+  };
+}
+
+function pickRecommendations(services, sector, customerGroup, consumption) {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Enrich each service with provision data
+  const enriched = services.map(svc => {
+    const fields = extractServiceFields(svc);
+    const prov = matchProvision(
+      fields.resellerName, fields.serviceName,
+      sector, customerGroup, consumption, today
+    );
+    return {
+      ...fields,
+      provisionEuro: prov ? prov.provisionEuro : 0,
+      contractMonths: prov ? prov.contractMonths : inferContractMonths(fields.serviceName),
+      _raw: svc,
+    };
   });
 
-  // Nimm den drittgünstigsten, falls vorhanden, sonst den günstigsten
-  if (sorted.length >= 3) {
-    return sorted[2];
-  } else {
-    return sorted[0];
+  // Filter out Spottarife
+  const nonSpot = enriched.filter(e => !isSpottarif(e._raw, services));
+
+  // Filter by minimum provision
+  const minProvFiltered = nonSpot.filter(e => {
+    if (e.provisionEuro <= 0) return false;
+    if (isBlacklisted(e.resellerName)) return false;
+    if (e.contractMonths >= 24) return e.provisionEuro >= 150;
+    if (e.contractMonths >= 12) return e.provisionEuro >= 130;
+    return e.provisionEuro >= 130;
+  });
+
+  if (!minProvFiltered.length) {
+    // Fallback: relax provision filter, take top 3 with any provision
+    const withProv = nonSpot.filter(e => e.provisionEuro > 0);
+    if (!withProv.length) return null;
+    const sorted = withProv.sort((a, b) => a.totalCostEurYear - b.totalCostEurYear);
+    const pick = sorted[0];
+    return {
+      sweetspot: formatRec(pick, "sweetspot"),
+      cheapest: formatRec(pick, "cheapest"),
+      highestProvision: formatRec(pick, "highestProvision"),
+      fallback: true,
+    };
   }
+
+  // 1) Cheapest: lowest totalCostEurYear
+  const sortedByCost = [...minProvFiltered].sort((a, b) => a.totalCostEurYear - b.totalCostEurYear);
+  const cheapest = sortedByCost[0];
+
+  // 2) Highest Provision
+  const sortedByProv = [...minProvFiltered].sort((a, b) => b.provisionEuro - a.provisionEuro);
+  const highestProv = sortedByProv[0];
+
+  // 3) Sweetspot (50/50): score = normalized_savings * 0.5 + normalized_provision * 0.5
+  const maxCost = Math.max(...minProvFiltered.map(e => e.totalCostEurYear));
+  const minCost = Math.min(...minProvFiltered.map(e => e.totalCostEurYear));
+  const maxProv = Math.max(...minProvFiltered.map(e => e.provisionEuro));
+  const minProv = Math.min(...minProvFiltered.map(e => e.provisionEuro));
+  const costRange = maxCost - minCost || 1;
+  const provRange = maxProv - minProv || 1;
+
+  const scored = minProvFiltered.map(e => ({
+    ...e,
+    _score: 0.5 * (1 - (e.totalCostEurYear - minCost) / costRange) + 0.5 * ((e.provisionEuro - minProv) / provRange),
+  }));
+  scored.sort((a, b) => b._score - a._score);
+  const sweetspot = scored[0];
+
+  return {
+    sweetspot: formatRec(sweetspot, "sweetspot"),
+    cheapest: formatRec(cheapest, "cheapest"),
+    highestProvision: formatRec(highestProv, "highestProvision"),
+    totalQualified: minProvFiltered.length,
+  };
+}
+
+function formatRec(entry, tag) {
+  if (!entry) return null;
+  return {
+    tag,
+    resellerName: entry.resellerName,
+    serviceName: entry.serviceName,
+    workingPriceCt: entry.workingPriceCt,
+    basePriceEurYear: entry.basePriceEurYear,
+    totalCostEurYear: entry.totalCostEurYear,
+    provisionEuro: Math.round(entry.provisionEuro * 100) / 100,
+    contractMonths: entry.contractMonths,
+  };
 }
 
 module.exports = async function handler(req, res) {
@@ -224,22 +386,22 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ ok: false, error: "No services returned by ratecalc socket API" });
     }
 
-    const refService = pickReferenceService(services, customerGroup, sector);
-    if (!refService) {
-      return res.status(404).json({ ok: false, error: "Reference tariff not found in current result set", count: services.length });
+    const recs = pickRecommendations(services, sector, customerGroup, consumption);
+    if (!recs) {
+      return res.status(404).json({ ok: false, error: "Keine Tarife mit ausreichender Provision gefunden.", count: services.length });
     }
 
     return res.status(200).json({
       ok: true,
       sector,
       customerGroup,
-      reference: {
-        resellerName: refService.providerName || refService.reseller_name || "",
-        serviceName: refService.rateName || refService.service_name || "",
-        workingPriceCt: Number.parseFloat(refService.workPrice || refService.working_price || 0) || 0,
-        basePriceEurYear: Number.parseFloat(refService.basePriceYear || refService.base_price || 0) || 0,
-        totalCostEurYear: Number.parseFloat(refService.totalPrice || refService.total_cost_minus_bonuses || refService.total_cost || 0) || 0,
+      recommendations: {
+        sweetspot: recs.sweetspot,
+        cheapest: recs.cheapest,
+        highestProvision: recs.highestProvision,
       },
+      // Backward compat: "reference" = sweetspot
+      reference: recs.sweetspot,
       meta: {
         branch,
         type,
@@ -250,6 +412,8 @@ module.exports = async function handler(req, res) {
         postalCode,
         consumption,
         totalServices: services.length,
+        totalQualified: recs.totalQualified || 0,
+        fallback: !!recs.fallback,
       },
     });
   } catch (error) {

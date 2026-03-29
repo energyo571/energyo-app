@@ -5557,6 +5557,28 @@ select {
 .savings-section { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: rgba(30, 41, 59, 0.5); border-radius: 10px; }
 .savings-section-title { font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .savings-section-actions { display: flex; justify-content: flex-end; }
+
+/* ── Tariff recommendation tiles ── */
+.tariff-tiles-section { margin: 6px 0 2px; }
+.tariff-tiles-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.tariff-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 12px 8px; border-radius: 12px; cursor: pointer;
+  background: rgba(30, 41, 59, 0.55); border: 1.5px solid #334155;
+  transition: all 0.18s ease; text-align: center; font-family: inherit;
+  color: #cbd5e1;
+}
+.tariff-tile:hover { border-color: #60a5fa; background: rgba(37, 49, 72, 0.7); transform: translateY(-1px); }
+.tariff-tile--active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.12); box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25); }
+.tariff-tile-icon { font-size: 1.3rem; line-height: 1; }
+.tariff-tile-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; }
+.tariff-tile-provider { font-size: 0.78rem; font-weight: 700; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.tariff-tile-name { font-size: 0.68rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.tariff-tile-ap { font-size: 0.88rem; font-weight: 800; color: #60a5fa; margin-top: 2px; }
+.tariff-tile-gp { font-size: 0.72rem; color: #94a3b8; }
+.tariff-tile-total { font-size: 0.72rem; font-weight: 700; color: #a5b4fc; }
+.tariff-tile-prov { font-size: 0.68rem; font-weight: 700; color: #4ade80; margin-top: 2px; }
+.tariff-tile-check { font-size: 0.68rem; font-weight: 800; color: #3b82f6; margin-top: 2px; }
 .savings-import-btn { border: 1px solid #475569; background: transparent; color: #cbd5e1; border-radius: 8px; padding: 7px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 .savings-import-btn:hover { border-color: #60a5fa; color: #dbeafe; }
 .savings-mini-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }

@@ -3198,6 +3198,8 @@ function SavingsCalculator({ lead }) {
   const [referenceLoading, setReferenceLoading] = useState(false);
   const [referenceError, setReferenceError] = useState("");
   const [referenceMeta, setReferenceMeta] = useState({ strom: "", gas: "" });
+  const [recommendations, setRecommendations] = useState({ strom: null, gas: null });
+  const [selectedTile, setSelectedTile] = useState({ strom: "sweetspot", gas: "sweetspot" });
 
   const effectivePostalCode = String(lead.postalCode || lead.deliveryAddress?.plz || "").trim();
   const customerTypeNormalized = normalizeText(lead.customerType || "privat");
@@ -3372,14 +3374,52 @@ function SavingsCalculator({ lead }) {
   };
 
   const applyReferenceResult = (sector, payload) => {
-    const ap = Number.parseFloat(payload?.reference?.workingPriceCt || 0);
-    if (sector === "strom" && ap > 0) setStromOfferPrice(ap.toFixed(2));
-    if (sector === "gas" && ap > 0) setGasOfferPrice(ap.toFixed(2));
+    const recs = payload?.recommendations;
+    if (recs) {
+      setRecommendations(prev => ({ ...prev, [sector]: recs }));
+      // Auto-select sweetspot
+      const sweetspot = recs.sweetspot;
+      if (sweetspot) {
+        applyTile(sector, sweetspot);
+        setSelectedTile(prev => ({ ...prev, [sector]: "sweetspot" }));
+      }
+    } else {
+      // Backward compat: single reference
+      const ref = payload?.reference;
+      if (ref) {
+        applyTile(sector, ref);
+      }
+    }
 
-    const serviceName = [payload?.reference?.resellerName, payload?.reference?.serviceName].filter(Boolean).join(" - ");
+    const serviceName = [payload?.reference?.resellerName, payload?.reference?.serviceName].filter(Boolean).join(" – ");
     if (serviceName) {
       setReferenceMeta((prev) => ({ ...prev, [sector]: serviceName }));
     }
+  };
+
+  const applyTile = (sector, tile) => {
+    if (!tile) return;
+    const ap = Number.parseFloat(tile.workingPriceCt || 0);
+    const gp = Number.parseFloat(tile.basePriceEurYear || 0);
+    if (sector === "strom") {
+      if (ap > 0) setStromOfferPrice(ap.toFixed(2));
+      if (gp > 0) setStromOfferBasePrice(gp.toFixed(2));
+    }
+    if (sector === "gas") {
+      if (ap > 0) setGasOfferPrice(ap.toFixed(2));
+      if (gp > 0) setGasOfferBasePrice(gp.toFixed(2));
+    }
+    const name = [tile.resellerName, tile.serviceName].filter(Boolean).join(" – ");
+    if (name) setReferenceMeta(prev => ({ ...prev, [sector]: name }));
+  };
+
+  const handleTileSelect = (sector, tileKey) => {
+    const recs = recommendations[sector];
+    if (!recs) return;
+    const tile = recs[tileKey];
+    if (!tile) return;
+    setSelectedTile(prev => ({ ...prev, [sector]: tileKey }));
+    applyTile(sector, tile);
   };
 
   const loadReferenceTariffs = async () => {
@@ -3461,19 +3501,61 @@ function SavingsCalculator({ lead }) {
 
       <div className="savings-actions">
         <button type="button" className="savings-copy-btn" onClick={loadReferenceTariffs} disabled={referenceLoading}>
-          {referenceLoading ? "⏳ Referenztarife werden geladen..." : "🔄 Referenztarife automatisch laden"}
+          {referenceLoading ? "⏳ Tarife werden geladen..." : "🔄 Tarife laden"}
         </button>
       </div>
 
-      {(referenceMeta.strom || referenceMeta.gas) && (
+      {referenceError && <div className="savings-warning neutral">ℹ️ {referenceError}</div>}
+
+      {/* ── Tarif-Tiles per Sector ── */}
+      {["strom", "gas"].map(sector => {
+        const recs = recommendations[sector];
+        const sectorKwh = sector === "strom" ? stromKwh : gasKwh;
+        if (!recs || sectorKwh <= 0) return null;
+        const tiles = [
+          { key: "cheapest", label: "Günstigster Preis", icon: "💰", desc: "Maximale Ersparnis" },
+          { key: "sweetspot", label: "Empfehlung", icon: "⭐", desc: "Bestes Verhältnis" },
+          { key: "highestProvision", label: "Höchste Provision", icon: "🏆", desc: "Top-Provision" },
+        ];
+        return (
+          <div key={sector} className="tariff-tiles-section">
+            <p className="savings-section-title">{sector === "strom" ? "⚡ Strom-Tarife" : "🔥 Gas-Tarife"}</p>
+            <div className="tariff-tiles-row">
+              {tiles.map(({ key, label, icon, desc }) => {
+                const tile = recs[key];
+                if (!tile) return null;
+                const isActive = selectedTile[sector] === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`tariff-tile${isActive ? " tariff-tile--active" : ""}`}
+                    onClick={() => handleTileSelect(sector, key)}
+                  >
+                    <span className="tariff-tile-icon">{icon}</span>
+                    <span className="tariff-tile-label">{label}</span>
+                    <span className="tariff-tile-provider">{tile.resellerName}</span>
+                    <span className="tariff-tile-name">{tile.serviceName}</span>
+                    <span className="tariff-tile-ap">{tile.workingPriceCt.toFixed(2)} ct/kWh</span>
+                    <span className="tariff-tile-gp">{tile.basePriceEurYear.toFixed(2)} €/Jahr GP</span>
+                    <span className="tariff-tile-total">{formatEuro(tile.totalCostEurYear)}/Jahr</span>
+                    {tile.provisionEuro > 0 && <span className="tariff-tile-prov">{formatEuro(tile.provisionEuro)} Prov.</span>}
+                    {isActive && <span className="tariff-tile-check">✓ Ausgewählt</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      {(referenceMeta.strom || referenceMeta.gas) && !recommendations.strom && !recommendations.gas && (
         <p className="savings-meter-hint">
           {referenceMeta.strom ? `Strom: ${referenceMeta.strom}` : ""}
           {referenceMeta.strom && referenceMeta.gas ? " · " : ""}
           {referenceMeta.gas ? `Gas: ${referenceMeta.gas}` : ""}
         </p>
       )}
-
-      {referenceError && <div className="savings-warning neutral">ℹ️ {referenceError}</div>}
 
       {stromKwh > 0 && (
         <div className="savings-section">
