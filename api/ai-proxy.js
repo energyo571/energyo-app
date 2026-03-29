@@ -64,6 +64,6 @@ module.exports = async (req, res) => {
     const data = await upstream.json();
     return res.status(upstream.status).json(data);
   } catch (e) {
-    return res.status(502).json({ error: "Upstream AI request failed.", detail: e?.message });
+    return res.status(502).json({ error: "Upstream AI request failed." });
   }
 };

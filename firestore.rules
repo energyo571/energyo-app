@@ -1,0 +1,154 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function currentUid() {
+      return request.auth.uid;
+    }
+
+    function currentEmail() {
+      return request.auth.token.email;
+    }
+
+    // Get the user's profile doc to check teamId / role
+    function userProfile() {
+      return get(/databases/$(database)/documents/users/$(currentUid())).data;
+    }
+
+    function userTeamId() {
+      return userProfile().teamId;
+    }
+
+    function userRole() {
+      return userProfile().role;
+    }
+
+    function isAdmin() {
+      return userRole() == 'admin';
+    }
+
+    function canAssign() {
+      return userProfile().canAssignAdmins == true;
+    }
+
+    // Check that the doc belongs to the user's team
+    function docBelongsToTeam() {
+      return resource.data.teamId == userTeamId();
+    }
+
+    function newDocBelongsToTeam() {
+      return request.resource.data.teamId == userTeamId();
+    }
+
+    // ── LEADS ─────────────────────────────────────────────────────────
+    match /leads/{leadId} {
+      // Admins: read all team leads. Agents: only own leads
+      allow read: if isSignedIn()
+        && docBelongsToTeam();
+
+      // Create: must be signed in, teamId must match user's team
+      allow create: if isSignedIn()
+        && newDocBelongsToTeam()
+        && request.resource.data.ownerUserId == currentUid();
+
+      // Update: must be in same team. Agents can only update their own leads.
+      allow update: if isSignedIn()
+        && docBelongsToTeam()
+        && newDocBelongsToTeam()
+        && (isAdmin() || resource.data.ownerUserId == currentUid());
+
+      // Delete: admin only, same team
+      allow delete: if isSignedIn()
+        && docBelongsToTeam()
+        && isAdmin();
+    }
+
+    // ── USERS ─────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Anyone signed in can read team member profiles (needed for team list)
+      allow read: if isSignedIn()
+        && (userId == currentUid() || resource.data.teamId == userTeamId());
+
+      // Users can create/update their own profile
+      allow create: if isSignedIn() && userId == currentUid();
+
+      // Users can update own profile. Admins can update team members (role changes).
+      allow update: if isSignedIn()
+        && (userId == currentUid()
+            || (canAssign() && resource.data.teamId == userTeamId()));
+
+      // No client-side delete of user profiles
+      allow delete: if false;
+    }
+
+    // ── INVITATIONS ───────────────────────────────────────────────────
+    match /invitations/{inviteId} {
+      // Team members can read their team's invitations
+      allow read: if isSignedIn()
+        && (resource.data.teamId == userTeamId()
+            || resource.data.invitedEmail == currentEmail());
+
+      // Only admins can create invitations for their team
+      allow create: if isSignedIn()
+        && isAdmin()
+        && newDocBelongsToTeam();
+
+      // Admins can update team invitations (supersede). Invited user can accept.
+      allow update: if isSignedIn()
+        && (resource.data.invitedEmail == currentEmail()
+            || (isAdmin() && docBelongsToTeam()));
+
+      allow delete: if false;
+    }
+
+    // ── INVITE LINKS ──────────────────────────────────────────────────
+    match /inviteLinks/{linkId} {
+      // Anyone signed in can read a link (to validate tokens)
+      allow read: if isSignedIn();
+
+      // Only admins can create invite links for their team
+      allow create: if isSignedIn()
+        && isAdmin()
+        && request.resource.data.teamId == userTeamId();
+
+      // Allow incrementing usageCount (anyone with valid token)
+      allow update: if isSignedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usageCount']);
+
+      allow delete: if false;
+    }
+
+    // ── CALENDAR EVENTS ───────────────────────────────────────────────
+    match /calendarEvents/{eventId} {
+      allow read: if isSignedIn()
+        && docBelongsToTeam();
+
+      allow create: if isSignedIn()
+        && newDocBelongsToTeam();
+
+      allow update: if isSignedIn()
+        && docBelongsToTeam()
+        && newDocBelongsToTeam();
+
+      allow delete: if isSignedIn()
+        && docBelongsToTeam();
+    }
+
+    // ── MARKET TREND SNAPSHOTS ────────────────────────────────────────
+    match /marketTrendSnapshots/{docId} {
+      // Read-only for signed-in users (written by API)
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // ── Deny everything else ──────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

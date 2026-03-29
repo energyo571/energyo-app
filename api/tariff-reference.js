@@ -417,6 +417,6 @@ module.exports = async function handler(req, res) {
       },
     });
   } catch (error) {
-    return res.status(500).json({ ok: false, error: "tariff-reference failed", detail: error?.message || String(error) });
+    return res.status(500).json({ ok: false, error: "tariff-reference failed" });
   }
 };

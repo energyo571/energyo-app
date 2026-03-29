@@ -14,7 +14,7 @@ function parseSignature(signatureHeader) {
 
 function verifyCalendlySignature(req, rawBody) {
   const signingKey = process.env.CALENDLY_WEBHOOK_SIGNING_KEY;
-  if (!signingKey) return true;
+  if (!signingKey) return false;
 
   const header = req.headers["calendly-webhook-signature"];
   const parsed = parseSignature(header);

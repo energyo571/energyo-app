@@ -27,7 +27,6 @@ export default function LoginPage({ onLogin, user }) {
           email,
           password
         );
-        console.log("Benutzer erstellt:", userCredential.user.email);
         onLogin(userCredential.user);
       } else {
         const userCredential = await signInWithEmailAndPassword(
@@ -35,7 +34,6 @@ export default function LoginPage({ onLogin, user }) {
           email,
           password
         );
-        console.log("Angemeldet:", userCredential.user.email);
         onLogin(userCredential.user);
       }
     } catch (err) {

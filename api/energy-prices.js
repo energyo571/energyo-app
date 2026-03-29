@@ -77,6 +77,6 @@ module.exports = async function handler(req, res) {
       period: { start: fmt(start), end: fmt(end) },
     });
   } catch (err) {
-    return res.status(502).json({ ok: false, error: err.message || "Fetch failed" });
+    return res.status(502).json({ ok: false, error: "Fetch failed" });
   }
 };
