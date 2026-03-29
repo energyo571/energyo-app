@@ -36,6 +36,7 @@ import NewLeadModal from "./components/NewLeadModal";
 import ImportModal from "./components/ImportModal";
 import PowerDialer from "./components/PowerDialer";
 import BulkActionBar from "./components/BulkActionBar";
+import MailboxPanel from "./components/MailboxPanel";
 import { IconSearch, IconList, IconGrid, IconCheckSquare, IconX, IconPlus, IconUpload, IconZap, IconFilter } from "./components/Icons";
 
 // ─── InviteLink-Handler ───────────────────────────────────────────────────────
@@ -671,6 +672,12 @@ function App() {
         {activeTab === "team" && (
           <div className="tab-page">
             <TeamManagement currentUser={user} teamId={teamId} teamMembers={teamMembers} onRefresh={loadTeamMembers} userRole={userRole} canAssignAdmins={canAssignAdmins} />
+          </div>
+        )}
+
+        {activeTab === "mailbox" && (
+          <div className="tab-page">
+            <MailboxPanel />
           </div>
         )}
       </div>
