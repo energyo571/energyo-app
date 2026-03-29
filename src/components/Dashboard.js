@@ -42,16 +42,16 @@ function Dashboard({ leads, teamMembers, userRole }) {
     const byStatus = STATUS_OPTIONS.map(s => ({ label: s, count: leads.filter(l => l.status === s).length }));
     const topPerformer = teamMembers.map(m => {
       const ml = leads.filter(l => l.createdBy?.email === m.email);
-      return { email: m.email, role: m.role, total: ml.length, won: ml.filter(l => l.status === "CLOSED").length, umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0) };
+      return { email: m.email, role: m.role, total: ml.length, won: ml.filter(l => l.status === "Abschluss").length, umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0) };
     }).sort((a, b) => b.won - a.won);
     const totalUmsatz = leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0);
-    const wonLeads = leads.filter(l => l.status === "CLOSED").length;
+    const wonLeads = leads.filter(l => l.status === "Abschluss").length;
     const closingRate = leads.length > 0 ? Math.round((wonLeads / leads.length) * 100) : 0;
     return { byStatus, topPerformer, totalUmsatz, wonLeads, closingRate };
   }, [leads, teamMembers]);
 
   const maxCount = Math.max(...stats.byStatus.map(s => s.count), 1);
-  const statusColors = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", Nachfassen: "#ffc107", CLOSED: "#198754", Verloren: "#dc3545" };
+  const statusColors = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", "Follow-up": "#ffc107", Abschluss: "#198754", Verloren: "#dc3545" };
   const trendSparkline = useMemo(() => {
     const points = trendHistory.filter((item) => Number.isFinite(item?.trendPct));
     if (points.length < 2) return null;
@@ -93,7 +93,7 @@ function Dashboard({ leads, teamMembers, userRole }) {
         </div>
         <div className="dashboard-summary">
           <div className="summary-item"><span>Closing rate</span><strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong></div>
-          <div className="summary-item"><span>CLOSED</span><strong>{stats.wonLeads}</strong></div>
+          <div className="summary-item"><span>Abschlüsse</span><strong>{stats.wonLeads}</strong></div>
           <div className="summary-item"><span>Umsatzpotenzial</span><strong className="kpi-success">{formatEuro(stats.totalUmsatz)}</strong></div>
         </div>
       </div>
@@ -112,7 +112,7 @@ function Dashboard({ leads, teamMembers, userRole }) {
                 </div>
                 <div className="performer-stats">
                   <span title="Leads">📋 {p.total}</span>
-                  <span title="CLOSED">✅ {p.won}</span>
+                  <span title="Abschlüsse">✅ {p.won}</span>
                   <span title="Umsatz">💶 {formatEuro(p.umsatz)}</span>
                 </div>
               </div>

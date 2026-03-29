@@ -36,8 +36,8 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
     if (!current) return;
     setSaving(true);
     await onLogCall(current.id, { outcome, notes: note, duration: "" });
-    const reached = !["Kein Kontakt", "Mailbox hinterlassen"].includes(outcome);
-    const appt = outcome === "Termin vereinbart";
+    const reached = !["Nicht erreicht", "Mailbox"].includes(outcome);
+    const appt = outcome === "Termin gesetzt";
     if (appt) await onUpdateField(current.id, "followUp", new Date().toISOString().split("T")[0]);
     setStats(prev => ({ called: prev.called + 1, reached: prev.reached + (reached ? 1 : 0), appointments: prev.appointments + (appt ? 1 : 0) }));
     setSaving(false);
@@ -119,7 +119,7 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
           ) : (
             <div className="dialer-log">
               <div className="dialer-log-row" style={{ flexWrap: "wrap", gap: 7 }}>
-                {[["❌ Kein Kontakt", "Kein Kontakt"], ["📱 Mailbox", "Mailbox hinterlassen"], ["📅 Termin", "Termin vereinbart"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
+                {[["❌ Nicht erreicht", "Nicht erreicht"], ["📱 Mailbox", "Mailbox"], ["📅 Termin", "Termin gesetzt"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
                   <button key={outcome} className="dialer-next-btn" style={{ flex: "1 1 45%", fontSize: "0.82rem" }} onClick={() => logAndAdvance(outcome)} disabled={saving}>
                     {label}
                   </button>

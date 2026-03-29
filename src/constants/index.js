@@ -1,16 +1,16 @@
 // ─── Konstanten ───────────────────────────────────────────────────────────────
-export const STATUS_OPTIONS = ["Neu", "Kontaktiert", "Angebot", "Nachfassen", "CLOSED", "Verloren"];
+export const STATUS_OPTIONS = ["Neu", "Kontaktiert", "Angebot", "Follow-up", "Abschluss", "Verloren"];
 export const STATUS_META = {
-  Neu:         { color: "#6b7280", bg: "#f3f4f6" },
-  Kontaktiert: { color: "#1d4ed8", bg: "#dbeafe" },
-  Angebot:     { color: "#c2410c", bg: "#ffedd5" },
-  Nachfassen:  { color: "#b45309", bg: "#fef3c7" },
-  CLOSED:      { color: "#065f46", bg: "#d1fae5" },
-  Verloren:    { color: "#991b1b", bg: "#fee2e2" },
+  Neu:           { color: "#6b7280", bg: "#f3f4f6" },
+  Kontaktiert:   { color: "#1d4ed8", bg: "#dbeafe" },
+  Angebot:       { color: "#c2410c", bg: "#ffedd5" },
+  "Follow-up":   { color: "#b45309", bg: "#fef3c7" },
+  Abschluss:     { color: "#065f46", bg: "#d1fae5" },
+  Verloren:      { color: "#991b1b", bg: "#fee2e2" },
 };
 export const CALL_OUTCOMES = [
-  "Kein Kontakt", "Mailbox hinterlassen", "Kurzes Gespräch",
-  "Ausführliches Gespräch", "Termin vereinbart", "Angebot besprochen", "Abschluss",
+  "Nicht erreicht", "Mailbox", "Kurzer Kontakt",
+  "Quali-Call", "Termin gesetzt", "Angebot platziert", "Abschluss",
 ];
 export const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024;
 export const RENEWAL_RESURFACE_MONTHS = 6;

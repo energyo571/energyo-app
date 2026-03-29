@@ -288,9 +288,13 @@ function App() {
     return onSnapshot(q, snap => {
       const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       loaded.forEach(l => {
-        if (l.status === "Gewonnen") {
-          updateDoc(doc(db, "leads", l.id), { status: "CLOSED" }).catch(() => {});
-          l.status = "CLOSED";
+        if (l.status === "Gewonnen" || l.status === "CLOSED") {
+          updateDoc(doc(db, "leads", l.id), { status: "Abschluss" }).catch(() => {});
+          l.status = "Abschluss";
+        }
+        if (l.status === "Nachfassen") {
+          updateDoc(doc(db, "leads", l.id), { status: "Follow-up" }).catch(() => {});
+          l.status = "Follow-up";
         }
       });
       setLeads(loaded);
@@ -311,7 +315,7 @@ function App() {
     if (!user || !teamId || leads.length === 0) return;
     const todayIso = new Date().toISOString().split("T")[0];
     const candidates = leads.filter((lead) =>
-      lead.status === "CLOSED"
+      lead.status === "Abschluss"
       && !lead.renewalResurfacedAt
       && isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)
     );
@@ -322,13 +326,13 @@ function App() {
       try {
         const now = new Date().toISOString();
         await updateDoc(doc(db, "leads", lead.id), {
-          status: "Nachfassen",
+          status: "Follow-up",
           followUp: lead.followUp || todayIso,
           renewalResurfacedAt: now,
           renewalResurfaceReason: `auto-${RENEWAL_RESURFACE_MONTHS}m-before-contract-end`,
           statusHistory: [
             ...(lead.statusHistory || []),
-            { from: "CLOSED", to: "Nachfassen", timestamp: now, author: "System" },
+            { from: "Abschluss", to: "Follow-up", timestamp: now, author: "System" },
           ],
           comments: [
             ...(lead.comments || []),
@@ -556,7 +560,7 @@ function App() {
       if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
       if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp) || isLeadInactiveForHours(l, 48))) return false;
       if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
-      if (smartView === "won" && l.status !== "CLOSED") return false;
+      if (smartView === "won" && l.status !== "Abschluss") return false;
       if (smartView === "lost" && l.status !== "Verloren") return false;
       if (smartView === "renewals" && !l.renewalResurfacedAt) return false;
       if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
@@ -564,13 +568,13 @@ function App() {
       if (kpiFocus === "inactive48" && !isLeadInactiveForHours(l, 48)) return false;
       if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
       if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
-      if (kpiFocus === "won" && l.status !== "CLOSED") return false;
+      if (kpiFocus === "won" && l.status !== "Abschluss") return false;
       return true;
     }), sortMode);
   }, [leads, searchTerm, filterPriority, filterStatus, smartView, sortMode, user, kpiFocus]);
 
   const activePipelineLeads = useMemo(
-    () => filteredLeads.filter((lead) => (lead.status !== "CLOSED" || isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)) && lead.status !== "Verloren"),
+    () => filteredLeads.filter((lead) => (lead.status !== "Abschluss" || isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)) && lead.status !== "Verloren"),
     [filteredLeads],
   );
 
@@ -596,7 +600,7 @@ function App() {
   }, [displayLeads, currentPage, leadsPerPage]);
 
   const wonBundleLeads = useMemo(() => {
-    const bucket = filteredLeads.filter((lead) => lead.status === "CLOSED" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
+    const bucket = filteredLeads.filter((lead) => lead.status === "Abschluss" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
       const ma = getMonthsUntil(a.contractEnd);
       const mb = getMonthsUntil(b.contractEnd);
@@ -611,7 +615,7 @@ function App() {
 
   const stats = useMemo(() => ({
     totalLeads: leads.length,
-    wonLeads: leads.filter(l => l.status === "CLOSED").length,
+    wonLeads: leads.filter(l => l.status === "Abschluss").length,
     lostLeads: leads.filter(l => l.status === "Verloren").length,
     overdue: leads.filter(l => isOverdue(l.followUp)).length,
     dueToday: leads.filter(l => isTodayDue(l.followUp)).length,
@@ -620,7 +624,7 @@ function App() {
     openCancellation: leads.filter(l => isOpenCancellationWindow(l.contractEnd)).length,
     movedEnergyKwh: leads.reduce((sum, lead) => sum + (Number.parseInt(lead.consumption || 0, 10) || 0), 0),
     totalUmsatzPotential: leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0),
-    closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "CLOSED").length / leads.length) * 100) : 0,
+    closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "Abschluss").length / leads.length) * 100) : 0,
   }), [leads]);
 
   // eslint-disable-next-line no-unused-vars
@@ -801,8 +805,8 @@ function App() {
                 <option value="action">Fokus: Action Queue</option>
                 <option value="hot">Fokus: Hot Deals</option>
                 <option value="renewals">Fokus: Renewals</option>
-                <option value="won">Fokus: CLOSED</option>
-                <option value="lost">Fokus: LOST</option>
+                <option value="won">Fokus: Abschlüsse</option>
+                <option value="lost">Fokus: Verloren</option>
                 <option value="uncontacted">Fokus: Unkontaktiert</option>
                 <option value="overdue">Fokus: Überfällig</option>
                 <option value="today">Fokus: Heute fällig</option>
@@ -812,7 +816,7 @@ function App() {
               <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
                 {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
               </button>
-              <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} CLOSED · {lostBundleLeads.length} LOST gebündelt</span>
+              <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} Abschlüsse · {lostBundleLeads.length} Verloren gebündelt</span>
             </div>
 
             {showAdvancedFilters && (
@@ -855,7 +859,7 @@ function App() {
                 <span className="kpi-val">{stats.openCancellation}</span>
                 <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
               </div>
-              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">CLOSED</span></div>
+              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Abschlüsse</span></div>
             </div>
 
             <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
@@ -929,7 +933,7 @@ function App() {
                   <div className="lth-flags">Next step / Deal</div>
                   <div className="lth-status">Status</div>
                   <div className="lth-umsatz">Potential</div>
-                  <div className="lth-followup">Nachfassen</div>
+                  <div className="lth-followup">Follow-up</div>
                   <div className="lth-activity">Aktivität</div>
                 </div>
                 {displayLeads.length === 0 ? (
@@ -958,7 +962,7 @@ function App() {
             {smartView !== "won" && kpiFocus !== "won" && wonBundleLeads.length > 0 && (
               <div className="won-bundle-section">
                 <div className="won-bundle-head">
-                  <h3>CLOSED gebündelt</h3>
+                  <h3>Abschlüsse gebündelt</h3>
                   <span>{wonBundleLeads.length} Leads außerhalb der aktiven Pipeline</span>
                 </div>
                 <div className="won-bundle-list">
@@ -987,7 +991,7 @@ function App() {
             {smartView !== "lost" && lostBundleLeads.length > 0 && (
               <div className="won-bundle-section lost-bundle-section">
                 <div className="won-bundle-head">
-                  <h3>LOST gebündelt</h3>
+                  <h3>Verloren gebündelt</h3>
                   <span>{lostBundleLeads.length} verlorene Leads</span>
                 </div>
                 <div className="won-bundle-list">

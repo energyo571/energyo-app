@@ -43,7 +43,7 @@ function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus 
     }
     if (selectedMode === "analyze") {
       return {
-        system: `Du bist ein CRM-Analyse-Assistent im Energievertrieb. Analysiere Leads und gib strukturierte Empfehlungen. Antworte als JSON:\n{"status":"Neu"|"Kontaktiert"|"Angebot"|"Nachfassen"|"CLOSED"|"Verloren","followUp":"YYYY-MM-DD","summary":"kurzer Text","actions":["Aktion 1","Aktion 2"]}\nWenn du das Feld nicht ändern willst, lass es weg.`,
+        system: `Du bist ein CRM-Analyse-Assistent im Energievertrieb. Analysiere Leads und gib strukturierte Empfehlungen. Antworte als JSON:\n{"status":"Neu"|"Kontaktiert"|"Angebot"|"Follow-up"|"Abschluss"|"Verloren","followUp":"YYYY-MM-DD","summary":"kurzer Text","actions":["Aktion 1","Aktion 2"]}\nWenn du das Feld nicht ändern willst, lass es weg.`,
         user: `${ctx}\n\nAnalysiere diesen Lead und gib strukturierte Empfehlungen. Was sollte der nächste Status sein? Wann sollte das Follow-up sein?`,
       };
     }

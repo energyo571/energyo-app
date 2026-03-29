@@ -49,7 +49,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         actions: [
           { key: "mark-contacted", label: "Als kontaktiert markieren", onClick: () => onUpdateStatus(lead.id, "Kontaktiert") },
           { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
-          { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
+          { key: "followup-today", label: "Heute Follow-up setzen", onClick: () => setFollowUpInDays(0) },
         ],
       };
     }
@@ -58,8 +58,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         title: "Nächster Schritt nach Kontakt",
         actions: [
           { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
-          { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
-          { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
+          { key: "followup-today", label: "Heute Follow-up setzen", onClick: () => setFollowUpInDays(0) },
+          { key: "followup-tomorrow", label: "Morgen Follow-up setzen", onClick: () => setFollowUpInDays(1) },
           { key: "move-offer", label: "Zu Angebot", onClick: () => onUpdateStatus(lead.id, "Angebot") },
         ],
       };
@@ -69,8 +69,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         title: "Nächster Schritt für Angebot",
         actions: [
           { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
-          { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
-          { key: "followup-three", label: "In 3 Tagen nachfassen", onClick: () => setFollowUpInDays(3) },
+          { key: "followup-tomorrow", label: "Morgen Follow-up setzen", onClick: () => setFollowUpInDays(1) },
+          { key: "followup-three", label: "In 3 Tagen Follow-up setzen", onClick: () => setFollowUpInDays(3) },
         ],
       };
     }
@@ -78,8 +78,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
       title: "Nächster Schritt",
       actions: [
         { key: "plan-appointment", label: "Termin planen", onClick: () => setShowAppointmentModal(true), className: "appointment" },
-        { key: "followup-today", label: "Heute nachfassen", onClick: () => setFollowUpInDays(0) },
-        { key: "followup-tomorrow", label: "Morgen nachfassen", onClick: () => setFollowUpInDays(1) },
+        { key: "followup-today", label: "Heute Follow-up setzen", onClick: () => setFollowUpInDays(0) },
+        { key: "followup-tomorrow", label: "Morgen Follow-up setzen", onClick: () => setFollowUpInDays(1) },
       ],
     };
   })();
@@ -564,7 +564,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Wechsel & Provision */}
         {drawerTab === "wechsel" && (
           <div className="drawer-tab-content">
-            {lead.status === "CLOSED" ? (
+            {lead.status === "Abschluss" ? (
               <>
                 <WechselprozessTracker lead={lead} user={user} onUpdateField={onUpdateField} />
                 <div style={{ marginTop: 20 }}>
@@ -573,7 +573,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               </>
             ) : (
               <div className="wechsel-locked">
-                🔒 Wechselprozess und Provision sind für CLOSED Leads (Status "CLOSED") verfügbar.
+                🔒 Wechselprozess und Provision sind für abgeschlossene Leads (Status „Abschluss“) verfügbar.
               </div>
             )}
           </div>

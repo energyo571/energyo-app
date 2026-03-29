@@ -18,7 +18,7 @@ export const getLastActivityTimestamp = (lead) => {
 
 export const isLeadInactiveForHours = (lead, minHours = 48) => {
   if (!lead) return false;
-  if (lead.status === "CLOSED" || lead.status === "Verloren") return false;
+  if (lead.status === "Abschluss" || lead.status === "Verloren") return false;
   const lastActivity = getLastActivityTimestamp(lead);
   return getHoursSince(lastActivity) >= minHours;
 };
@@ -26,7 +26,7 @@ export const isLeadInactiveForHours = (lead, minHours = 48) => {
 export const getContactTouchCount = (lead) => (lead.callLogs?.length || 0) + (lead.comments?.length || 0);
 
 export const isWonLeadRenewalDue = (lead, monthsBefore = RENEWAL_RESURFACE_MONTHS) => {
-  if (!lead || lead.status !== "CLOSED") return false;
+  if (!lead || lead.status !== "Abschluss") return false;
   const monthsUntilEnd = getMonthsUntil(lead.contractEnd);
   return monthsUntilEnd >= 0 && monthsUntilEnd <= monthsBefore;
 };
@@ -52,7 +52,7 @@ export const calculatePriority = (lead) => {
 export const clampScore = (value, min = 0, max = 100) => Math.min(max, Math.max(min, value));
 
 export const calculateLeadScore = (lead) => {
-  if (lead.status === "CLOSED") return 100;
+  if (lead.status === "Abschluss") return 100;
   if (lead.status === "Verloren") return 5;
 
   let score = 30;
@@ -69,7 +69,7 @@ export const calculateLeadScore = (lead) => {
   if (lead.appointmentDate) score += 16;
 
   if (lead.status === "Angebot") score += 12;
-  if (lead.status === "Nachfassen") score += 8;
+  if (lead.status === "Follow-up") score += 8;
   if (lead.status === "Kontaktiert") score += 6;
 
   if (consumption >= 50000) score += 10;
@@ -83,7 +83,7 @@ export const calculateLeadScore = (lead) => {
 };
 
 export const getLeadWinProbability = (lead) => {
-  if (lead.status === "CLOSED") return 100;
+  if (lead.status === "Abschluss") return 100;
   if (lead.status === "Verloren") return 0;
 
   const score = calculateLeadScore(lead);
@@ -103,7 +103,7 @@ export const getLeadScoreTone = (probability) => {
 };
 
 export const getLeadTemperature = (lead) => {
-  if (lead.status === "CLOSED") return { label: "Won", tone: "won", step: 3 };
+  if (lead.status === "Abschluss") return { label: "Won", tone: "won", step: 3 };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost", step: 0 };
   if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical", step: 2 };
   const inactivityHours = getHoursSince(getLastActivityTimestamp(lead));
@@ -113,7 +113,7 @@ export const getLeadTemperature = (lead) => {
 };
 
 export const getLeadReadiness = (lead) => {
-  if (lead.status === "CLOSED") {
+  if (lead.status === "Abschluss") {
     return { label: "🚦 Angebotsfaehig", tone: "green", reason: "Abschluss bereits erfolgt.", missing: [] };
   }
   if (lead.status === "Verloren") {
@@ -148,7 +148,7 @@ export const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
   const hasEmail = !!lead.email;
 
-  if (lead.status === "CLOSED") {
+  if (lead.status === "Abschluss") {
     return { label: "Abschluss sichern", tone: "success", channel: hasEmail ? "E-Mail" : "Telefon", when: "Heute", reason: "Onboarding und Referenzchance sichern" };
   }
   if (lead.status === "Verloren") {
@@ -178,7 +178,7 @@ export const getNextAction = (lead) => {
 };
 
 export const getLeadSequencePlan = (lead) => {
-  if (lead.status === "CLOSED") {
+  if (lead.status === "Abschluss") {
     return {
       stage: "post-win", title: "Retention Sequenz",
       steps: [
@@ -246,12 +246,12 @@ export const sortLeads = (items, sortMode) => {
 };
 
 export const rankCockpitCtas = ({ leads, marketTrendPct = null }) => {
-  const workingLeads = leads.filter((lead) => lead.status !== "CLOSED" && lead.status !== "Verloren");
+  const workingLeads = leads.filter((lead) => lead.status !== "Abschluss" && lead.status !== "Verloren");
   const inactiveLeads = workingLeads.filter((lead) => isLeadInactiveForHours(lead, 48));
   const uncontactedLeads = workingLeads.filter((lead) => getContactTouchCount(lead) === 0);
   const overdueLeads = workingLeads.filter((lead) => isOverdue(lead.followUp));
   const cancelWindowLeads = workingLeads.filter((lead) => isOpenCancellationWindow(lead.contractEnd));
-  const stalledOfferLeads = workingLeads.filter((lead) => (lead.status === "Angebot" || lead.status === "Nachfassen") && getHoursSince(getLastActivityTimestamp(lead)) >= 72);
+  const stalledOfferLeads = workingLeads.filter((lead) => (lead.status === "Angebot" || lead.status === "Follow-up") && getHoursSince(getLastActivityTimestamp(lead)) >= 72);
   const hotLeads = workingLeads.filter((lead) => getLeadTemperature(lead).tone === "hot");
 
   const cards = [];
