@@ -2625,6 +2625,15 @@ textarea:focus {
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* Drawer in dialer mode — no backdrop, fixed position on the right */
+.drawer.drawer--dialer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 52;
+  box-shadow: -12px 0 36px rgba(16, 23, 38, 0.22);
+}
+
 .drawer-header,
 .modal-header,
 .modal-footer,
@@ -5700,9 +5709,51 @@ select {
 /* ─── ENERGY BADGE KWH in lead row ──────────────────────────────────────── */
 .energy-badge.kwh { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 700; border-radius: 20px; padding: 2px 8px; }
 
-/* --- POWER DIALER MODAL ---------------------------------------------------- */
+/* --- POWER DIALER MODAL (legacy, unused) ----------------------------------- */
 .power-dialer-modal { background: #0f172a; max-width: 500px; width: 95%; border-radius: 16px; overflow: hidden; }
 .power-dialer-modal .drawer-close-btn { color: #64748b; background: transparent; border: none; cursor: pointer; font-size: 1rem; }
+
+/* --- POWER DIALER SIDEBAR PANEL -------------------------------------------- */
+.power-dialer-panel {
+  position: fixed;
+  top: 0;
+  left: 290px;
+  width: 380px;
+  height: 100vh;
+  overflow-y: auto;
+  background: #0f172a;
+  box-shadow: 4px 0 24px rgba(16, 23, 38, 0.32);
+  padding: 20px 18px;
+  z-index: 45;
+  animation: dialerPanelIn 200ms ease-out;
+}
+@keyframes dialerPanelIn {
+  from { transform: translateX(-24px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.dialer-company-link { cursor: pointer; text-decoration: underline; text-decoration-color: rgba(241, 245, 249, 0.25); text-underline-offset: 2px; }
+.dialer-company-link:hover { text-decoration-color: #60a5fa; color: #93c5fd; }
+
+/* shift main content right when dialer panel is open */
+.app-layout.dialer-active .main-content { margin-left: 380px; }
+
+/* --- DIALER EINWAND PANEL (KI Objection Handler inside Dialer) ------------- */
+.dialer-einwand-panel {
+  background: linear-gradient(135deg, #1e293b, #1e1b4b);
+  border: 1.5px solid #312e81;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dialer-einwand-panel .objection-title { color: #f1f5f9; }
+
+@media (max-width: 980px) {
+  .power-dialer-panel { left: 0; width: 100%; z-index: 55; }
+  .app-layout.dialer-active .main-content { margin-left: 0; }
+}
 
 /* --- PROVISIONS TRACKER ---------------------------------------------------- */
 .provisions-tracker { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 4px; }

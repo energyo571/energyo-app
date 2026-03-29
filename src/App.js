@@ -1305,7 +1305,7 @@ function ActivityItem({ item, onEdit, onDelete, canEdit }) {
 }
 
 // ─── UPDATED: LeadDetailDrawer ────────────────────────────────────────────────
-function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment }) {
+function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment, dialerActive }) {
   const [drawerTab, setDrawerTab] = useState("activity");
   const [noteText, setNoteText] = useState("");
   const [showCallForm, setShowCallForm] = useState(false);
@@ -1501,9 +1501,13 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
     { id: "ai",          label: "KI Bot" },
   ];
 
+  const Wrapper = dialerActive ? React.Fragment : ({ children }) => (
+    <div className="drawer-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>{children}</div>
+  );
+
   return (
-    <div className="drawer-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="drawer">
+    <Wrapper>
+      <div className={`drawer${dialerActive ? " drawer--dialer" : ""}`}>
         {/* Header */}
         <div className="drawer-header">
           <div className="drawer-header-info">
@@ -1981,7 +1985,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
           onSave={handleSaveAppointment}
         />
       )}
-    </div>
+    </Wrapper>
   );
 }
 
@@ -3863,8 +3867,8 @@ function ProvisionsTracker({ lead, onUpdateField }) {
   );
 }
 
-// ─── PowerDialer ─────────────────────────────────────────────────────────────
-function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose }) {
+// ─── PowerDialer (Left Sidebar Panel) ────────────────────────────────────────
+function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectLead }) {
   const queue = useMemo(() => {
     return leads
       .filter(l => l.phone && l.status !== "Verloren")
@@ -3904,96 +3908,204 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal power-dialer-modal">
-        {idx >= queue.length || queue.length === 0 ? (
-          <div className="dialer-done">
-            <div style={{ fontSize: "2.5rem" }}>🏁</div>
-            <h3 style={{ color: "#f1f5f9", margin: "8px 0" }}>Session abgeschlossen</h3>
-            <div style={{ display: "flex", gap: 20, margin: "16px 0" }}>
-              {[["📞", stats.called, "Anrufe"], ["✅", stats.reached, "Erreicht"], ["📅", stats.appointments, "Termine"]].map(([icon, val, label]) => (
-                <div key={label} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "#f1f5f9" }}>{icon} {val}</div>
-                  <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{label}</div>
-                </div>
-              ))}
-            </div>
-            <button className="dialer-close-btn" onClick={onClose}>Schließen</button>
+    <div className="power-dialer-panel">
+      {idx >= queue.length || queue.length === 0 ? (
+        <div className="dialer-done">
+          <div style={{ fontSize: "2.5rem" }}>🏁</div>
+          <h3 style={{ color: "#f1f5f9", margin: "8px 0" }}>Session abgeschlossen</h3>
+          <div style={{ display: "flex", gap: 20, margin: "16px 0" }}>
+            {[["📞", stats.called, "Anrufe"], ["✅", stats.reached, "Erreicht"], ["📅", stats.appointments, "Termine"]].map(([icon, val, label]) => (
+              <div key={label} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "#f1f5f9" }}>{icon} {val}</div>
+                <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{label}</div>
+              </div>
+            ))}
           </div>
-        ) : (
-          <div className="power-dialer">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <strong style={{ color: "#f1f5f9", fontSize: "1rem" }}>⚡ Power Dialer</strong>
-                <span style={{ color: "#64748b", marginLeft: 10, fontSize: "0.8rem" }}>Anruf {idx + 1} / {queue.length}</span>
-              </div>
-              <div style={{ display: "flex", gap: 12, alignItems: "center", fontSize: "0.8rem", color: "#64748b" }}>
-                <span title="Anrufe">📞 {stats.called}</span>
-                <span title="Erreicht">✅ {stats.reached}</span>
-                <span title="Termine">📅 {stats.appointments}</span>
-                <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>
-              </div>
+          <button className="dialer-close-btn" onClick={onClose}>Schließen</button>
+        </div>
+      ) : (
+        <div className="power-dialer">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <strong style={{ color: "#f1f5f9", fontSize: "1rem" }}>⚡ Power Dialer</strong>
+              <span style={{ color: "#64748b", marginLeft: 10, fontSize: "0.8rem" }}>Anruf {idx + 1} / {queue.length}</span>
             </div>
-            <div className="dialer-progress">
-              <div className="dialer-progress-bar"><div className="dialer-progress-fill" style={{ width: `${progress}%` }} /></div>
-              <span className="dialer-progress-label">{progress}%</span>
+            <div style={{ display: "flex", gap: 12, alignItems: "center", fontSize: "0.8rem", color: "#64748b" }}>
+              <span title="Anrufe">📞 {stats.called}</span>
+              <span title="Erreicht">✅ {stats.reached}</span>
+              <span title="Termine">📅 {stats.appointments}</span>
+              <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>
             </div>
-            <div className="dialer-card">
-              <div className="dialer-context">
-                <span className={`health-pill ${getLeadTemperature(current).tone}`}>{getLeadTemperature(current).label}</span>
-                {isOverdue(current.followUp) && <span className="dialer-chip hot">⏰ Überfällig</span>}
-                {isOpenCancellationWindow(current.contractEnd) && <span className="dialer-chip hot">🔔 Kündigungsfenster</span>}
-              </div>
-              <p className="dialer-company">{current.company || current.person}</p>
-              <p className="dialer-person">{current.person}</p>
-              <a className="dialer-call-btn" href={`tel:${current.phone}`}>📞 {current.phone}</a>
-              {current.phone && (
-                <a className="dialer-wa-btn" href={`https://wa.me/${formatWaPhone(current.phone)}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>
-              )}
-              <div className="dialer-context" style={{ marginTop: 6 }}>
-                {current.currentProvider && <span className="dialer-chip">Aktuell: {current.currentProvider}</span>}
-                {current.consumption && <span className="dialer-chip">{parseInt(current.consumption).toLocaleString("de-DE")} kWh</span>}
-                {current.annualCosts && <span className="dialer-chip">€{parseInt(current.annualCosts).toLocaleString("de-DE")}/Jahr</span>}
-                {current.followUp && <span className="dialer-chip">Follow-up: {formatDate(current.followUp)}</span>}
-              </div>
-              {(current.callLogs || []).length > 0 && (
-                <p className="dialer-last-note">
-                  Letzter Anruf: {current.callLogs[current.callLogs.length - 1].outcome}
-                  {current.callLogs[current.callLogs.length - 1].notes ? ` — ${current.callLogs[current.callLogs.length - 1].notes}` : ""}
-                </p>
-              )}
+          </div>
+          <div className="dialer-progress">
+            <div className="dialer-progress-bar"><div className="dialer-progress-fill" style={{ width: `${progress}%` }} /></div>
+            <span className="dialer-progress-label">{progress}%</span>
+          </div>
+          <div className="dialer-card">
+            <div className="dialer-context">
+              <span className={`health-pill ${getLeadTemperature(current).tone}`}>{getLeadTemperature(current).label}</span>
+              {isOverdue(current.followUp) && <span className="dialer-chip hot">⏰ Überfällig</span>}
+              {isOpenCancellationWindow(current.contractEnd) && <span className="dialer-chip hot">🔔 Kündigungsfenster</span>}
             </div>
-            {showLog ? (
-              <div className="dialer-log">
-                <select className="dialer-outcome-select" value={logOutcome} onChange={e => setLogOutcome(e.target.value)}>
-                  {CALL_OUTCOMES.map(o => <option key={o}>{o}</option>)}
-                </select>
-                <textarea className="dialer-note" placeholder="Gesprächsnotiz (optional)..." value={logNote} onChange={e => setLogNote(e.target.value)} rows={2} />
-                <div className="dialer-actions">
-                  <button className="dialer-skip-btn" onClick={() => setShowLog(false)}>Abbrechen</button>
-                  <button className="dialer-next-btn logged" onClick={() => logAndAdvance(logOutcome, logNote)} disabled={saving}>
-                    {saving ? "..." : "Speichern & Weiter"}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="dialer-log">
-                <div className="dialer-log-row" style={{ flexWrap: "wrap", gap: 7 }}>
-                  {[["❌ Kein Kontakt", "Kein Kontakt"], ["📱 Mailbox", "Mailbox hinterlassen"], ["📅 Termin", "Termin vereinbart"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
-                    <button key={outcome} className="dialer-next-btn" style={{ flex: "1 1 45%", fontSize: "0.82rem" }} onClick={() => logAndAdvance(outcome)} disabled={saving}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-                <div className="dialer-actions">
-                  <button className="dialer-skip-btn" onClick={() => setShowLog(true)}>📝 Gespräch protokollieren</button>
-                  <button className="dialer-skip-btn" onClick={advance}>Überspringen →</button>
-                </div>
-              </div>
+            <p className="dialer-company dialer-company-link" onClick={() => onSelectLead && onSelectLead(current.id)}>{current.company || current.person}</p>
+            <p className="dialer-person">{current.person}</p>
+            <a className="dialer-call-btn" href={`tel:${current.phone}`}>📞 {current.phone}</a>
+            {current.phone && (
+              <a className="dialer-wa-btn" href={`https://wa.me/${formatWaPhone(current.phone)}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>
+            )}
+            <div className="dialer-context" style={{ marginTop: 6 }}>
+              {current.currentProvider && <span className="dialer-chip">Aktuell: {current.currentProvider}</span>}
+              {current.consumption && <span className="dialer-chip">{parseInt(current.consumption).toLocaleString("de-DE")} kWh</span>}
+              {current.annualCosts && <span className="dialer-chip">€{parseInt(current.annualCosts).toLocaleString("de-DE")}/Jahr</span>}
+              {current.followUp && <span className="dialer-chip">Follow-up: {formatDate(current.followUp)}</span>}
+            </div>
+            {(current.callLogs || []).length > 0 && (
+              <p className="dialer-last-note">
+                Letzter Anruf: {current.callLogs[current.callLogs.length - 1].outcome}
+                {current.callLogs[current.callLogs.length - 1].notes ? ` — ${current.callLogs[current.callLogs.length - 1].notes}` : ""}
+              </p>
             )}
           </div>
-        )}
+          {showLog ? (
+            <div className="dialer-log">
+              <select className="dialer-outcome-select" value={logOutcome} onChange={e => setLogOutcome(e.target.value)}>
+                {CALL_OUTCOMES.map(o => <option key={o}>{o}</option>)}
+              </select>
+              <textarea className="dialer-note" placeholder="Gesprächsnotiz (optional)..." value={logNote} onChange={e => setLogNote(e.target.value)} rows={2} />
+              <div className="dialer-actions">
+                <button className="dialer-skip-btn" onClick={() => setShowLog(false)}>Abbrechen</button>
+                <button className="dialer-next-btn logged" onClick={() => logAndAdvance(logOutcome, logNote)} disabled={saving}>
+                  {saving ? "..." : "Speichern & Weiter"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="dialer-log">
+              <div className="dialer-log-row" style={{ flexWrap: "wrap", gap: 7 }}>
+                {[["❌ Kein Kontakt", "Kein Kontakt"], ["📱 Mailbox", "Mailbox hinterlassen"], ["📅 Termin", "Termin vereinbart"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
+                  <button key={outcome} className="dialer-next-btn" style={{ flex: "1 1 45%", fontSize: "0.82rem" }} onClick={() => logAndAdvance(outcome)} disabled={saving}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="dialer-actions">
+                <button className="dialer-skip-btn" onClick={() => setShowLog(true)}>📝 Gespräch protokollieren</button>
+                <button className="dialer-skip-btn" onClick={advance}>Überspringen →</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {current && <DialerEinwandPanel lead={current} user={user} />}
+    </div>
+  );
+}
+
+// ─── DialerEinwandPanel (KI Objection Handler inside Dialer) ─────────────────
+function DialerEinwandPanel({ lead, user }) {
+  const OBJECTIONS = [
+    { id: "teuer", icon: "💰", label: "Zu teuer" },
+    { id: "interesse", icon: "🚫", label: "Kein Interesse" },
+    { id: "spaeter", icon: "⏳", label: "Entscheide später" },
+    { id: "vertrag", icon: "📋", label: "Vertraglich gebunden" },
+    { id: "infos", icon: "📧", label: "Erst mal Infos" },
+    { id: "anbieter", icon: "🏢", label: "Habe schon Anbieter" },
+  ];
+
+  const [activeObjection, setActiveObjection] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleObjection = async (obj) => {
+    if (activeObjection === obj.id && response) {
+      setActiveObjection(null);
+      setResponse(null);
+      return;
+    }
+    setActiveObjection(obj.id);
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
+    const ctx = [
+      `Lead: ${lead.company || lead.person || "—"}`,
+      `Ansprechpartner: ${lead.person || "—"}`,
+      `Status: ${lead.status}`,
+      lead.consumption ? `Verbrauch: ${lead.consumption} kWh` : null,
+      lead.currentProvider ? `Aktueller Anbieter: ${lead.currentProvider}` : null,
+      lead.annualCosts ? `Jahreskosten: €${lead.annualCosts}` : null,
+      lead.contractEnd ? `Vertragsende: ${lead.contractEnd}` : null,
+    ].filter(Boolean).join("\n");
+
+    try {
+      const apiBase = process.env.REACT_APP_API_BASE_URL || "";
+      const res = await fetch(`${apiBase}/api/ai-proxy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "Du bist ein erfahrener Energievertriebscoach. Gib kurze, schlagfertige Antworten auf Kundeneinwände im Energievertrieb. Antworte auf Deutsch, direkt und praxisnah. Maximal 3-4 Sätze pro Antwort. Nutze die Lead-Informationen für personalisierte Argumente." },
+            { role: "user", content: `${ctx}\n\nDer Kunde sagt: "${obj.label}"\n\nGib eine professionelle, überzeugende Antwort auf diesen Einwand.` }
+          ]
+        })
+      });
+      const data = await res.json();
+      setResponse(data.choices?.[0]?.message?.content || data.result || "Keine Antwort erhalten.");
+    } catch {
+      setError("KI-Antwort fehlgeschlagen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyResponse = () => {
+    if (response) navigator.clipboard.writeText(response);
+  };
+
+  if (!lead) return null;
+
+  return (
+    <div className="dialer-einwand-panel">
+      <div className="objection-header">
+        <span className="objection-title-icon">🛡️</span>
+        <div>
+          <p className="objection-title">KI-Einwandbehandlung</p>
+          <p className="objection-sub">{lead.company || lead.person} — Einwand auswählen:</p>
+        </div>
       </div>
+      <div className="objection-grid">
+        {OBJECTIONS.map(obj => (
+          <button
+            key={obj.id}
+            className={`objection-chip${activeObjection === obj.id ? " active" : ""}`}
+            onClick={() => handleObjection(obj)}
+            disabled={loading && activeObjection !== obj.id}
+          >
+            <span>{obj.icon}</span> {obj.label}
+          </button>
+        ))}
+      </div>
+      {loading && (
+        <div className="objection-loading">
+          <div className="obj-spinner" />
+          <span>KI generiert Antwort...</span>
+        </div>
+      )}
+      {error && <div className="objection-error">{error}</div>}
+      {response && !loading && (
+        <div className="objection-response">
+          <div className="objection-response-header">
+            <span>💡 Empfohlene Antwort</span>
+            <button className="objection-copy" onClick={copyResponse}>📋 Kopieren</button>
+          </div>
+          <div className="objection-response-text">
+            {response.split("\n").filter(Boolean).map((line, i) => (
+              <p key={i} className={line.startsWith("- ") || line.startsWith("• ") ? "objection-bullet" : "objection-line"}>{line}</p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -4179,6 +4291,7 @@ function App() {
         if (selectionMode) { setSelectionMode(false); setSelectedLeadIds(new Set()); }
         else if (showNewLeadModal) setShowNewLeadModal(false);
         else if (selectedLeadId) setSelectedLeadId(null);
+        else if (showPowerDialer) { setShowPowerDialer(false); }
       }
       if (e.key === "n" && !showNewLeadModal && !selectedLeadId && !selectionMode &&
         !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
@@ -4187,7 +4300,7 @@ function App() {
     };
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
-  }, [showNewLeadModal, selectedLeadId, selectionMode]);
+  }, [showNewLeadModal, selectedLeadId, selectionMode, showPowerDialer]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -4736,13 +4849,13 @@ function App() {
 
   const closeLeadDrawer = () => {
     setSelectedLeadId(null);
-    applyFocusPreset("all");
+    if (!showPowerDialer) applyFocusPreset("all");
   };
 
   if (!user) return <LoginPage onLogin={setUser} user={user} />;
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout${showPowerDialer ? " dialer-active" : ""}`}>
       {loading && <LeadLoadingOverlay />}
       <Sidebar
         activeTab={activeTab}
@@ -5060,6 +5173,7 @@ function App() {
           onLogCall={logCall}
           onAddAttachment={addLeadAttachment}
           onRemoveAttachment={removeLeadAttachment}
+          dialerActive={showPowerDialer}
         />
       )}
 
@@ -5077,7 +5191,8 @@ function App() {
           user={user}
           onLogCall={logCall}
           onUpdateField={updateLeadField}
-          onClose={() => setShowPowerDialer(false)}
+          onClose={() => { setShowPowerDialer(false); }}
+          onSelectLead={(leadId) => setSelectedLeadId(leadId)}
         />
       )}
     </div>
