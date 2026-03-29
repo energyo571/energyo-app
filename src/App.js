@@ -13,13 +13,13 @@ import * as XLSX from "xlsx";
 import "./App.css";
 
 // ─── Konstanten ───────────────────────────────────────────────────────────────
-const STATUS_OPTIONS = ["Neu", "Kontaktiert", "Angebot", "Nachfassen", "Gewonnen", "Verloren"];
+const STATUS_OPTIONS = ["Neu", "Kontaktiert", "Angebot", "Nachfassen", "CLOSED", "Verloren"];
 const STATUS_META = {
   Neu:         { color: "#6b7280", bg: "#f3f4f6" },
   Kontaktiert: { color: "#1d4ed8", bg: "#dbeafe" },
   Angebot:     { color: "#c2410c", bg: "#ffedd5" },
   Nachfassen:  { color: "#b45309", bg: "#fef3c7" },
-  Gewonnen:    { color: "#065f46", bg: "#d1fae5" },
+  CLOSED:      { color: "#065f46", bg: "#d1fae5" },
   Verloren:    { color: "#991b1b", bg: "#fee2e2" },
 };
 const CALL_OUTCOMES = [
@@ -62,7 +62,7 @@ const getMonthsUntil = (dateValue) => {
   return (new Date(dateValue) - new Date()) / (1000 * 60 * 60 * 24 * 30);
 };
 const isWonLeadRenewalDue = (lead, monthsBefore = RENEWAL_RESURFACE_MONTHS) => {
-  if (!lead || lead.status !== "Gewonnen") return false;
+  if (!lead || lead.status !== "CLOSED") return false;
   const monthsUntilEnd = getMonthsUntil(lead.contractEnd);
   return monthsUntilEnd >= 0 && monthsUntilEnd <= monthsBefore;
 };
@@ -173,12 +173,12 @@ const getLastActivityTimestamp = (lead) => {
 };
 const isLeadInactiveForHours = (lead, minHours = 48) => {
   if (!lead) return false;
-  if (lead.status === "Gewonnen" || lead.status === "Verloren") return false;
+  if (lead.status === "CLOSED" || lead.status === "Verloren") return false;
   const lastActivity = getLastActivityTimestamp(lead);
   return getHoursSince(lastActivity) >= minHours;
 };
 const getLeadTemperature = (lead) => {
-  if (lead.status === "Gewonnen") return { label: "Won", tone: "won", step: 3 };
+  if (lead.status === "CLOSED") return { label: "Won", tone: "won", step: 3 };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost", step: 0 };
   if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical", step: 2 };
   // Bidirectional: purely activity-based — every lead can warm up through action
@@ -191,7 +191,7 @@ const getNextActionPlan = (lead) => {
   const hasPhone = !!lead.phone;
   const hasEmail = !!lead.email;
 
-  if (lead.status === "Gewonnen") {
+  if (lead.status === "CLOSED") {
     return {
       label: "Abschluss sichern",
       tone: "success",
@@ -272,7 +272,7 @@ const parseOptionalNumber = (value) => {
   return Number.isFinite(num) ? num : null;
 };
 const rankCockpitCtas = ({ leads, marketTrendPct = null }) => {
-  const workingLeads = leads.filter((lead) => lead.status !== "Gewonnen" && lead.status !== "Verloren");
+  const workingLeads = leads.filter((lead) => lead.status !== "CLOSED" && lead.status !== "Verloren");
   const inactiveLeads = workingLeads.filter((lead) => isLeadInactiveForHours(lead, 48));
   const uncontactedLeads = workingLeads.filter((lead) => getContactTouchCount(lead) === 0);
   const overdueLeads = workingLeads.filter((lead) => isOverdue(lead.followUp));
@@ -382,7 +382,7 @@ const addDaysToIso = (days) => {
   return dt.toISOString().split("T")[0];
 };
 const getLeadSequencePlan = (lead) => {
-  if (lead.status === "Gewonnen") {
+  if (lead.status === "CLOSED") {
     return {
       stage: "post-win",
       title: "Retention Sequenz",
@@ -431,7 +431,7 @@ const getLeadSequencePlan = (lead) => {
 };
 const clampScore = (value, min = 0, max = 100) => Math.min(max, Math.max(min, value));
 const calculateLeadScore = (lead) => {
-  if (lead.status === "Gewonnen") return 100;
+  if (lead.status === "CLOSED") return 100;
   if (lead.status === "Verloren") return 5;
 
   let score = 30;
@@ -461,7 +461,7 @@ const calculateLeadScore = (lead) => {
   return clampScore(Math.round(score));
 };
 const getLeadWinProbability = (lead) => {
-  if (lead.status === "Gewonnen") return 100;
+  if (lead.status === "CLOSED") return 100;
   if (lead.status === "Verloren") return 0;
 
   const score = calculateLeadScore(lead);
@@ -479,7 +479,7 @@ const getLeadScoreTone = (probability) => {
   return "low";
 };
 const getLeadReadiness = (lead) => {
-  if (lead.status === "Gewonnen") {
+  if (lead.status === "CLOSED") {
     return {
       label: "🚦 Angebotsfaehig",
       tone: "green",
@@ -761,13 +761,13 @@ Lead-Informationen:
     const jsonRules = "Antworte ausschließlich als valides JSON (ohne Markdown, ohne Codeblock).";
 
     if (m === "prepare") {
-      return `${ctx}\n\nAufgabe: Erstelle eine prägnante Gesprächsvorbereitung auf Deutsch. Gib konkrete Einwandbehandlung für die wichtigsten Standard-Einwände mit kurzen, schlagfertigen Antworten.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "opening": "string",\n  "valuePoints": ["string"],\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "closingQuestion": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+      return `${ctx}\n\nAufgabe: Erstelle eine prägnante Gesprächsvorbereitung auf Deutsch. Gib konkrete Einwandbehandlung für die wichtigsten Standard-Einwände mit kurzen, schlagfertigen Antworten.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "opening": "string",\n  "valuePoints": ["string"],\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "closingQuestion": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|CLOSED|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
     }
     if (m === "analyze") {
-      return `${ctx}\n\nAufgabe: Analysiere den Lead kurz und konkret auf Deutsch und nenne die 2 wichtigsten Einwand-Antwort-Paare für den nächsten Kontakt.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "priority": "low|mid|high",\n  "reason": "string",\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+      return `${ctx}\n\nAufgabe: Analysiere den Lead kurz und konkret auf Deutsch und nenne die 2 wichtigsten Einwand-Antwort-Paare für den nächsten Kontakt.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "priority": "low|mid|high",\n  "reason": "string",\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|CLOSED|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
     }
     if (m === "nextSteps") {
-      return `${ctx}\n\nAufgabe: Gib 3–5 priorisierte nächste Schritte auf Deutsch. Ergänze am Ende eine kurze Einwandbehandlung für die 2 wahrscheinlichsten Standard-Einwände.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "nextSteps": ["string"],\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "draftNote": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|Gewonnen|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
+      return `${ctx}\n\nAufgabe: Gib 3–5 priorisierte nächste Schritte auf Deutsch. Ergänze am Ende eine kurze Einwandbehandlung für die 2 wahrscheinlichsten Standard-Einwände.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "summary": "string",\n  "nextSteps": ["string"],\n  "recommendedAction": {\n    "label": "string",\n    "channel": "Telefon|E-Mail|CRM|WhatsApp|Termin",\n    "when": "Heute|In 24h|In 48h|Diese Woche",\n    "reason": "string"\n  },\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "draftNote": "string",\n  "reason": "string",\n  "suggestedUpdates": { "status": "Neu|Kontaktiert|Angebot|Nachfassen|CLOSED|Verloren|", "followUp": "YYYY-MM-DD|" }\n}`;
     }
     if (m === "email") {
       return `${ctx}\n\nAufgabe: Schreibe einen professionellen Follow-up-Mailentwurf auf Deutsch. Ergänze kurze Einwandbehandlung, falls der Empfänger zurückhaltend reagiert.\n${jsonRules}\nSchema:\n{\n  "title": "string",\n  "subject": "string",\n  "emailText": "string",\n  "tone": "warm|professional|urgent",\n  "objectionHandling": ["Einwand: ... | Antwort: ..."],\n  "reason": "string",\n  "suggestedUpdates": { "followUp": "YYYY-MM-DD|" }\n}`;
@@ -1856,7 +1856,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
         {/* Tab: Wechsel & Provision */}
         {drawerTab === "wechsel" && (
           <div className="drawer-tab-content">
-            {lead.status === "Gewonnen" ? (
+            {lead.status === "CLOSED" ? (
               <>
                 <WechselprozessTracker lead={lead} user={user} onUpdateField={onUpdateField} />
                 <div style={{ marginTop: 20 }}>
@@ -1865,7 +1865,7 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               </>
             ) : (
               <div className="wechsel-locked">
-                🔒 Wechselprozess und Provision sind für gewonnene Leads (Status "Gewonnen") verfügbar.
+                🔒 Wechselprozess und Provision sind für CLOSED Leads (Status "CLOSED") verfügbar.
               </div>
             )}
           </div>
@@ -2438,16 +2438,16 @@ function Dashboard({ leads, teamMembers, userRole }) {
     const byStatus = STATUS_OPTIONS.map(s => ({ label: s, count: leads.filter(l => l.status === s).length }));
     const topPerformer = teamMembers.map(m => {
       const ml = leads.filter(l => l.createdBy?.email === m.email);
-      return { email: m.email, role: m.role, total: ml.length, won: ml.filter(l => l.status === "Gewonnen").length, umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0) };
+      return { email: m.email, role: m.role, total: ml.length, won: ml.filter(l => l.status === "CLOSED").length, umsatz: ml.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0) };
     }).sort((a, b) => b.won - a.won);
     const totalUmsatz = leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0);
-    const wonLeads = leads.filter(l => l.status === "Gewonnen").length;
+    const wonLeads = leads.filter(l => l.status === "CLOSED").length;
     const closingRate = leads.length > 0 ? Math.round((wonLeads / leads.length) * 100) : 0;
     return { byStatus, topPerformer, totalUmsatz, wonLeads, closingRate };
   }, [leads, teamMembers]);
 
   const maxCount = Math.max(...stats.byStatus.map(s => s.count), 1);
-  const statusColors = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", Nachfassen: "#ffc107", Gewonnen: "#198754", Verloren: "#dc3545" };
+  const statusColors = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", Nachfassen: "#ffc107", CLOSED: "#198754", Verloren: "#dc3545" };
   const trendSparkline = useMemo(() => {
     const points = trendHistory.filter((item) => Number.isFinite(item?.trendPct));
     if (points.length < 2) return null;
@@ -2489,7 +2489,7 @@ function Dashboard({ leads, teamMembers, userRole }) {
         </div>
         <div className="dashboard-summary">
           <div className="summary-item"><span>Closing rate</span><strong className={getClosingRateClass(stats.closingRate)}>{stats.closingRate}%</strong></div>
-          <div className="summary-item"><span>Gewonnen</span><strong>{stats.wonLeads}</strong></div>
+          <div className="summary-item"><span>CLOSED</span><strong>{stats.wonLeads}</strong></div>
           <div className="summary-item"><span>Umsatzpotenzial</span><strong className="kpi-success">{formatEuro(stats.totalUmsatz)}</strong></div>
         </div>
       </div>
@@ -2508,7 +2508,7 @@ function Dashboard({ leads, teamMembers, userRole }) {
                 </div>
                 <div className="performer-stats">
                   <span title="Leads">📋 {p.total}</span>
-                  <span title="Gewonnen">✅ {p.won}</span>
+                  <span title="CLOSED">✅ {p.won}</span>
                   <span title="Umsatz">💶 {formatEuro(p.umsatz)}</span>
                 </div>
               </div>
@@ -4135,6 +4135,11 @@ function App() {
       setKpiFocus("won");
       return;
     }
+    if (preset === "lost") {
+      setSmartView("lost");
+      setKpiFocus("all");
+      return;
+    }
     if (preset === "uncontacted") {
       setSmartView("all");
       setKpiFocus("all");
@@ -4289,7 +4294,17 @@ function App() {
     const q = userRole === "admin"
       ? query(collection(db, "leads"), where("teamId", "==", teamId))
       : query(collection(db, "leads"), where("teamId", "==", teamId), where("ownerUserId", "==", user.uid));
-    return onSnapshot(q, snap => setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+    return onSnapshot(q, snap => {
+      const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // One-time migration: rename legacy "Gewonnen" → "CLOSED"
+      loaded.forEach(l => {
+        if (l.status === "Gewonnen") {
+          updateDoc(doc(db, "leads", l.id), { status: "CLOSED" }).catch(() => {});
+          l.status = "CLOSED";
+        }
+      });
+      setLeads(loaded);
+    });
   }, [user, teamId, userRole]);
 
   useEffect(() => {
@@ -4306,7 +4321,7 @@ function App() {
     if (!user || !teamId || leads.length === 0) return;
     const todayIso = new Date().toISOString().split("T")[0];
     const candidates = leads.filter((lead) =>
-      lead.status === "Gewonnen"
+      lead.status === "CLOSED"
       && !lead.renewalResurfacedAt
       && isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)
     );
@@ -4323,7 +4338,7 @@ function App() {
           renewalResurfaceReason: `auto-${RENEWAL_RESURFACE_MONTHS}m-before-contract-end`,
           statusHistory: [
             ...(lead.statusHistory || []),
-            { from: "Gewonnen", to: "Nachfassen", timestamp: now, author: "System" },
+            { from: "CLOSED", to: "Nachfassen", timestamp: now, author: "System" },
           ],
           comments: [
             ...(lead.comments || []),
@@ -4558,25 +4573,27 @@ function App() {
       if (smartView === "mine" && getLeadOwnerEmail(l) !== user.email) return false;
       if (smartView === "action" && !(isOverdue(l.followUp) || isTodayDue(l.followUp) || isLeadInactiveForHours(l, 48))) return false;
       if (smartView === "hot" && getLeadTemperature(l).tone !== "hot") return false;
-      if (smartView === "won" && l.status !== "Gewonnen") return false;
+      if (smartView === "won" && l.status !== "CLOSED") return false;
+      if (smartView === "lost" && l.status !== "Verloren") return false;
       if (smartView === "renewals" && !l.renewalResurfacedAt) return false;
       if (kpiFocus === "overdue" && !isOverdue(l.followUp)) return false;
       if (kpiFocus === "today" && !isTodayDue(l.followUp)) return false;
       if (kpiFocus === "inactive48" && !isLeadInactiveForHours(l, 48)) return false;
       if (kpiFocus === "cancellation" && !isOpenCancellationWindow(l.contractEnd)) return false;
       if (kpiFocus === "priorityA" && calculatePriority(l) !== "A") return false;
-      if (kpiFocus === "won" && l.status !== "Gewonnen") return false;
+      if (kpiFocus === "won" && l.status !== "CLOSED") return false;
       return true;
     }), sortMode);
   }, [leads, searchTerm, filterPriority, filterStatus, smartView, sortMode, user, kpiFocus]);
 
   const activePipelineLeads = useMemo(
-    () => filteredLeads.filter((lead) => lead.status !== "Gewonnen" || isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)),
+    () => filteredLeads.filter((lead) => (lead.status !== "CLOSED" || isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS)) && lead.status !== "Verloren"),
     [filteredLeads],
   );
 
   const displayLeads = useMemo(() => {
     if (smartView === "won" || kpiFocus === "won") return filteredLeads;
+    if (smartView === "lost") return filteredLeads;
     return activePipelineLeads;
   }, [filteredLeads, activePipelineLeads, smartView, kpiFocus]);
 
@@ -4596,7 +4613,7 @@ function App() {
   }, [displayLeads, currentPage, leadsPerPage]);
 
   const wonBundleLeads = useMemo(() => {
-    const bucket = filteredLeads.filter((lead) => lead.status === "Gewonnen" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
+    const bucket = filteredLeads.filter((lead) => lead.status === "CLOSED" && !isWonLeadRenewalDue(lead, RENEWAL_RESURFACE_MONTHS));
     return [...bucket].sort((a, b) => {
       const ma = getMonthsUntil(a.contractEnd);
       const mb = getMonthsUntil(b.contractEnd);
@@ -4604,9 +4621,15 @@ function App() {
     });
   }, [filteredLeads]);
 
+  const lostBundleLeads = useMemo(() => {
+    return filteredLeads.filter((lead) => lead.status === "Verloren")
+      .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+  }, [filteredLeads]);
+
   const stats = useMemo(() => ({
     totalLeads: leads.length,
-    wonLeads: leads.filter(l => l.status === "Gewonnen").length,
+    wonLeads: leads.filter(l => l.status === "CLOSED").length,
+    lostLeads: leads.filter(l => l.status === "Verloren").length,
     overdue: leads.filter(l => isOverdue(l.followUp)).length,
     dueToday: leads.filter(l => isTodayDue(l.followUp)).length,
     inactive48: leads.filter(l => isLeadInactiveForHours(l, 48)).length,
@@ -4614,7 +4637,7 @@ function App() {
     openCancellation: leads.filter(l => isOpenCancellationWindow(l.contractEnd)).length,
     movedEnergyKwh: leads.reduce((sum, lead) => sum + (Number.parseInt(lead.consumption || 0, 10) || 0), 0),
     totalUmsatzPotential: leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0),
-    closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "Gewonnen").length / leads.length) * 100) : 0,
+    closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "CLOSED").length / leads.length) * 100) : 0,
   }), [leads]);
 
   const actionQueueLeads = useMemo(() =>
@@ -4651,7 +4674,7 @@ function App() {
       tone: "success",
       title: "Closing stark: Erfolgsroutine skalieren",
       tips: [
-        "Top-Argumente aus gewonnenen Leads als Script sichern.",
+        "Top-Argumente aus CLOSED Leads als Script sichern.",
         "High-Potential-Leads mit gleichem Playbook spiegeln.",
         "Hot-Leads weiter mit kurzen 24h-Zyklen bearbeiten.",
       ],
@@ -4796,7 +4819,8 @@ function App() {
                 <option value="action">Fokus: Action Queue</option>
                 <option value="hot">Fokus: Hot Deals</option>
                 <option value="renewals">Fokus: Renewals</option>
-                <option value="won">Fokus: Gewonnen</option>
+                <option value="won">Fokus: CLOSED</option>
+                <option value="lost">Fokus: LOST</option>
                 <option value="uncontacted">Fokus: Unkontaktiert</option>
                 <option value="overdue">Fokus: Überfällig</option>
                 <option value="today">Fokus: Heute fällig</option>
@@ -4806,7 +4830,7 @@ function App() {
               <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
                 {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
               </button>
-              <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} gewonnen gebündelt</span>
+              <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} CLOSED · {lostBundleLeads.length} LOST gebündelt</span>
             </div>
 
             {showAdvancedFilters && (
@@ -4849,7 +4873,7 @@ function App() {
                 <span className="kpi-val">{stats.openCancellation}</span>
                 <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
               </div>
-              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Gewonnen</span></div>
+              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">CLOSED</span></div>
             </div>
 
             <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
@@ -4953,7 +4977,7 @@ function App() {
             {smartView !== "won" && kpiFocus !== "won" && wonBundleLeads.length > 0 && (
               <div className="won-bundle-section">
                 <div className="won-bundle-head">
-                  <h3>Gewonnen gebündelt</h3>
+                  <h3>CLOSED gebündelt</h3>
                   <span>{wonBundleLeads.length} Leads außerhalb der aktiven Pipeline</span>
                 </div>
                 <div className="won-bundle-list">
@@ -4972,6 +4996,28 @@ function App() {
                         {Number.isFinite(monthsUntilEnd) && monthsUntilEnd > 0 && (
                           <div className="won-bundle-meta">Wiedervorlage automatisch bei ≤ 6 Monaten Restlaufzeit</div>
                         )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {smartView !== "lost" && lostBundleLeads.length > 0 && (
+              <div className="won-bundle-section lost-bundle-section">
+                <div className="won-bundle-head">
+                  <h3>LOST gebündelt</h3>
+                  <span>{lostBundleLeads.length} verlorene Leads</span>
+                </div>
+                <div className="won-bundle-list">
+                  {lostBundleLeads.map((lead) => {
+                    const temp = getLeadTemperature(lead);
+                    return (
+                      <button key={lead.id} type="button" className="won-bundle-card lost-card" onClick={() => setSelectedLeadId(lead.id)}>
+                        <div className="won-bundle-title">{lead.company || lead.person || "Lead"}</div>
+                        {lead.lossReason && <div className="won-bundle-meta">Grund: {lead.lossReason}</div>}
+                        <div className="won-bundle-meta">Status seit: {formatDate(lead.updatedAt || lead.createdAt)}</div>
+                        <div className="won-bundle-meta">Score: {calculateLeadScore(lead)}/100 · {temp.label}</div>
                       </button>
                     );
                   })}
