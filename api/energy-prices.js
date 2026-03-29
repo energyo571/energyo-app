@@ -15,8 +15,8 @@ module.exports = async function handler(req, res) {
   const stromUrl = `https://api.energy-charts.info/price?country=de&start=${fmt(start)}&end=${fmt(end)}`;
 
   // --- Gas: Yahoo Finance TTF front-month futures ---
-  const rangeMap = { 3: "3mo", 6: "6mo", 12: "1y" };
-  const yRange = rangeMap[months] || `${months}mo`;
+  const rangeMap = { 1: "1mo", 3: "3mo", 6: "6mo", 12: "1y", 24: "2y" };
+  const yRange = rangeMap[months] || (months <= 6 ? "6mo" : months <= 12 ? "1y" : "2y");
   const gasUrl = `https://query1.finance.yahoo.com/v8/finance/chart/TTF%3DF?range=${yRange}&interval=1d`;
 
   try {
