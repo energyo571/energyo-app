@@ -1,25 +1,65 @@
 :root {
-  --bg: #f3f4f6;
+  /* ── Colors ── */
+  --bg: #f5f5f7;
   --surface: #ffffff;
-  --surface-muted: #f9fafb;
+  --surface-muted: #f9f9fb;
   --surface-strong: #0f1219;
   --surface-strong-2: #0a0d12;
-  --text: #111827;
-  --text-soft: #6b7280;
-  --text-inverse: #f3f4f6;
-  --line: #e5e7eb;
-  --line-soft: #e5e7eb;
-  --primary: #1b7eea;
-  --primary-deep: #1f2a44;
+  --text: #1d1d1f;
+  --text-soft: #86868b;
+  --text-inverse: #f5f5f7;
+  --line: #d2d2d7;
+  --line-soft: #e8e8ed;
+  --primary: #0071e3;
+  --primary-deep: #1d1d1f;
   --success: #059669;
   --danger: #dc2626;
   --warning: #d97706;
   --today: #7c3aed;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-soft: 0 1px 2px rgba(0,0,0,0.04);
-  --radius: 10px;
-  --radius-lg: 14px;
+
+  /* ── Shadows (Apple-style subtle) ── */
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-soft: 0 0.5px 1px rgba(0,0,0,0.03);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+
+  /* ── Radius (3-tier system: sm/md/lg) ── */
   --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  /* ── Spacing scale (4px base) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* ── Typography scale ── */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-md: 14px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+
+  /* ── Close button token ── */
+  --close-size: 36px;
+  --close-icon: 18px;
+  --close-radius: var(--radius-sm);
+
+  /* ── Button height tiers ── */
+  --btn-sm: 32px;
+  --btn-md: 36px;
+  --btn-lg: 40px;
+
+  /* ── Transition ── */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --duration: 150ms;
 }
 
 * {
@@ -419,7 +459,7 @@ button {
 .calendar-month-board {
   background: var(--surface);
   border: 1px solid var(--line-soft);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
@@ -541,9 +581,9 @@ button {
 .calendar-upcoming-panel {
   background: var(--surface);
   border: 1px solid var(--line-soft);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
-  padding: 16px;
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -834,7 +874,7 @@ textarea:focus {
   padding: 2px;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: var(--radius);
   box-shadow: none;
 }
 
@@ -859,7 +899,7 @@ textarea:focus {
   padding: 2px;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: var(--radius);
 }
 
 .density-toggle-btn {
@@ -934,9 +974,9 @@ textarea:focus {
 }
 
 .import-upload-zone {
-  border: 2px dashed #d9e8ff;
-  border-radius: 20px;
-  padding: 40px 20px;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-5);
   text-align: center;
   cursor: pointer;
   transition: all 180ms ease;
@@ -1084,7 +1124,7 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 10px 12px;
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius);
   border: 1px solid var(--line);
   background: var(--surface);
@@ -1173,7 +1213,7 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 18px;
-  padding: 24px 26px;
+  padding: var(--space-6);
   border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1261,9 +1301,9 @@ textarea:focus {
 .command-card {
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid var(--line-soft);
-  border-radius: 14px;
-  padding: 12px;
-  box-shadow: 0 6px 14px rgba(16, 23, 38, 0.04);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1856,7 +1896,7 @@ textarea:focus {
 .leads-table-wrap {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--line-soft);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(14px);
@@ -3111,7 +3151,7 @@ textarea:focus {
   overflow-y: auto;
   background: var(--surface);
   border-left: 1px solid var(--line);
-  padding: 24px;
+  padding: var(--space-6);
   animation: drawerIn 180ms ease-out;
 }
 
@@ -3292,14 +3332,31 @@ textarea:focus {
   pointer-events: none;
 }
 
-.drawer-close-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+.drawer-close-btn,
+.preview-close,
+.modal-close-btn {
+  width: var(--close-size);
+  height: var(--close-size);
+  border-radius: var(--close-radius);
   border: 1px solid var(--line);
-  background: white;
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: var(--close-icon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.drawer-close-btn:hover,
+.preview-close:hover,
+.modal-close-btn:hover {
+  background: var(--surface-muted);
   color: var(--text);
-  font-size: 18px;
 }
 
 .drawer-header-actions {
@@ -3371,14 +3428,14 @@ textarea:focus {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 14px 10px;
-  border-radius: 18px;
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius);
   border: 1px solid var(--line-soft);
   background: var(--surface);
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  transition: all var(--duration) var(--ease);
 }
 
 .contact-btn:hover:not(.disabled) {
@@ -4699,12 +4756,12 @@ select {
 }
 
 .preview-modal {
-  width: min(800px, 90vw);
+  width: min(800px, 92vw);
   max-height: 85vh;
   overflow-y: auto;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 36px 72px rgba(16, 23, 38, 0.25);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
   padding: 0;
   position: absolute;
   top: 50%;
@@ -4729,17 +4786,7 @@ select {
   word-break: break-word;
 }
 
-.preview-close {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: white;
-  color: var(--text);
-  font-size: 18px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
+/* .preview-close — unified above with .drawer-close-btn */
 
 .preview-content {
   padding: 24px;
@@ -4802,11 +4849,11 @@ select {
 }
 
 .confirm-modal {
-  width: min(400px, 88vw);
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 36px 72px rgba(16, 23, 38, 0.25);
-  padding: 32px 24px;
+  width: min(420px, 88vw);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  padding: var(--space-7) var(--space-6);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -4874,7 +4921,7 @@ select {
   background: var(--surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
-  padding: 24px;
+  padding: var(--space-6);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -5219,11 +5266,11 @@ select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  background: white;
-  border-radius: 26px;
-  box-shadow: var(--shadow);
-  padding: 36px;
+  gap: var(--space-6);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  padding: var(--space-8);
 }
 
 .lead-loading-logo {
@@ -6298,7 +6345,7 @@ select {
 
 /* --- POWER DIALER MODAL (legacy, unused) ----------------------------------- */
 .power-dialer-modal { background: #0f172a; max-width: 500px; width: 95%; border-radius: 16px; overflow: hidden; }
-.power-dialer-modal .drawer-close-btn { color: #64748b; background: transparent; border: none; cursor: pointer; font-size: 1rem; }
+.power-dialer-modal .drawer-close-btn { color: var(--text-soft); background: transparent; border: none; cursor: pointer; font-size: var(--close-icon); }
 
 /* --- POWER DIALER SIDEBAR PANEL -------------------------------------------- */
 .power-dialer-panel {
@@ -6382,5 +6429,600 @@ select {
 @media (max-width: 600px) {
   .kpi-strip-compact { flex-direction: column; align-items: stretch; }
   .dashboard-summary { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — CONSISTENCY LAYER
+   Apple / Close.com visual language enforcement
+   All overrides use specificity to normalize without touching originals
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Border Radius: 3-tier system ───────────────────────────────────── */
+/* Tier 1: Small (8px) — buttons, inputs, pills, badges, chips */
+.toolbar-action-btn,
+.toolbar-icon-btn,
+.view-toggle-group,
+.view-toggle-btn,
+.density-toggle-group,
+.density-toggle-btn,
+.smart-view-chip,
+.add-meter-btn,
+.wechsel-complete-btn,
+.wechsel-confirm-btn,
+.wechsel-cancel-btn,
+.remove-meter-btn,
+.bulk-action-bar,
+.bulk-select-all-btn,
+.selection-mode-btn,
+.delete-mode-info,
+.filter-select-inline,
+.toolbar-search,
+.command-insights-toggle,
+.kpi-reset-btn,
+.quick-action-btn,
+.compose-action-btn,
+.danger-btn,
+.danger-btn-xs,
+.ghost-btn-xs,
+.status-step-btn,
+.small-btn,
+.ghost-btn,
+.ghost-btn-sm,
+.danger-btn-sm,
+.sequence-btn,
+.cal-btn,
+.team-role-hint,
+.invite-status,
+.import-error,
+.import-warning,
+.provision-status-btn,
+.ai-mode-btn,
+.ai-error,
+.ai-apply-message,
+.ai-copy-btn,
+.objection-chip,
+.briefing-regenerate,
+.breadcrumb-btn {
+  border-radius: var(--radius-sm);
+}
+
+/* Tier 2: Medium (12px) — cards, panels, sections */
+.card,
+.summary-metric-card,
+.command-card,
+.kpi-item,
+.kpi-action-btn,
+.kanban-card,
+.lead-row-checkbox input[type="checkbox"],
+.activity-item,
+.activity-icon-wrap,
+.drawer-signal-card,
+.drawer-core-item,
+.inline-field,
+.attachment-row,
+.won-bundle-card,
+.lost-card,
+.cockpit-action-lead,
+.cockpit-cta-card,
+.cockpit-action-card,
+.cockpit-trend-inline,
+.delivery-location-card,
+.meter-card,
+.preview-item,
+.next-action-playbook,
+.next-action-playbook-grid div,
+.sequence-step-card,
+.planung-calc-wrap,
+.dash-kpi,
+.dash-shortcut,
+.dash-action,
+.dash-action-icon,
+.ai-result,
+.ai-loading,
+.ranking-row,
+.performer-item,
+.team-member-item,
+.performer-rank,
+.calendar-event-chip,
+.calendar-upcoming-item,
+.dialer-card,
+.objection-response,
+.briefing-content,
+.wechsel-tracker,
+.provisions-tracker,
+.address-section,
+.energy-detail-card,
+.energy-section,
+.meter-card-header,
+.audit-gate,
+.activity-compose-bar,
+.note-compose,
+.call-form,
+.attachments-upload-zone,
+.drawer-created-by,
+.team-inline-hint,
+.file-upload-zone,
+.bulk-hint-bar,
+.won-bundle-section,
+.empty-timeline,
+.market-trend-sparkline-wrap,
+.market-trend-error,
+.existing-appointment,
+.cal-confirm-box,
+.activity-edit-area textarea,
+.wechsel-locked {
+  border-radius: var(--radius);
+}
+
+/* Tier 3: Large (16px) — drawers, modals, big panels */
+.modal,
+.new-lead-modal,
+.preview-modal,
+.confirm-modal,
+.appointment-modal,
+.import-modal,
+.modal-backdrop + .modal,
+.leads-table-wrap,
+.kanban-col,
+.calendar-month-board,
+.calendar-upcoming-panel,
+.drawer,
+.lead-loading-content,
+.command-hero,
+.command-summary-bar,
+.power-dialer-modal,
+.sticky-smart-view,
+.savings-calc,
+.briefing-widget,
+.objection-handler,
+.contact-btn,
+.dialer-einwand-panel {
+  border-radius: var(--radius-lg);
+}
+
+/* ── 2. Font Weight: 3-tier system ─────────────────────────────────────── */
+/* Tier 1: Regular (500) — body text, descriptions */
+.drawer-person,
+.step-desc,
+.upload-hint,
+.activity-text,
+.ai-result-text,
+.briefing-line,
+.objection-line,
+.cockpit-action-list,
+.calendar-event-title,
+.command-card p,
+.bar-label {
+  font-weight: 500;
+}
+
+/* Tier 2: Medium (600) — labels, secondary headings, buttons */
+.sidebar-item-label,
+.sidebar-footer-name,
+.page-title,
+.inline-label,
+.form-group label,
+.energy-section-header label,
+.kpi-label,
+.dash-kpi-label,
+.dash-shortcut-label,
+.summary-metric-card span,
+.hero-metric-card span,
+.lth-checkbox,
+.leads-table-header,
+.drawer-signal-card span,
+.drawer-core-item span,
+.energy-detail-key,
+.new-lead-btn,
+.primary-btn-modal,
+.primary-btn-sm,
+.primary-btn,
+.import-btn,
+.toolbar-action-btn,
+.small-btn,
+.ghost-btn,
+.ghost-btn-sm,
+.danger-btn-sm,
+.confirm-actions button,
+.radio-label,
+.checkbox-label,
+.att-name,
+.bulk-count,
+.bulk-confirm-text,
+.filter-result-count,
+.lead-pagination-inline,
+.ranking-name,
+.invite-status,
+.status-action-head span,
+.cockpit-action-head span,
+.quick-nav-title,
+.ai-panel-title,
+.savings-title,
+.wechsel-title,
+.briefing-greeting,
+.objection-title,
+.user-email-short,
+.drawer-umsatz-label {
+  font-weight: 600;
+}
+
+/* Tier 3: Bold (700) — emphasis, KPIs, section titles */
+.drawer-company,
+.modal h2,
+.lead-row-company,
+.kanban-company,
+.kpi-val,
+.dash-kpi-val,
+.dash-shortcut-count,
+.summary-metric-card strong,
+.hero-metric-card strong,
+.market-trend-value,
+.drawer-umsatz-value,
+.ranking-col-stat,
+.dash-action-title,
+.contact-btn-label,
+.quick-action-btn,
+.compose-action-btn,
+.sequence-btn,
+.drawer-prio-badge,
+.drawer-badge,
+.call-outcome-badge,
+.energy-detail-value,
+.energy-detail-label,
+.inline-value,
+.meter-index,
+.drawer-meta-chip,
+.selection-mode-btn,
+.delete-mode-count,
+.command-card-label,
+.command-card-meta,
+.status-action-head strong,
+.ai-result-header,
+.ai-result-title,
+.section-label,
+.won-bundle-title,
+.cockpit-trend-title,
+.table-header,
+.upload-label,
+.location-index,
+.add-meter-btn {
+  font-weight: 700;
+}
+
+/* ── 3. Button Height Normalization ────────────────────────────────────── */
+/* Small (32px) — toolbar actions, compact */
+.toolbar-action-btn,
+.delete-mode-btn,
+.delete-mode-cancel,
+.bulk-select-all-btn,
+.density-toggle-btn,
+.view-toggle-btn {
+  height: var(--btn-sm);
+  padding-top: 0;
+  padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Medium (36px) — primary actions, toolbar icons */
+.toolbar-icon-btn,
+.new-lead-btn,
+.primary-btn-modal,
+.primary-btn-sm,
+.primary-btn,
+.import-btn,
+.selection-mode-btn,
+.kpi-action-btn,
+.small-btn,
+.ghost-btn,
+.ghost-btn-sm,
+.danger-btn-sm,
+.quick-action-btn,
+.status-step-btn,
+.compose-action-btn,
+.command-insights-toggle,
+.kpi-reset-btn,
+.add-meter-btn {
+  height: var(--btn-md);
+  padding-top: 0;
+  padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Large (40px) — attachment actions */
+.att-btn {
+  width: var(--btn-lg);
+  height: var(--btn-lg);
+  border-radius: var(--radius-sm);
+}
+
+/* ── 4. Input/Select/Textarea Normalization ──────────────────────────── */
+textarea,
+input,
+select {
+  border-radius: var(--radius-sm);
+  border-color: var(--line);
+  transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.10);
+  outline: none;
+}
+
+/* ── 5. Transition Normalization ───────────────────────────────────────── */
+button,
+a,
+.kanban-card,
+.lead-row,
+.kpi-item.clickable,
+.dash-shortcut,
+.dash-action,
+.contact-btn,
+.toolbar-icon-btn,
+.toolbar-action-btn,
+.sidebar-nav-item {
+  transition: all var(--duration) var(--ease);
+}
+
+/* ── 6. Consistent Card Padding ────────────────────────────────────────── */
+.card,
+.dash-card,
+.dashboard-card {
+  padding: var(--space-5);
+}
+
+.kpi-item,
+.dash-kpi,
+.summary-metric-card,
+.cockpit-cta-card {
+  padding: var(--space-3) var(--space-3);
+}
+
+.drawer-signal-card,
+.drawer-core-item,
+.inline-field,
+.activity-item,
+.attachment-row,
+.cockpit-action-card,
+.won-bundle-card,
+.cockpit-action-lead,
+.delivery-location-card,
+.meter-card,
+.next-action-playbook,
+.sequence-step-card {
+  padding: var(--space-3) var(--space-4);
+}
+
+.drawer {
+  padding: var(--space-6);
+}
+
+.modal,
+.new-lead-modal {
+  padding: var(--space-6);
+}
+
+.confirm-modal {
+  padding: var(--space-7) var(--space-6);
+}
+
+/* ── 7. Consistent Gap System ──────────────────────────────────────────── */
+.drawer-tabs,
+.quick-action-row,
+.drawer-status-stepper,
+.smart-view-bar,
+.filter-bar,
+.toolbar-actions {
+  gap: var(--space-2);
+}
+
+.sidebar-nav,
+.drawer-tab-content,
+.activity-timeline,
+.modal-form,
+.tab-page,
+.dashboard-layout {
+  gap: var(--space-4);
+}
+
+/* ── 8. Consistent Modal Widths ────────────────────────────────────────── */
+.preview-modal {
+  width: min(800px, 92vw);
+  box-shadow: var(--shadow-modal);
+}
+
+.confirm-modal {
+  width: min(420px, 88vw);
+  box-shadow: var(--shadow-modal);
+}
+
+.modal,
+.new-lead-modal {
+  box-shadow: var(--shadow-modal);
+}
+
+/* ── 9. Typography Consistency ─────────────────────────────────────────── */
+.page-title {
+  font-size: var(--text-xl);
+  letter-spacing: -0.025em;
+}
+
+.drawer-company,
+.modal h2 {
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
+}
+
+.confirm-modal h3 {
+  font-size: var(--text-lg);
+}
+
+/* Label tier: all uppercase labels use same size */
+.inline-label,
+.form-group label,
+.energy-section-header label,
+.kpi-label,
+.dash-kpi-label,
+.dash-shortcut-label,
+.leads-table-header,
+.drawer-signal-card span,
+.drawer-core-item span,
+.energy-detail-key,
+.command-card-label,
+.command-card-meta,
+.next-action-playbook-head span,
+.next-action-playbook-grid span,
+.sequence-playbook-head span {
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Body text tier */
+.toolbar-action-btn,
+.new-lead-btn,
+.primary-btn-modal,
+.primary-btn,
+.import-btn,
+.drawer-tab-btn,
+.filter-select-inline,
+.toolbar-search,
+.status-step-btn,
+.quick-action-btn,
+.compose-action-btn,
+.small-btn,
+.ghost-btn,
+.ghost-btn-sm,
+.danger-btn-sm,
+.kpi-action-btn,
+.selection-mode-btn,
+.command-insights-toggle,
+.kpi-reset-btn,
+.ai-mode-btn span:last-child {
+  font-size: var(--text-base);
+}
+
+/* Meta/secondary text tier */
+.lead-row-sub,
+.lead-row-owner,
+.att-meta,
+.activity-time,
+.drawer-address,
+.calendar-event-time,
+.calendar-more-events,
+.kanban-person,
+.last-activity-label,
+.no-company,
+.ranking-role,
+.member-role-badge,
+.performer-role {
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+/* KPI value tier: consistent large numbers */
+.kpi-val,
+.summary-metric-card strong,
+.command-card strong {
+  font-size: var(--text-xl);
+}
+
+.dash-kpi-val,
+.dash-shortcut-count {
+  font-size: var(--text-xl);
+}
+
+.hero-metric-card strong {
+  font-size: var(--text-2xl);
+}
+
+.drawer-umsatz-value {
+  font-size: var(--text-2xl);
+}
+
+/* ── 10. Pill/Badge Consistency ────────────────────────────────────────── */
+.status-chip,
+.energy-badge,
+.health-pill,
+.lead-score-pill,
+.next-action-pill,
+.ampel-pill,
+.followup-chip,
+.audit-pill,
+.resurface-pill {
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  line-height: 1.4;
+}
+
+.drawer-prio-badge,
+.drawer-badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: var(--text-sm);
+}
+
+.drawer-meta-chip {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: var(--text-sm);
+}
+
+.user-role-chip {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: var(--text-xs);
+}
+
+.call-outcome-badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: var(--text-sm);
+}
+
+/* ── 11. Sidebar Consistency (Dark Theme) ──────────────────────────────── */
+.sidebar-nav-item {
+  font-size: var(--text-base);
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-nav-item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sidebar-kpi-item {
+  border-radius: var(--radius-sm);
+}
+
+/* ── 12. Hover State Consistency ───────────────────────────────────────── */
+.kanban-card:hover,
+.won-bundle-card:hover,
+.dash-shortcut:hover,
+.dash-action:hover,
+.cockpit-action-lead:hover,
+.quick-action-btn:hover,
+.compose-action-btn:hover {
+  border-color: var(--primary);
+}
+
+/* ── 13. Focus ring consistency ────────────────────────────────────────── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
