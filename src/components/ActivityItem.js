@@ -1,11 +1,50 @@
 import React, { useState } from "react";
 import { formatDateTime } from "../utils/dates";
 
-function ActivityItem({ item, onEdit, onDelete, canEdit }) {
+function ActivityItem({ item, onEdit, onDelete, canEdit, stack, linkedStatus }) {
   const [editing, setEditing] = useState(false);
-  const [editText, setEditText] = useState(item.text || "");
+  const [editText, setEditText] = useState(item?.text || "");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [stackOpen, setStackOpen] = useState(false);
 
+  // ─── Stack mode: collapsed status changes ───
+  if (stack) {
+    const latest = stack[0];
+    const rest = stack.slice(1);
+    return (
+      <div className="activity-item act-status act-stack">
+        <div className="activity-icon-wrap"><span>🔄</span></div>
+        <div className="activity-body">
+          <div className="activity-meta">
+            <span className="activity-author">{latest.author || "System"}</span>
+            <span className="activity-time">{formatDateTime(latest.timestamp)}</span>
+          </div>
+          <p className="activity-text">
+            {latest.from} <span className="status-arrow">→</span> <strong>{latest.to}</strong>
+          </p>
+          {rest.length > 0 && (
+            <button
+              type="button"
+              className="stack-toggle-btn"
+              onClick={() => setStackOpen(v => !v)}
+            >
+              {stackOpen ? "Weniger anzeigen" : `${rest.length} weitere Änderung${rest.length > 1 ? "en" : ""}`}
+            </button>
+          )}
+          {stackOpen && rest.map((s, i) => (
+            <div key={i} className="stack-item">
+              <span className="activity-time">{formatDateTime(s.timestamp)}</span>
+              <span className="activity-text">
+                {s.from} <span className="status-arrow">→</span> <strong>{s.to}</strong>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Normal / Linked mode ───
   const cfg = {
     comment: { icon: "💬", cls: "act-comment" },
     call:    { icon: "📞", cls: "act-call" },
@@ -18,7 +57,14 @@ function ActivityItem({ item, onEdit, onDelete, canEdit }) {
   };
 
   return (
-    <div className={`activity-item ${cfg.cls}`}>
+    <div className={`activity-item ${cfg.cls}${linkedStatus ? " act-linked" : ""}`}>
+      {linkedStatus && (
+        <div className="linked-status-bar">
+          <span className="linked-status-icon">🔄</span>
+          <span>{linkedStatus.from} → <strong>{linkedStatus.to}</strong></span>
+          <span className="activity-time">{formatDateTime(linkedStatus.timestamp)}</span>
+        </div>
+      )}
       <div className="activity-icon-wrap"><span>{cfg.icon}</span></div>
       <div className="activity-body">
         <div className="activity-meta">

@@ -727,6 +727,20 @@ function App() {
     if (!showPowerDialer) applyFocusPreset("all");
   };
 
+  // Auto-open dialer on desktop when drawer opens
+  useEffect(() => {
+    if (selectedLeadId && window.innerWidth >= 1024 && !showPowerDialer) {
+      setShowPowerDialer(true);
+    }
+  }, [selectedLeadId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const navigateToNextLead = useCallback(() => {
+    if (!selectedLeadId || displayLeads.length === 0) return;
+    const idx = displayLeads.findIndex(l => l.id === selectedLeadId);
+    const nextIdx = idx + 1 < displayLeads.length ? idx + 1 : 0;
+    setSelectedLeadId(displayLeads[nextIdx].id);
+  }, [selectedLeadId, displayLeads]);
+
   if (!user) return <LoginPage onLogin={setUser} user={user} />;
 
   return (
@@ -1037,6 +1051,9 @@ function App() {
         <LeadDetailDrawer
           lead={selectedLead}
           onClose={closeLeadDrawer}
+          onNextLead={navigateToNextLead}
+          leadPosition={displayLeads.findIndex(l => l.id === selectedLead.id) + 1}
+          leadTotal={displayLeads.length}
           user={user}
           userRole={userRole}
           onUpdateField={updateLeadField}
@@ -1065,6 +1082,9 @@ function App() {
           onUpdateField={updateLeadField}
           onClose={() => { setShowPowerDialer(false); }}
           onSelectLead={(leadId) => setSelectedLeadId(leadId)}
+          displayLeads={displayLeads}
+          selectedLeadId={selectedLeadId}
+          drawerOpen={!!selectedLeadId}
         />
       )}
     </div>

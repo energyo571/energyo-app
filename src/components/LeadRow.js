@@ -1,7 +1,6 @@
 import React from "react";
 import { STATUS_META } from "../constants";
-import { isOpenCancellationWindow, isOverdue, isTodayDue } from "../utils/dates";
-import { formatDate } from "../utils/dates";
+import { isOpenCancellationWindow, isOverdue, isTodayDue, formatDate } from "../utils/dates";
 import { formatEuro } from "../utils/format";
 import { calculateUmsatzPotential, getEnergyMeterCount, getTotalDeliveryPoints } from "../utils/energy";
 import {
@@ -46,10 +45,10 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
       <div className="lead-row-signals">
         <span
           className={`ampel-pill ${readiness.tone}`}
-          title={readiness.reason}
-          aria-label={`Abschlussampel: ${readiness.label}`}
+          title={readiness.tone === "green" ? "Alle Daten vollständig" : "Daten unvollständig"}
+          aria-label={readiness.tone === "green" ? "Alle Daten vollständig" : "Daten unvollständig"}
         >
-          {readiness.tone === "green" ? "🚦 OK" : "🚦 FEHLT"}
+          {readiness.tone === "green" ? "🟢" : "🛑"}
         </span>
         <span
           className={`health-pill ${temperature.tone}`}

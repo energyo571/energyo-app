@@ -12,7 +12,7 @@ import SavingsCalculator from "./SavingsCalculator";
 import WechselprozessTracker from "./WechselprozessTracker";
 import ProvisionsTracker from "./ProvisionsTracker";
 
-function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment, dialerActive }) {
+function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment, dialerActive }) {
   const [drawerTab, setDrawerTab] = useState("activity");
   const [noteText, setNoteText] = useState("");
   const [showCallForm, setShowCallForm] = useState(false);
@@ -99,6 +99,52 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
     (lead.statusHistory || []).forEach((c, idx) => items.push({ type: "status", ...c, _idx: idx }));
     return items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }, [lead.comments, lead.callLogs, lead.statusHistory]);
+
+  // Group timeline: stack consecutive status changes, link status+comment within 60s
+  const groupedTimeline = useMemo(() => {
+    const groups = [];
+    const used = new Set();
+
+    for (let i = 0; i < timeline.length; i++) {
+      if (used.has(i)) continue;
+      const item = timeline[i];
+
+      // Link: status + comment within 60s
+      if (item.type === "status") {
+        const t = new Date(item.timestamp).getTime();
+        const linkedIdx = timeline.findIndex((other, j) =>
+          j !== i && !used.has(j) && other.type === "comment"
+          && Math.abs(new Date(other.timestamp).getTime() - t) <= 60000
+        );
+        if (linkedIdx !== -1) {
+          used.add(i);
+          used.add(linkedIdx);
+          groups.push({ kind: "linked", status: item, comment: timeline[linkedIdx] });
+          continue;
+        }
+
+        // Stack: consecutive status changes
+        const stack = [item];
+        used.add(i);
+        for (let j = i + 1; j < timeline.length; j++) {
+          if (used.has(j)) continue;
+          if (timeline[j].type !== "status") break;
+          stack.push(timeline[j]);
+          used.add(j);
+        }
+        if (stack.length > 1) {
+          groups.push({ kind: "stack", items: stack });
+        } else {
+          groups.push({ kind: "single", item });
+        }
+        continue;
+      }
+
+      used.add(i);
+      groups.push({ kind: "single", item });
+    }
+    return groups;
+  }, [timeline]);
 
   const submitNote = async () => {
     if (!noteText.trim()) return;
@@ -200,8 +246,8 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
   const tabs = [
     { id: "details",     label: "Details" },
     { id: "activity",    label: "Aktivität" },
-    { id: "planung",     label: "📋 Planung" },
-    { id: "wechsel",     label: "🔄 Wechsel" },
+    { id: "planung",     label: "Planung" },
+    { id: "wechsel",     label: "Wechsel" },
     { id: "attachments", label: `Anhänge${lead.attachments?.length > 0 ? ` (${lead.attachments.length})` : ""}` },
     { id: "ai",          label: "KI Bot" },
   ];
@@ -240,7 +286,14 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
               )}
             </div>
           </div>
-          <button className="drawer-close-btn" onClick={onClose} aria-label="Schließen">✕</button>
+          <div className="drawer-header-actions">
+            <button className="drawer-close-btn" onClick={onClose} aria-label="Schließen">✕</button>
+            {onNextLead && leadTotal > 1 && (
+              <button className="drawer-next-btn" onClick={onNextLead} title={`Lead ${leadPosition} von ${leadTotal}`}>
+                Nächster Lead ›
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Umsatz Banner */}
@@ -499,18 +552,39 @@ function LeadDetailDrawer({ lead, onClose, user, userRole, onUpdateField, onUpda
             </div>
 
             <div className="activity-timeline">
-              {timeline.length === 0 ? (
+              {groupedTimeline.length === 0 ? (
                 <p className="empty-timeline">Noch keine Aktivitäten. Füge eine Notiz hinzu oder protokolliere einen Anruf.</p>
               ) : (
-                timeline.map((item, idx) => (
-                  <ActivityItem
-                    key={idx}
-                    item={item}
-                    canEdit={item.type === "comment" && (item.author === user.email || userRole === "admin")}
-                    onEdit={item.type === "comment" ? (newText) => editComment(item._idx, newText) : null}
-                    onDelete={item.type === "comment" ? () => deleteComment(item._idx) : null}
-                  />
-                ))
+                groupedTimeline.map((group, gIdx) => {
+                  if (group.kind === "single") {
+                    const item = group.item;
+                    return (
+                      <ActivityItem
+                        key={gIdx}
+                        item={item}
+                        canEdit={item.type === "comment" && (item.author === user.email || userRole === "admin")}
+                        onEdit={item.type === "comment" ? (newText) => editComment(item._idx, newText) : null}
+                        onDelete={item.type === "comment" ? () => deleteComment(item._idx) : null}
+                      />
+                    );
+                  }
+                  if (group.kind === "stack") {
+                    return <ActivityItem key={gIdx} stack={group.items} />;
+                  }
+                  if (group.kind === "linked") {
+                    return (
+                      <ActivityItem
+                        key={gIdx}
+                        item={group.comment}
+                        linkedStatus={group.status}
+                        canEdit={group.comment.author === user.email || userRole === "admin"}
+                        onEdit={(newText) => editComment(group.comment._idx, newText)}
+                        onDelete={() => deleteComment(group.comment._idx)}
+                      />
+                    );
+                  }
+                  return null;
+                })
               )}
             </div>
           </div>

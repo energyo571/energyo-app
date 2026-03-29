@@ -111,7 +111,7 @@ function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus 
 
   return (
     <div className="ai-assistant-panel">
-      <div className="ai-mode-selector">
+      <div className="ai-mode-grid">
         {MODES.map((m) => (
           <button
             key={m.id}

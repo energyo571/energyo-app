@@ -2807,6 +2807,32 @@ textarea:focus {
   font-size: 18px;
 }
 
+.drawer-header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.drawer-next-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.drawer-next-btn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
 .drawer-umsatz-bar {
   display: flex;
   align-items: center;
@@ -3362,6 +3388,51 @@ select {
   border: 1px solid var(--line-soft);
 }
 
+/* ─── Linked status+comment card ─── */
+.activity-item.act-linked {
+  grid-template-columns: 1fr;
+  border-left: 3px solid #3b82f6;
+}
+.linked-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #eff6ff;
+  font-size: 12px;
+  color: #1e40af;
+  margin-bottom: 4px;
+}
+.linked-status-bar .activity-time { margin-left: auto; }
+.linked-status-icon { font-size: 14px; }
+.act-linked .activity-icon-wrap { display: none; }
+.act-linked .activity-body { grid-column: 1; }
+
+/* ─── Status stack ─── */
+.act-stack { background: #f8fafc; }
+.stack-toggle-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-top: 2px;
+}
+.stack-toggle-btn:hover { text-decoration: underline; }
+.stack-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #64748b;
+  border-top: 1px dashed #e2e8f0;
+  margin-top: 4px;
+}
+
 .activity-icon-wrap {
   width: 44px;
   height: 44px;
@@ -3560,16 +3631,18 @@ select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 14px 10px;
-  border-radius: 10px;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: 8px;
   border: 1.5px solid #e2e8f0;
   background: #f8fafc;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   color: #475569;
   transition: all 0.15s;
   text-align: center;
+  cursor: pointer;
 }
 
 .ai-mode-btn:hover {
@@ -3590,7 +3663,7 @@ select {
 }
 
 .ai-mode-btn span:first-child {
-  font-size: 22px;
+  font-size: 16px;
 }
 
 .ai-loading {
@@ -5750,6 +5823,22 @@ select {
   gap: 10px;
 }
 .dialer-einwand-panel .objection-title { color: #f1f5f9; }
+
+/* --- LEAD QUICK NAV (compact lead list in dialer panel) -------------------- */
+.quick-nav { margin-top: 14px; border-top: 1px solid #1e293b; padding-top: 12px; }
+.quick-nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.quick-nav-title { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.4px; }
+.quick-nav-count { font-size: 0.68rem; color: #475569; background: #1e293b; border-radius: 8px; padding: 1px 7px; }
+.quick-nav-list { display: flex; flex-direction: column; gap: 2px; max-height: 40vh; overflow-y: auto; }
+.quick-nav-list::-webkit-scrollbar { width: 4px; }
+.quick-nav-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+.quick-nav-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; border: none;
+  background: transparent; color: #cbd5e1; cursor: pointer; text-align: left; font-size: 0.76rem; transition: background 120ms; width: 100%; }
+.quick-nav-item:hover { background: #1e293b; }
+.quick-nav-item.active { background: #1e3a5f; color: #f1f5f9; font-weight: 600; }
+.quick-nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.quick-nav-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quick-nav-score { font-size: 0.66rem; color: #64748b; flex-shrink: 0; min-width: 20px; text-align: right; }
 
 @media (max-width: 980px) {
   .power-dialer-panel { left: 0; width: 100%; z-index: 55; }

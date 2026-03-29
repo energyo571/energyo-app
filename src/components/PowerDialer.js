@@ -4,8 +4,9 @@ import { isOverdue, isTodayDue, formatDate, isOpenCancellationWindow } from "../
 import { formatWaPhone } from "../utils/format";
 import { calculateLeadScore, getLeadTemperature } from "../utils/leads";
 import DialerEinwandPanel from "./DialerEinwandPanel";
+import LeadQuickNav from "./LeadQuickNav";
 
-function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectLead }) {
+function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectLead, displayLeads, selectedLeadId, drawerOpen }) {
   const queue = useMemo(() => {
     return leads
       .filter(l => l.phone && l.status !== "Verloren")
@@ -71,7 +72,7 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
               <span title="Anrufe">📞 {stats.called}</span>
               <span title="Erreicht">✅ {stats.reached}</span>
               <span title="Termine">📅 {stats.appointments}</span>
-              <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>
+              {!drawerOpen && <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>}
             </div>
           </div>
           <div className="dialer-progress">
@@ -134,6 +135,7 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
         </div>
       )}
       {current && <DialerEinwandPanel lead={current} user={user} />}
+      <LeadQuickNav leads={displayLeads} selectedLeadId={selectedLeadId} onSelectLead={onSelectLead} />
     </div>
   );
 }
