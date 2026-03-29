@@ -1,5 +1,7 @@
 const io = require("socket.io-client");
 const PROVISION_DATA = require("./_lib/provision-data");
+const { rateLimit } = require("./_lib/rateLimit");
+const { verifyAuth } = require("./_lib/auth");
 
 const DEFAULT_BASE_URL = process.env.TARIFKALKULATOR_BASE_URL || "https://tarifrechner.software";
 const DEFAULT_SERVICE_ROOT_PATH = process.env.TARIFKALKULATOR_SERVICE_ROOT_PATH || "whitelabel";
@@ -328,6 +330,11 @@ module.exports = async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
+
+  if (rateLimit(req, res, { max: 15, windowMs: 60_000 })) return;
+
+  const user = await verifyAuth(req, res);
+  if (!user) return;
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});

@@ -232,7 +232,7 @@ function App() {
           const result = await acceptInviteLink(urlToken, currentUser.uid, currentUser.email);
           if (result.ok) { setTeamId(result.teamId); setUserRole(result.role); setCanAssignAdmins(false); window.history.replaceState({}, document.title, window.location.pathname); }
         }
-      } catch (e) { console.error(e); setTeamId(`team-${currentUser.uid}`); setCanAssignAdmins(false); }
+      } catch (e) { setTeamId(`team-${currentUser.uid}`); setCanAssignAdmins(false); }
     });
     return unsubscribe;
   }, []);
@@ -266,7 +266,6 @@ function App() {
 
       setUserProfile((prev) => ({ ...(prev || {}), avatarDataUrl: dataUrl }));
     } catch (error) {
-      console.error(error);
       alert(`Profilbild konnte nicht gespeichert werden. (${error?.message || "Unbekannter Fehler"})`);
     } finally {
       setAvatarUploading(false);
@@ -279,7 +278,7 @@ function App() {
       const q = query(collection(db, "users"), where("teamId", "==", teamId));
       const snap = await getDocs(q);
       setTeamMembers(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) { console.error(e); }
+    } catch (e) { /* silent */ }
   }, [teamId]);
 
   useEffect(() => { loadTeamMembers(); }, [loadTeamMembers]);

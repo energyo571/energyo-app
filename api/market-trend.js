@@ -1,4 +1,6 @@
 const { getDb } = require("./_lib/firebaseAdmin");
+const { rateLimit } = require("./_lib/rateLimit");
+const { verifyAuth } = require("./_lib/auth");
 
 function toIsoDay(date = new Date()) {
   return date.toISOString().split("T")[0];
@@ -99,6 +101,11 @@ module.exports = async function handler(req, res) {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
+
+  if (rateLimit(req, res, { max: 30, windowMs: 60_000 })) return;
+
+  const user = await verifyAuth(req, res);
+  if (!user) return;
 
   const today = toIsoDay();
   const forceRefresh = String(req.query?.refresh || "") === "1";

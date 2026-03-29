@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { admin, getDb } = require("./_lib/firebaseAdmin");
+const { rateLimit } = require("./_lib/rateLimit");
 
 function parseSignature(signatureHeader) {
   if (!signatureHeader) return null;
@@ -90,6 +91,8 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
+
+  if (rateLimit(req, res, { max: 30, windowMs: 60_000 })) return;
 
   try {
     const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body || {});

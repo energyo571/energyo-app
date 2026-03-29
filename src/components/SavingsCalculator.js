@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { normalizeText, formatEuro } from "../utils/format";
+import { authFetch } from "../utils/authFetch";
 import { IconZap, IconFlame, IconRefresh, IconClipboard, IconDollar, IconStar, IconTrophy, IconAlertTriangle, IconInfo, IconLoader } from "./Icons";
 
 function SavingsCalculator({ lead }) {
@@ -199,7 +200,7 @@ function SavingsCalculator({ lead }) {
     let lastErrorMessage = "Referenztarife konnten nicht geladen werden.";
 
     for (const endpoint of endpointCandidates) {
-      const response = await fetch(endpoint, {
+      const response = await authFetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

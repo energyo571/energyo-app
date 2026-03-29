@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { authFetch } from "../utils/authFetch";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || "";
 
@@ -17,7 +18,7 @@ function EnergyPriceChart() {
     let cancelled = false;
     setLoading(true);
     setError("");
-    fetch(`${API_BASE}/api/energy-prices?months=${range}`)
+    authFetch(`${API_BASE}/api/energy-prices?months=${range}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((json) => { if (cancelled) return; if (!json.ok) throw new Error(json.error || "Fehler"); setData(json); })
       .catch((e) => { if (!cancelled) setError(e.message); })

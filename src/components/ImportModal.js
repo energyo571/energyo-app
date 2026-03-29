@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
+import readXlsxFile from "read-excel-file/browser";
 import { detectColumnHeaders, parseImportRow, mergeImportedLeads, detectDuplicates } from "../utils/import";
 
 function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
@@ -42,15 +42,9 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
     setError('');
     const fileName = String(f.name || '').toLowerCase();
     if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        try {
-          const workbook = XLSX.read(evt.target?.result, { type: 'array' });
-          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          processTabularData(XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }));
-        } catch (err) { setError(`Excel-Fehler: ${err?.message}`); }
-      };
-      reader.readAsArrayBuffer(f);
+      readXlsxFile(f).then((rows) => {
+        processTabularData(rows.map(row => row.map(cell => cell != null ? cell : '')));
+      }).catch((err) => { setError(`Excel-Fehler: ${err?.message}`); });
       return;
     }
     Papa.parse(f, { header: false, skipEmptyLines: true, delimiter: "", complete: (r) => processTabularData(r.data || []), error: (err) => setError(`Parse-Fehler: ${err.message}`) });

@@ -11,6 +11,7 @@ import {
 import { isOverdue, isOpenCancellationWindow } from "../utils/dates";
 import { isContractEndUnrealistic } from "../utils/format";
 import { isWonLeadRenewalDue } from "../utils/leads";
+import { sanitizeObject, sanitizeValue, isAllowedLeadField } from "../utils/sanitize";
 
 export default function useLeads(user, teamId, userRole) {
   const [leads, setLeads] = useState([]);
@@ -85,7 +86,7 @@ export default function useLeads(user, teamId, userRole) {
           ],
         });
       } catch (e) {
-        console.error("Auto-Resurface fehlgeschlagen", e);
+        // silent – auto-resurface failure is non-critical
       } finally {
         resurfacingLockRef.current.delete(lead.id);
       }
@@ -127,9 +128,10 @@ export default function useLeads(user, teamId, userRole) {
     setLoading(true);
     try {
       const { attachments: rawAttachments = [], ...formData } = form;
+      const safeData = sanitizeObject(formData);
       const createdAt = new Date().toISOString();
       const docRef = await addDoc(collection(db, "leads"), {
-        ...formData,
+        ...safeData,
         attachments: [],
         teamId,
         ownerUserId: user.uid,
@@ -149,7 +151,6 @@ export default function useLeads(user, teamId, userRole) {
           );
           await updateDoc(doc(db, "leads", docRef.id), { attachments: uploadedAttachments });
         } catch (uploadError) {
-          console.error(uploadError);
           alert(`Lead wurde angelegt, aber Anhänge konnten nicht vollständig hochgeladen werden. (${uploadError?.code || uploadError?.message || "Unbekannter Fehler"})`);
         }
       }
@@ -167,11 +168,12 @@ export default function useLeads(user, teamId, userRole) {
     if (!teamId || !user) throw new Error("Team/User nicht gefunden");
     const createdAt = new Date().toISOString();
     for (const lead of importedLeads) {
+      const safeLead = sanitizeObject(lead);
       await addDoc(collection(db, "leads"), {
-        ...lead, teamId, ownerUserId: user.uid, ownerEmail: lead.createdBy?.email || user.email,
-        createdBy: { uid: user.uid, email: lead.createdBy?.email || user.email, timestamp: createdAt },
-        status: lead.status || "Neu", createdAt,
-        comments: lead.extras ? [{ timestamp: createdAt, text: `CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
+        ...safeLead, teamId, ownerUserId: user.uid, ownerEmail: safeLead.createdBy?.email || user.email,
+        createdBy: { uid: user.uid, email: safeLead.createdBy?.email || user.email, timestamp: createdAt },
+        status: safeLead.status || "Neu", createdAt,
+        comments: safeLead.extras ? [{ timestamp: createdAt, text: `CSV-Import: ${JSON.stringify(safeLead.extras)}`, author: user.email }] : [],
         callLogs: [],
       });
     }
@@ -185,28 +187,29 @@ export default function useLeads(user, teamId, userRole) {
         status: newStatus,
         statusHistory: [...(leadDoc.statusHistory || []), { from: leadDoc.status, to: newStatus, timestamp: new Date().toISOString(), author: user.email }],
       });
-    } catch (e) { console.error(e); }
+    } catch (_) { /* silent */ }
   };
 
   const updateLeadField = async (id, field, value) => {
-    try { await updateDoc(doc(db, "leads", id), { [field]: value }); } catch (e) { console.error(e); }
+    if (!isAllowedLeadField(field)) return;
+    try { await updateDoc(doc(db, "leads", id), { [field]: sanitizeValue(value) }); } catch (_) { /* silent */ }
   };
 
   const logCall = async (leadId, callData) => {
     const leadDoc = leads.find(l => l.id === leadId);
     if (!leadDoc) return;
-    try { await updateDoc(doc(db, "leads", leadId), { callLogs: [...(leadDoc.callLogs || []), { ...callData, timestamp: new Date().toISOString(), author: user.email }] }); }
-    catch (e) { console.error(e); }
+    try { await updateDoc(doc(db, "leads", leadId), { callLogs: [...(leadDoc.callLogs || []), { ...sanitizeObject(callData), timestamp: new Date().toISOString(), author: user.email }] }); }
+    catch (_) { /* silent */ }
   };
 
   const deleteLead = async (id) => {
-    try { await deleteDoc(doc(db, "leads", id)); } catch (e) { console.error(e); }
+    try { await deleteDoc(doc(db, "leads", id)); } catch (_) { /* silent */ }
   };
 
   /** Deletes multiple leads by ID array. */
   const bulkDeleteLeads = async (ids) => {
     for (const id of ids) {
-      try { await deleteDoc(doc(db, "leads", id)); } catch (e) { console.error(e); }
+      try { await deleteDoc(doc(db, "leads", id)); } catch (_) { /* silent */ }
     }
   };
 
@@ -232,7 +235,6 @@ export default function useLeads(user, teamId, userRole) {
         attachments: [...(leadDoc.attachments || []), ...uploadedAttachments],
       });
     } catch (e) {
-      console.error(e);
       alert(`Anhänge konnten nicht hochgeladen werden. (${e?.code || e?.message || "Unbekannter Fehler"})`);
     }
   };
@@ -241,7 +243,7 @@ export default function useLeads(user, teamId, userRole) {
     const leadDoc = leads.find(l => l.id === leadId);
     if (!leadDoc) return;
     try { await updateDoc(doc(db, "leads", leadId), { attachments: leadDoc.attachments.filter(a => a.id !== attId) }); }
-    catch (e) { console.error(e); }
+    catch (_) { /* silent */ }
   };
 
   return {

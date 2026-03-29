@@ -57,8 +57,8 @@ export default function LoginPage({ onLogin, user }) {
     try {
       await signOut(auth);
       onLogin(null);
-    } catch (err) {
-      console.error("Logout-Fehler:", err);
+    } catch (_) {
+      // silent
     }
   };
 

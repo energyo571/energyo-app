@@ -6,6 +6,9 @@
  * Usage (client):  fetch("/api/ai-proxy", { method: "POST", body: JSON.stringify({...}) })
  * Env var required: ANTHROPIC_API_KEY  (set in Vercel project settings)
  */
+const { rateLimit } = require("./_lib/rateLimit");
+const { verifyAuth } = require("./_lib/auth");
+
 module.exports = async (req, res) => {
   const ALLOWED_MODELS = new Set(["claude-sonnet-4-5"]);
   const MAX_ALLOWED_TOKENS = 1200;
@@ -17,6 +20,11 @@ module.exports = async (req, res) => {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
+
+  if (rateLimit(req, res, { max: 20, windowMs: 60_000 })) return;
+
+  const user = await verifyAuth(req, res);
+  if (!user) return;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {

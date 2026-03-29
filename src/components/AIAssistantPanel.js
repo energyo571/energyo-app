@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { IconTarget, IconSearch, IconClipboard, IconMail } from "./Icons";
+import { authFetch } from "../utils/authFetch";
 
 function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus }) {
   const [mode, setMode] = useState(null);
@@ -72,7 +73,7 @@ function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus 
     const { system, user: userMsg } = buildPrompt(selectedMode);
     try {
       const apiBase = process.env.REACT_APP_API_BASE_URL || "";
-      const res = await fetch(`${apiBase}/api/ai-proxy`, {
+      const res = await authFetch(`${apiBase}/api/ai-proxy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: [{ role: "system", content: system }, { role: "user", content: userMsg }] }),

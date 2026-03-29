@@ -114,7 +114,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
       const q = query(collection(db, "users"), where("email", "==", email));
       const snap = await getDocs(q);
       if (!snap.empty) { await updateDoc(doc(db, "users", snap.docs[0].id), { teamId: `team-${snap.docs[0].id}`, role: "admin" }); onRefresh(); }
-    } catch (e) { console.error(e); }
+    } catch (e) { /* silent */ }
   };
 
   const toggleRole = async (email, currentRole) => {
@@ -124,7 +124,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
       const q = query(collection(db, "users"), where("email", "==", email));
       const snap = await getDocs(q);
       if (!snap.empty) { await updateDoc(doc(db, "users", snap.docs[0].id), { role: currentRole === "admin" ? "agent" : "admin" }); onRefresh(); }
-    } catch (e) { console.error(e); }
+    } catch (e) { /* silent */ }
   };
 
   const SECTIONS = [

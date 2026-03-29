@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { IconDollar, IconX, IconClock, IconClipboard, IconMail, IconShield, IconLightbulb } from "./Icons";
+import { authFetch } from "../utils/authFetch";
 
 function DialerEinwandPanel({ lead, user }) {
   const OBJECTIONS = [
@@ -39,7 +40,7 @@ function DialerEinwandPanel({ lead, user }) {
 
     try {
       const apiBase = process.env.REACT_APP_API_BASE_URL || "";
-      const res = await fetch(`${apiBase}/api/ai-proxy`, {
+      const res = await authFetch(`${apiBase}/api/ai-proxy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

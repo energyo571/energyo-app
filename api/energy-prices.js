@@ -1,8 +1,16 @@
+const { rateLimit } = require("./_lib/rateLimit");
+const { verifyAuth } = require("./_lib/auth");
+
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
+
+  if (rateLimit(req, res, { max: 30, windowMs: 60_000 })) return;
+
+  const user = await verifyAuth(req, res);
+  if (!user) return;
 
   const months = Math.min(parseInt(req.query?.months, 10) || 12, 24);
   const end = new Date();
