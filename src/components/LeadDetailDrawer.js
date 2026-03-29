@@ -478,7 +478,6 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                       <div key={idx} className="energy-detail-card gas">
                         <div className="energy-detail-label"><IconFlame size={13} /> Gas {idx + 1}</div>
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählertyp:</span><span className="energy-detail-value">{meter.zählertyp || "SLP"}</span></div>
-                        {meter.zählertyp === "RLM" && meter.spannungsebene && <div className="energy-detail-item"><span className="energy-detail-key">Spannungsebene:</span><span className="energy-detail-value">{meter.spannungsebene === "bekannt" ? (meter.spannungsebeneWert || "Bekannt") : "Unbekannt"}</span></div>}
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
                         {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
                         {meter.verbrauchKwh && <div className="energy-detail-item"><span className="energy-detail-key">Verbrauch:</span><span className="energy-detail-value">{Number(meter.verbrauchKwh).toLocaleString("de-DE")} kWh</span></div>}
