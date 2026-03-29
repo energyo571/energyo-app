@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { STATUS_OPTIONS, STATUS_META, CALL_OUTCOMES, getAttachmentHref } from "../constants";
 import { formatDate, formatDateTime, isOverdue, isTodayDue, isOpenCancellationWindow, addDaysToIso } from "../utils/dates";
 import { formatEuro, formatWaPhone, formatMeterAddress } from "../utils/format";
@@ -16,6 +16,8 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
   const [drawerTab, setDrawerTab] = useState("activity");
   const [noteText, setNoteText] = useState("");
   const [showCallForm, setShowCallForm] = useState(false);
+  const touchStartY = useRef(null);
+  const drawerRef = useRef(null);
   const [callForm, setCallForm] = useState({ duration: "", outcome: CALL_OUTCOMES[0], notes: "" });
   const [saving, setSaving] = useState(false);
   const [previewAttachment, setPreviewAttachment] = useState(null);
@@ -258,7 +260,18 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
 
   return (
     <Wrapper>
-      <div className={`drawer${dialerActive ? " drawer--dialer" : ""}`}>
+      <div
+        className={`drawer${dialerActive ? " drawer--dialer" : ""}`}
+        ref={drawerRef}
+        onTouchStart={e => { touchStartY.current = e.touches[0].clientY; }}
+        onTouchMove={e => {
+          if (touchStartY.current == null) return;
+          const delta = e.touches[0].clientY - touchStartY.current;
+          if (delta > 60 && drawerRef.current?.scrollTop === 0) onClose();
+        }}
+        onTouchEnd={() => { touchStartY.current = null; }}
+      >
+        <div className="drawer-swipe-handle" aria-hidden="true" />
         {/* Header */}
         <div className="drawer-header">
           <div className="drawer-header-info">

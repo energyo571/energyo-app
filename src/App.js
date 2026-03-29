@@ -8,6 +8,7 @@ import { getDownloadURL, ref as storageRef, uploadBytes } from "firebase/storage
 import { auth, db, storage } from "./firebaseConfig";
 import LoginPage from "./LoginPage";
 import "./App.css";
+import "./mobile.css";
 
 // ─── Constants & Utils ────────────────────────────────────────────────────────
 import {
@@ -999,6 +1000,10 @@ function App() {
           selectedLeadId={selectedLeadId}
           drawerOpen={!!selectedLeadId}
         />
+      )}
+
+      {activeTab === "leads" && !showNewLeadModal && !selectedLeadId && !showPowerDialer && (
+        <button className="mobile-fab" onClick={() => setShowNewLeadModal(true)} aria-label="Neuer Lead">＋</button>
       )}
     </div>
   );
