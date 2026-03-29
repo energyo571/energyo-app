@@ -80,7 +80,7 @@ export default function useLeads(user, teamId, userRole) {
             {
               timestamp: now,
               author: "System",
-              text: `🔁 Automatische Wiedervorlage: ${RENEWAL_RESURFACE_MONTHS} Monate vor Vertragsende wieder in aktive Pipeline überführt.`,
+              text: `Automatische Wiedervorlage: ${RENEWAL_RESURFACE_MONTHS} Monate vor Vertragsende wieder in aktive Pipeline überführt.`,
             },
           ],
         });
@@ -171,7 +171,7 @@ export default function useLeads(user, teamId, userRole) {
         ...lead, teamId, ownerUserId: user.uid, ownerEmail: lead.createdBy?.email || user.email,
         createdBy: { uid: user.uid, email: lead.createdBy?.email || user.email, timestamp: createdAt },
         status: lead.status || "Neu", createdAt,
-        comments: lead.extras ? [{ timestamp: createdAt, text: `📥 CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
+        comments: lead.extras ? [{ timestamp: createdAt, text: `CSV-Import: ${JSON.stringify(lead.extras)}`, author: user.email }] : [],
         callLogs: [],
       });
     }

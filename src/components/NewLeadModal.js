@@ -92,7 +92,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             </div>
 
             <div className="form-group form-group-full address-section">
-              <label className="section-label">📬 Lieferadresse</label>
+              <label className="section-label">Lieferadresse</label>
               <div className="address-grid">
                 <div className="form-group"><label>Straße *</label><input type="text" placeholder="Hauptstraße" value={form.deliveryAddress.straße} onChange={(e) => handleDeliveryAddressChange("straße", e.target.value)} disabled={loading} /></div>
                 <div className="form-group"><label>Hausnummer *</label><input type="text" placeholder="42" value={form.deliveryAddress.hausnummer} onChange={(e) => handleDeliveryAddressChange("hausnummer", e.target.value)} disabled={loading} /></div>
@@ -110,7 +110,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 
             {form.hasAlternativeInvoiceAddress && (
               <div className="form-group form-group-full address-section expanded">
-                <label className="section-label">💳 Rechnungsadresse</label>
+                <label className="section-label">Rechnungsadresse</label>
                 <div className="address-grid">
                   <div className="form-group"><label>Straße</label><input type="text" placeholder="Rechnungsstraße" value={form.invoiceAddress.straße} onChange={(e) => handleInvoiceAddressChange("straße", e.target.value)} disabled={loading} /></div>
                   <div className="form-group"><label>Hausnummer</label><input type="text" placeholder="42" value={form.invoiceAddress.hausnummer} onChange={(e) => handleInvoiceAddressChange("hausnummer", e.target.value)} disabled={loading} /></div>
@@ -122,7 +122,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 
             <div className="form-group form-group-full">
               <div className="energy-section-header">
-                <label>⚡ Stromzähler</label>
+                <label>Stromzähler</label>
                 <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: [...p.energy.strom, { ...EMPTY_METER }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.strom.map((meter, idx) => (
@@ -154,7 +154,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
 
             <div className="form-group form-group-full">
               <div className="energy-section-header">
-                <label>🔥 Gaszähler</label>
+                <label>Gaszähler</label>
                 <button type="button" className="add-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: [...p.energy.gas, { ...EMPTY_METER }] } }))} disabled={loading}>+ Zähler hinzufügen</button>
               </div>
               {form.energy.gas.map((meter, idx) => (
@@ -200,7 +200,7 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
             </div>
             <div className="form-group form-group-full">
               <div className="file-upload-zone">
-                <label htmlFor="modal-file-input" className="file-upload-zone-label">📎 Dateien anfügen (max 10MB)</label>
+                <label htmlFor="modal-file-input" className="file-upload-zone-label">Dateien anfügen (max 10MB)</label>
                 <input id="modal-file-input" type="file" multiple onChange={handleFile} className="file-input" />
                 {form.attachments.length > 0 && (
                   <div className="att-preview">

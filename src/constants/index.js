@@ -43,7 +43,7 @@ export const WECHSEL_STEPS = [
   { id: "abschluss",     label: "Abgeschlossen",                desc: "Wechsel erfolgreich — Empfehlung anfragen" },
 ];
 export const PROVISION_STATUS = [
-  { id: "offen",      label: "Offen",      icon: "⏳" },
-  { id: "gebucht",    label: "Gebucht",    icon: "📋" },
-  { id: "ausgezahlt", label: "Ausgezahlt", icon: "✅" },
+  { id: "offen",      label: "Offen",      icon: "pending" },
+  { id: "gebucht",    label: "Gebucht",    icon: "booked" },
+  { id: "ausgezahlt", label: "Ausgezahlt", icon: "done" },
 ];

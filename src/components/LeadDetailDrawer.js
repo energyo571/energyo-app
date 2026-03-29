@@ -11,6 +11,7 @@ import AppointmentModal from "./AppointmentModal";
 import SavingsCalculator from "./SavingsCalculator";
 import WechselprozessTracker from "./WechselprozessTracker";
 import ProvisionsTracker from "./ProvisionsTracker";
+import { IconBell, IconClock, IconCalendar, IconSearch, IconPhone, IconComment, IconMail, IconZap, IconFlame, IconPaperclip, IconAlertTriangle } from "./Icons";
 
 function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, user, userRole, onUpdateField, onUpdateStatus, onDelete, onLogCall, onAddAttachment, onRemoveAttachment, dialerActive }) {
   const [drawerTab, setDrawerTab] = useState("activity");
@@ -287,14 +288,14 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
               return full ? <p className="drawer-address">{full}</p> : null;
             })()}
             <div className="drawer-header-badges">
-              {hasCancellationWindow && <span className="drawer-badge alert">🔔 Kündigungsfenster</span>}
-              {isOverdueNow && <span className="drawer-badge danger">⏰ Überfällig</span>}
-              {isTodayNow && <span className="drawer-badge today">📅 Heute fällig</span>}
-              {lead.bundleInquiry && <span className="drawer-badge info">📦 Bündelanfrage</span>}
-              {lead.energyAuditEligible && <span className="drawer-badge audit">🔍 Energieaudit berechtigt</span>}
+              {hasCancellationWindow && <span className="drawer-badge alert"><IconBell size={12} /> Kündigungsfenster</span>}
+              {isOverdueNow && <span className="drawer-badge danger"><IconClock size={12} /> Überfällig</span>}
+              {isTodayNow && <span className="drawer-badge today"><IconCalendar size={12} /> Heute fällig</span>}
+              {lead.bundleInquiry && <span className="drawer-badge info">Bündelanfrage</span>}
+              {lead.energyAuditEligible && <span className="drawer-badge audit"><IconSearch size={12} /> Energieaudit berechtigt</span>}
               {lead.appointmentDate && (
                 <span className="drawer-badge appointment" onClick={() => setShowAppointmentModal(true)} style={{ cursor: "pointer" }}>
-                  📅 Termin: {formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` ${lead.appointmentTime}` : ""}
+                  <IconCalendar size={12} /> Termin: {formatDate(lead.appointmentDate)}{lead.appointmentTime ? ` ${lead.appointmentTime}` : ""}
                 </span>
               )}
             </div>
@@ -323,39 +324,39 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
         <div className="contact-bar">
           {lead.phone ? (
             <a className="contact-btn call" href={`tel:${lead.phone}`}>
-              <span className="contact-btn-icon">📞</span>
+              <span className="contact-btn-icon"><IconPhone size={16} /></span>
               <span className="contact-btn-label">Anrufen</span>
               <span className="contact-btn-sub">{lead.phone}</span>
             </a>
           ) : (
             <div className="contact-btn call disabled">
-              <span className="contact-btn-icon">📞</span>
+              <span className="contact-btn-icon"><IconPhone size={16} /></span>
               <span className="contact-btn-label">Anrufen</span>
               <span className="contact-btn-sub">Kein Tel.</span>
             </div>
           )}
           {lead.phone ? (
             <a className="contact-btn whatsapp" href={`https://wa.me/${formatWaPhone(lead.phone)}?text=${encodeURIComponent(`Hallo ${lead.person || ''},\n\nhier ist Ihr ENERGYO-Berater. Ich melde mich bezüglich Ihres Energievertrags. Haben Sie kurz Zeit?`)}`} target="_blank" rel="noreferrer">
-              <span className="contact-btn-icon">💬</span>
+              <span className="contact-btn-icon"><IconComment size={16} /></span>
               <span className="contact-btn-label">WhatsApp</span>
               <span className="contact-btn-sub">Nachricht</span>
             </a>
           ) : (
             <div className="contact-btn whatsapp disabled">
-              <span className="contact-btn-icon">💬</span>
+              <span className="contact-btn-icon"><IconComment size={16} /></span>
               <span className="contact-btn-label">WhatsApp</span>
               <span className="contact-btn-sub">Kein Tel.</span>
             </div>
           )}
           {lead.email ? (
             <a className="contact-btn email" href={`mailto:${lead.email}?subject=${encodeURIComponent('Ihr Energievertrag – ENERGYO')}&body=${encodeURIComponent(`Sehr geehrte/r ${lead.person || 'Kundin/Kunde'},\n\n`)}`}>
-              <span className="contact-btn-icon">📧</span>
+              <span className="contact-btn-icon"><IconMail size={16} /></span>
               <span className="contact-btn-label">E-Mail</span>
               <span className="contact-btn-sub">{lead.email}</span>
             </a>
           ) : (
             <div className="contact-btn email disabled">
-              <span className="contact-btn-icon">📧</span>
+              <span className="contact-btn-icon"><IconMail size={16} /></span>
               <span className="contact-btn-label">E-Mail</span>
               <span className="contact-btn-sub">Keine E-Mail</span>
             </div>
@@ -385,7 +386,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
           <span className={`drawer-meta-chip score-${scoreTone}`}>★ {leadScore}/100</span>
           <span className="drawer-meta-chip">{closeProbability}% Chance</span>
           <span className={`drawer-meta-chip readiness-${readiness.tone}`}>{readiness.label}</span>
-          {lead.followUp && <span className={`drawer-meta-chip${isOverdueNow ? " overdue" : ""}`}>{isOverdueNow ? "⏰" : "📅"} {formatDate(lead.followUp)}</span>}
+          {lead.followUp && <span className={`drawer-meta-chip${isOverdueNow ? " overdue" : ""}`}>{isOverdueNow ? <IconClock size={12} /> : <IconCalendar size={12} />} {formatDate(lead.followUp)}</span>}
         </div>
 
         {/* Tabs */}
@@ -461,7 +462,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                       ? `${formatDate(lead.appointmentDate)}${lead.appointmentTime ? ` · ${lead.appointmentTime}` : ""}`
                       : <em className="inline-empty">Klicken zum Planen</em>}
                   </span>
-                  <span className="inline-edit-icon">📅</span>
+                  <span className="inline-edit-icon"><IconCalendar size={14} /></span>
                 </div>
               </div>
             </div>
@@ -473,7 +474,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                   <>
                     {lead.energy?.strom?.filter(m => m.zählernummer).map((meter, idx) => (
                       <div key={idx} className="energy-detail-card strom">
-                        <div className="energy-detail-label">🔌 Strom {idx + 1}</div>
+                        <div className="energy-detail-label"><IconZap size={13} /> Strom {idx + 1}</div>
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
                         {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
                         {meter.verbrauchKwh && <div className="energy-detail-item"><span className="energy-detail-key">Verbrauch:</span><span className="energy-detail-value">{Number(meter.verbrauchKwh).toLocaleString("de-DE")} kWh</span></div>}
@@ -483,7 +484,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                     ))}
                     {lead.energy?.gas?.filter(m => m.zählernummer).map((meter, idx) => (
                       <div key={idx} className="energy-detail-card gas">
-                        <div className="energy-detail-label">🔥 Gas {idx + 1}</div>
+                        <div className="energy-detail-label"><IconFlame size={13} /> Gas {idx + 1}</div>
                         <div className="energy-detail-item"><span className="energy-detail-key">Zählernummer:</span><span className="energy-detail-value">{meter.zählernummer}</span></div>
                         {meter.maloId && <div className="energy-detail-item"><span className="energy-detail-key">MALO-ID:</span><span className="energy-detail-value">{meter.maloId}</span></div>}
                         {meter.verbrauchKwh && <div className="energy-detail-item"><span className="energy-detail-key">Verbrauch:</span><span className="energy-detail-value">{Number(meter.verbrauchKwh).toLocaleString("de-DE")} kWh</span></div>}
@@ -520,7 +521,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                 className={`compose-action-btn ${showCallForm ? "active" : ""}`}
                 onClick={() => setShowCallForm(v => !v)}
               >
-                📞 Anruf protokollieren
+                <IconPhone size={13} /> Anruf protokollieren
               </button>
             </div>
 
@@ -660,7 +661,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
               </>
             ) : (
               <div className="wechsel-locked">
-                🔒 Wechselprozess und Provision sind für abgeschlossene Leads (Status „Abschluss“) verfügbar.
+                Wechselprozess und Provision sind für abgeschlossene Leads (Status „Abschluss“) verfügbar.
               </div>
             )}
           </div>
@@ -684,7 +685,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
           <div className="drawer-tab-content">
             <div className="attachments-upload-zone">
               <label htmlFor={`drawer-file-${lead.id}`} className="attachment-upload-label">
-                📎 Dateien hochladen (max 10 MB)
+                <IconPaperclip size={13} /> Dateien hochladen (max 10 MB)
               </label>
               <input id={`drawer-file-${lead.id}`} type="file" multiple className="file-input" onChange={e => onAddAttachment(lead.id, e.target.files)} />
             </div>
@@ -697,7 +698,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                       <span className="att-meta">{(att.size / 1024).toFixed(1)} KB · {formatDate(att.uploadedAt)}</span>
                     </div>
                     <div className="attachment-row-actions">
-                      <button type="button" onClick={() => setPreviewAttachment(att)} className="att-btn preview" title="Vorschau">👁</button>
+                      <button type="button" onClick={() => setPreviewAttachment(att)} className="att-btn preview" title="Vorschau">▶</button>
                       <a href={getAttachmentHref(att)} download={att.name} className="att-btn download" title="Herunterladen">⬇</a>
                       <button type="button" onClick={() => setDeleteConfirmId(att.id)} className="att-btn delete" title="Löschen">✕</button>
                     </div>
@@ -721,7 +722,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                   <img src={previewHref} alt={previewAttachment.name} className="preview-image" />
                 ) : previewAttachment.type === "application/pdf" ? (
                   <div className="preview-pdf">
-                    <p>📄 PDF-Datei</p>
+                    <p>PDF-Datei</p>
                     <a href={previewHref} target="_blank" rel="noreferrer" className="primary-btn-modal">PDF öffnen</a>
                   </div>
                 ) : previewAttachment.type?.startsWith("text/") || previewAttachment.name?.match(/\.(txt|json|csv|md)$/i) ? (
@@ -737,7 +738,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
                   </div>
                 ) : (
                   <div className="preview-generic">
-                    <p>📎 {previewAttachment.type || "Unbekannter Dateityp"}</p>
+                    <p>{previewAttachment.type || "Unbekannter Dateityp"}</p>
                     <a href={previewHref} download={previewAttachment.name} className="primary-btn-modal">Datei herunterladen</a>
                   </div>
                 )}
@@ -749,7 +750,7 @@ function LeadDetailDrawer({ lead, onClose, onNextLead, leadPosition, leadTotal, 
         {deleteConfirmId && (
           <div className="modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
             <div className="confirm-modal" onClick={e => e.stopPropagation()}>
-              <div className="confirm-icon">⚠️</div>
+              <div className="confirm-icon"><IconAlertTriangle size={24} /></div>
               <h3>Anhang löschen?</h3>
               <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
               <div className="confirm-actions">

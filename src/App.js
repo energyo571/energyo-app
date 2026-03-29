@@ -14,13 +14,12 @@ import useLeads from "./hooks/useLeads";
 // ─── Constants & Utils ────────────────────────────────────────────────────────
 import { STATUS_OPTIONS, RENEWAL_RESURFACE_MONTHS } from "./constants";
 import { formatDate, isOverdue, isTodayDue, isOpenCancellationWindow, getMonthsUntil, getHoursSince } from "./utils/dates";
-import { formatEnergyVolume } from "./utils/format";
 import { calculateUmsatzPotential } from "./utils/energy";
 import {
   getLeadOwnerEmail, getLastActivityTimestamp, isLeadInactiveForHours,
   isWonLeadRenewalDue, getWechselProgress, hasSupplyConfirmation,
   calculatePriority, calculateLeadScore, getLeadTemperature,
-  sortLeads, rankCockpitCtas,
+  sortLeads,
 } from "./utils/leads";
 
 // ─── Components ───────────────────────────────────────────────────────────────
@@ -36,6 +35,7 @@ import NewLeadModal from "./components/NewLeadModal";
 import ImportModal from "./components/ImportModal";
 import PowerDialer from "./components/PowerDialer";
 import BulkActionBar from "./components/BulkActionBar";
+import { IconSearch, IconList, IconGrid, IconCheckSquare, IconX, IconPlus, IconUpload, IconZap, IconFilter } from "./components/Icons";
 
 // ─── InviteLink-Handler ───────────────────────────────────────────────────────
 async function acceptInviteLink(token, userId, userEmail) {
@@ -392,64 +392,6 @@ function App() {
       .slice(0, 5),
   [leads]);
 
-  const closingRateCoach = useMemo(() => {
-    if (stats.closingRate < 15) {
-      return {
-        tone: "alert",
-        title: "Closing unter 15%: jetzt aktiv eingreifen",
-        tips: [
-          "Überfällige Leads heute priorisiert anrufen.",
-          "Angebots-Leads ohne Touchpoint >48h zuerst bearbeiten.",
-          "Jeden Kontakt mit konkretem Follow-up-Datum abschließen.",
-        ],
-      };
-    }
-    if (stats.closingRate < 25) {
-      return {
-        tone: "warning",
-        title: "Closing 15-24%: Disziplin erhöht Conversion",
-        tips: [
-          "Follow-ups konsequent im 24-48h Rhythmus setzen.",
-          "Einwandbehandlung im KI-Tab vor Calls vorbereiten.",
-          "Pipeline-Mitte (Angebot/Nachfassen) täglich bewegen.",
-        ],
-      };
-    }
-    return {
-      tone: "success",
-      title: "Closing stark: Erfolgsroutine skalieren",
-      tips: [
-        "Top-Argumente aus CLOSED Leads als Script sichern.",
-        "High-Potential-Leads mit gleichem Playbook spiegeln.",
-        "Hot-Leads weiter mit kurzen 24h-Zyklen bearbeiten.",
-      ],
-    };
-  }, [stats.closingRate]);
-
-  const cockpitCtas = useMemo(() => rankCockpitCtas({
-    leads: activePipelineLeads,
-  }), [activePipelineLeads]);
-
-  const CTA_ACTION_PRESET = {
-    inactive48: "inactive48",
-    overdue: "overdue",
-    cancellation: "cancellation",
-    hot: "hot",
-    uncontacted: "uncontacted",
-    stalledOffers: "stalledOffers",
-  };
-
-  const runCockpitCtaAction = (cta) => {
-    if (!cta) return;
-    const targetPreset = CTA_ACTION_PRESET[cta.action];
-    if (!targetPreset) return;
-    if (focusPreset === targetPreset) {
-      applyFocusPreset("all");
-    } else {
-      applyFocusPreset(targetPreset);
-    }
-  };
-
   const closeLeadDrawer = () => {
     setSelectedLeadId(null);
     if (!showPowerDialer) applyFocusPreset("all");
@@ -477,7 +419,6 @@ function App() {
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        stats={stats}
         user={user}
         userRole={userRole}
         userProfile={userProfile}
@@ -496,16 +437,36 @@ function App() {
                 <span className="lead-count-badge">{displayLeads.length}</span>
               </div>
               <div className="toolbar-right">
-                <input type="text" placeholder="🔍 Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
+                <div className="toolbar-search-wrap">
+                  <IconSearch size={14} className="toolbar-search-icon" />
+                  <input type="text" placeholder="Suche nach Firma, Kontakt, Telefon..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="toolbar-search" />
+                </div>
                 <select value={sortMode} onChange={e => setSortMode(e.target.value)} className="filter-select-inline compact">
                   <option value="priority">Sortiert nach Priorität</option>
                   <option value="potential">Nach Potential</option>
                   <option value="activity">Nach Aktivität</option>
                   <option value="followUp">Nach Follow-up</option>
                 </select>
+                <select value={focusPreset} onChange={(e) => applyFocusPreset(e.target.value)} className="filter-select-inline compact focus-select">
+                  <option value="all">Alle Leads</option>
+                  <option value="mine">Meine Leads</option>
+                  <option value="action">Action Queue</option>
+                  <option value="hot">Hot Deals</option>
+                  <option value="renewals">Renewals</option>
+                  <option value="won">Abschlüsse</option>
+                  <option value="lost">Verloren</option>
+                  <option value="uncontacted">Unkontaktiert</option>
+                  <option value="overdue">Überfällig</option>
+                  <option value="today">Heute fällig</option>
+                  <option value="inactive48">{'>'} 48h inaktiv</option>
+                  <option value="cancellation">Kündigungsfenster</option>
+                </select>
+                <button type="button" className={`toolbar-icon-btn ${showAdvancedFilters ? 'active' : ''}`} onClick={() => setShowAdvancedFilters(v => !v)} title="Erweiterte Filter">
+                  <IconFilter size={15} />
+                </button>
                 <div className="view-toggle-group">
-                  <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>≡ Liste</button>
-                  <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}>⊞ Pipeline</button>
+                  <button className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}><IconList size={15} /></button>
+                  <button className={`view-toggle-btn ${viewMode === "kanban" ? "active" : ""}`} onClick={() => setViewMode("kanban")}><IconGrid size={15} /></button>
                 </div>
                 {userRole === "admin" && (
                   <button
@@ -513,9 +474,14 @@ function App() {
                     onClick={() => { setSelectionMode(v => !v); setSelectedLeadIds(new Set()); }}
                     title="Mehrfachauswahl"
                   >
-                    {selectionMode ? "✕ Auswahl" : "☑ Auswählen"}
+                    {selectionMode ? <><IconX size={13} /> Auswahl</> : <><IconCheckSquare size={13} /> Auswählen</>}
                   </button>
                 )}
+                <div className="toolbar-actions">
+                  <button type="button" className="toolbar-action-btn primary" onClick={() => setShowNewLeadModal(true)}><IconPlus size={14} /> Neuer Lead</button>
+                  <button type="button" className="toolbar-action-btn" onClick={() => setShowImportModal(true)}><IconUpload size={14} /> Import</button>
+                  <button type="button" className="toolbar-action-btn" onClick={() => setShowPowerDialer(true)}><IconZap size={14} /> Dialer</button>
+                </div>
               </div>
             </div>
 
@@ -536,29 +502,12 @@ function App() {
             )}
             {selectionMode && selectedLeadIds.size === 0 && (
               <div className="bulk-hint-bar">
-                ☑ Mehrfachauswahl aktiv – Leads anklicken zum Auswählen
+                <IconCheckSquare size={14} /> Mehrfachauswahl aktiv – Leads anklicken zum Auswählen
                 <button className="ghost-btn-sm" onClick={() => { setSelectionMode(false); setSelectedLeadIds(new Set()); }} style={{ marginLeft: 12 }}>Abbrechen</button>
               </div>
             )}
 
             <div className="focus-bar">
-              <select value={focusPreset} onChange={(e) => applyFocusPreset(e.target.value)} className="filter-select-inline compact focus-select">
-                <option value="all">Fokus: Alle Leads</option>
-                <option value="mine">Fokus: Meine Leads</option>
-                <option value="action">Fokus: Action Queue</option>
-                <option value="hot">Fokus: Hot Deals</option>
-                <option value="renewals">Fokus: Renewals</option>
-                <option value="won">Fokus: Abschlüsse</option>
-                <option value="lost">Fokus: Verloren</option>
-                <option value="uncontacted">Fokus: Unkontaktiert</option>
-                <option value="overdue">Fokus: Überfällig</option>
-                <option value="today">Fokus: Heute fällig</option>
-                <option value="inactive48">Fokus: {'>'}48h ohne Aktivität</option>
-                <option value="cancellation">Fokus: Kündigungsfenster</option>
-              </select>
-              <button type="button" className="ghost-btn-sm" onClick={() => setShowAdvancedFilters(v => !v)}>
-                {showAdvancedFilters ? "Erweiterte Filter ausblenden" : "Erweiterte Filter"}
-              </button>
               <span className="filter-result-count">{displayLeads.length} sichtbar · {wonBundleLeads.length} Abschlüsse · {lostBundleLeads.length} Verloren gebündelt</span>
             </div>
 
@@ -589,63 +538,14 @@ function App() {
               </div>
             )}
 
-            <div className="kpi-strip">
-              <div className="kpi-item kpi-umsatz">
-                <span className="kpi-val">{formatEnergyVolume(stats.movedEnergyKwh)}</span>
-                <span className="kpi-label">Bewegte Energiemenge</span>
-              </div>
-              <div className="kpi-item kpi-prio"><span className="kpi-val">{stats.priorityA}</span><span className="kpi-label">Hot</span></div>
-              <div className="kpi-item kpi-warning"><span className="kpi-val">{stats.overdue}</span><span className="kpi-label">Überfällig</span></div>
-              <div className="kpi-item kpi-today"><span className="kpi-val">{stats.dueToday}</span><span className="kpi-label">Heute fällig</span></div>
-              <div className="kpi-item"><span className="kpi-val">{stats.inactive48}</span><span className="kpi-label">{'>'}48h ohne Aktivität</span></div>
-              <div className="kpi-item kpi-alert">
-                <span className="kpi-val">{stats.openCancellation}</span>
-                <span className="kpi-label two-line"><span>Kündigungs</span><span>fenster</span></span>
-              </div>
-              <div className="kpi-item"><span className="kpi-val">{stats.wonLeads}</span><span className="kpi-label">Abschlüsse</span></div>
-            </div>
-
-            <div className={`cockpit-action-card compact ${closingRateCoach.tone}`}>
-              <div className="cockpit-action-head">
-                <strong>{closingRateCoach.title}</strong>
-                <span>Closing Rate: {stats.closingRate}%</span>
-              </div>
-              <ul className="cockpit-action-list">
-                {closingRateCoach.tips.slice(0, 2).map((tip) => <li key={tip}>{tip}</li>)}
-              </ul>
-              <div className="cockpit-cta-grid">
-                {cockpitCtas.map((cta) => {
-                  const ctaPreset = CTA_ACTION_PRESET[cta.action];
-                  const isCtaActive = ctaPreset && focusPreset === ctaPreset;
-                  return (
-                    <div key={cta.id} className={`cockpit-cta-card ${cta.tone}${isCtaActive ? " active" : ""}`}>
-                      <strong>{cta.title}</strong>
-                      <p>{cta.message}</p>
-                      <button type="button" className="ghost-btn-sm" onClick={() => runCockpitCtaAction(cta)}>
-                        {isCtaActive ? "Ansicht schließen" : cta.actionLabel}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="lead-list-controls">
-              <div className="lead-actions-inline">
-                <button type="button" className="kpi-action-btn dialer" onClick={() => setShowPowerDialer(true)}>⚡ Power Dialer</button>
-                <button type="button" className="kpi-action-btn import" onClick={() => setShowImportModal(true)}>📥 CSV importieren</button>
-                <button type="button" className="kpi-action-btn create" onClick={() => setShowNewLeadModal(true)}>＋ Neuer Lead</button>
-              </div>
+            <div className="kpi-strip-compact">
               <div className="lead-pagination-inline">
-                <label htmlFor="lead-page-size">Leads pro Seite</label>
-                <select id="lead-page-size" value={leadsPerPage} onChange={(e) => setLeadsPerPage(Number(e.target.value))}>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
+                <select id="lead-page-size" value={leadsPerPage} onChange={(e) => setLeadsPerPage(Number(e.target.value))} className="filter-select-inline compact" style={{ minWidth: 60 }}>
+                  <option value={25}>25</option><option value={50}>50</option><option value={100}>100</option>
                 </select>
-                <button type="button" className="ghost-btn-sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>Zurück</button>
-                <span>Seite {currentPage} / {totalPipelinePages}</span>
-                <button type="button" className="ghost-btn-sm" disabled={currentPage >= totalPipelinePages} onClick={() => setCurrentPage((p) => Math.min(totalPipelinePages, p + 1))}>Weiter</button>
+                <button type="button" className="ghost-btn-sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>‹</button>
+                <span>{currentPage}/{totalPipelinePages}</span>
+                <button type="button" className="ghost-btn-sm" disabled={currentPage >= totalPipelinePages} onClick={() => setCurrentPage((p) => Math.min(totalPipelinePages, p + 1))}>›</button>
               </div>
             </div>
 
@@ -741,7 +641,15 @@ function App() {
         {activeTab === "dashboard" && (
           <div className="tab-page">
             <div className="main-toolbar"><h1 className="page-title">Dashboard</h1></div>
-            <Dashboard leads={leads} teamMembers={teamMembers} userRole={userRole} />
+            <Dashboard leads={leads} teamMembers={teamMembers} userRole={userRole} stats={stats} onNavigate={(preset) => {
+              setActiveTab("leads");
+              if (preset.startsWith("status:")) {
+                const status = preset.slice(7);
+                setSmartView("all"); setKpiFocus("all"); setFilterStatus(status); setFilterPriority("all"); setSortMode("activity"); setFocusPreset("all");
+              } else {
+                applyFocusPreset(preset);
+              }
+            }} />
           </div>
         )}
 

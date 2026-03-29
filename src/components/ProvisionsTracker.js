@@ -2,6 +2,9 @@ import React from "react";
 import { PROVISION_STATUS } from "../constants";
 import { formatEuro } from "../utils/format";
 import { formatDate } from "../utils/dates";
+import { IconDollar, IconClock, IconClipboard, IconCheck } from "./Icons";
+
+const PROVISION_ICONS = { pending: <IconClock size={13} />, booked: <IconClipboard size={13} />, done: <IconCheck size={13} /> };
 
 function ProvisionsTracker({ lead, onUpdateField }) {
   const provision = lead.provision || {};
@@ -12,7 +15,7 @@ function ProvisionsTracker({ lead, onUpdateField }) {
 
   return (
     <div className="provisions-tracker">
-      <h3 style={{ margin: "0 0 12px", fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>💶 Provisions-Tracker</h3>
+      <h3 style={{ margin: "0 0 12px", fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}><IconDollar size={14} /> Provisions-Tracker</h3>
       <div className="provision-grid">
         <div className="provision-field">
           <label>Provisionsbetrag (€)</label>
@@ -34,13 +37,13 @@ function ProvisionsTracker({ lead, onUpdateField }) {
       <div className="provision-status-row">
         {PROVISION_STATUS.map(s => (
           <button key={s.id} className={`provision-status-btn ${provision.status === s.id ? "active" : ""}`} onClick={() => save({ status: s.id })}>
-            {s.icon} {s.label}
+            {PROVISION_ICONS[s.icon]} {s.label}
           </button>
         ))}
       </div>
       {provision.status === "ausgezahlt" && provision.amount && (
         <div className="provision-confirmed">
-          ✅ {formatEuro(parseFloat(provision.amount))} ausgezahlt{provision.actualDate ? ` am ${formatDate(provision.actualDate)}` : ""}
+          <IconCheck size={13} /> {formatEuro(parseFloat(provision.amount))} ausgezahlt{provision.actualDate ? ` am ${formatDate(provision.actualDate)}` : ""}
         </div>
       )}
     </div>

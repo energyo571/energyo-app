@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { IconDollar, IconX, IconClock, IconClipboard, IconMail, IconShield, IconLightbulb } from "./Icons";
 
 function DialerEinwandPanel({ lead, user }) {
   const OBJECTIONS = [
-    { id: "teuer", icon: "💰", label: "Zu teuer" },
-    { id: "interesse", icon: "🚫", label: "Kein Interesse" },
-    { id: "spaeter", icon: "⏳", label: "Entscheide später" },
-    { id: "vertrag", icon: "📋", label: "Vertraglich gebunden" },
-    { id: "infos", icon: "📧", label: "Erst mal Infos" },
-    { id: "anbieter", icon: "🏢", label: "Habe schon Anbieter" },
+    { id: "teuer", icon: <IconDollar size={15} />, label: "Zu teuer" },
+    { id: "interesse", icon: <IconX size={15} />, label: "Kein Interesse" },
+    { id: "spaeter", icon: <IconClock size={15} />, label: "Entscheide später" },
+    { id: "vertrag", icon: <IconClipboard size={15} />, label: "Vertraglich gebunden" },
+    { id: "infos", icon: <IconMail size={15} />, label: "Erst mal Infos" },
+    { id: "anbieter", icon: <IconShield size={15} />, label: "Habe schon Anbieter" },
   ];
 
   const [activeObjection, setActiveObjection] = useState(null);
@@ -66,7 +67,7 @@ function DialerEinwandPanel({ lead, user }) {
   return (
     <div className="dialer-einwand-panel">
       <div className="objection-header">
-        <span className="objection-title-icon">🛡️</span>
+        <span className="objection-title-icon"><IconShield size={18} /></span>
         <div>
           <p className="objection-title">KI-Einwandbehandlung</p>
           <p className="objection-sub">{lead.company || lead.person} — Einwand auswählen:</p>
@@ -94,8 +95,8 @@ function DialerEinwandPanel({ lead, user }) {
       {response && !loading && (
         <div className="objection-response">
           <div className="objection-response-header">
-            <span>💡 Empfohlene Antwort</span>
-            <button className="objection-copy" onClick={copyResponse}>📋 Kopieren</button>
+            <span><IconLightbulb size={14} /> Empfohlene Antwort</span>
+            <button className="objection-copy" onClick={copyResponse}><IconClipboard size={13} /> Kopieren</button>
           </div>
           <div className="objection-response-text">
             {response.split("\n").filter(Boolean).map((line, i) => (

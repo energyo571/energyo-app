@@ -5,6 +5,7 @@ import { formatWaPhone } from "../utils/format";
 import { calculateLeadScore, getLeadTemperature } from "../utils/leads";
 import DialerEinwandPanel from "./DialerEinwandPanel";
 import LeadQuickNav from "./LeadQuickNav";
+import { IconPhone, IconCheck, IconCalendar, IconZap, IconClock, IconBell, IconComment, IconEdit, IconX } from "./Icons";
 
 function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectLead, displayLeads, selectedLeadId, drawerOpen }) {
   const queue = useMemo(() => {
@@ -49,10 +50,10 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
     <div className="power-dialer-panel">
       {idx >= queue.length || queue.length === 0 ? (
         <div className="dialer-done">
-          <div style={{ fontSize: "2.5rem" }}>🏁</div>
+          <div style={{ fontSize: "2.5rem" }}>✔</div>
           <h3 style={{ color: "#f1f5f9", margin: "8px 0" }}>Session abgeschlossen</h3>
           <div style={{ display: "flex", gap: 20, margin: "16px 0" }}>
-            {[["📞", stats.called, "Anrufe"], ["✅", stats.reached, "Erreicht"], ["📅", stats.appointments, "Termine"]].map(([icon, val, label]) => (
+            {[[<IconPhone size={16} />, stats.called, "Anrufe"], [<IconCheck size={16} />, stats.reached, "Erreicht"], [<IconCalendar size={16} />, stats.appointments, "Termine"]].map(([icon, val, label]) => (
               <div key={label} style={{ textAlign: "center" }}>
                 <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "#f1f5f9" }}>{icon} {val}</div>
                 <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{label}</div>
@@ -65,13 +66,13 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
         <div className="power-dialer">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <strong style={{ color: "#f1f5f9", fontSize: "1rem" }}>⚡ Power Dialer</strong>
+              <strong style={{ color: "#f1f5f9", fontSize: "1rem" }}><IconZap size={15} /> Power Dialer</strong>
               <span style={{ color: "#64748b", marginLeft: 10, fontSize: "0.8rem" }}>Anruf {idx + 1} / {queue.length}</span>
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "center", fontSize: "0.8rem", color: "#64748b" }}>
-              <span title="Anrufe">📞 {stats.called}</span>
-              <span title="Erreicht">✅ {stats.reached}</span>
-              <span title="Termine">📅 {stats.appointments}</span>
+              <span title="Anrufe"><IconPhone size={13} /> {stats.called}</span>
+              <span title="Erreicht"><IconCheck size={13} /> {stats.reached}</span>
+              <span title="Termine"><IconCalendar size={13} /> {stats.appointments}</span>
               {!drawerOpen && <button className="drawer-close-btn" onClick={onClose} style={{ marginLeft: 4 }}>✕</button>}
             </div>
           </div>
@@ -82,14 +83,14 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
           <div className="dialer-card">
             <div className="dialer-context">
               <span className={`health-pill ${getLeadTemperature(current).tone}`}>{getLeadTemperature(current).label}</span>
-              {isOverdue(current.followUp) && <span className="dialer-chip hot">⏰ Überfällig</span>}
-              {isOpenCancellationWindow(current.contractEnd) && <span className="dialer-chip hot">🔔 Kündigungsfenster</span>}
+              {isOverdue(current.followUp) && <span className="dialer-chip hot"><IconClock size={12} /> Überfällig</span>}
+              {isOpenCancellationWindow(current.contractEnd) && <span className="dialer-chip hot"><IconBell size={12} /> Kündigungsfenster</span>}
             </div>
             <p className="dialer-company dialer-company-link" onClick={() => onSelectLead && onSelectLead(current.id)}>{current.company || current.person}</p>
             <p className="dialer-person">{current.person}</p>
-            <a className="dialer-call-btn" href={`tel:${current.phone}`}>📞 {current.phone}</a>
+            <a className="dialer-call-btn" href={`tel:${current.phone}`}><IconPhone size={14} /> {current.phone}</a>
             {current.phone && (
-              <a className="dialer-wa-btn" href={`https://wa.me/${formatWaPhone(current.phone)}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>
+              <a className="dialer-wa-btn" href={`https://wa.me/${formatWaPhone(current.phone)}`} target="_blank" rel="noreferrer"><IconComment size={14} /> WhatsApp</a>
             )}
             <div className="dialer-context" style={{ marginTop: 6 }}>
               {current.currentProvider && <span className="dialer-chip">Aktuell: {current.currentProvider}</span>}
@@ -120,14 +121,14 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
           ) : (
             <div className="dialer-log">
               <div className="dialer-log-row" style={{ flexWrap: "wrap", gap: 7 }}>
-                {[["❌ Nicht erreicht", "Nicht erreicht"], ["📱 Mailbox", "Mailbox"], ["📅 Termin", "Termin gesetzt"], ["✅ Abschluss", "Abschluss"]].map(([label, outcome]) => (
+                {[[<><IconX size={12} /> Nicht erreicht</>, "Nicht erreicht"], ["Mailbox", "Mailbox"], [<><IconCalendar size={12} /> Termin</>, "Termin gesetzt"], [<><IconCheck size={12} /> Abschluss</>, "Abschluss"]].map(([label, outcome]) => (
                   <button key={outcome} className="dialer-next-btn" style={{ flex: "1 1 45%", fontSize: "0.82rem" }} onClick={() => logAndAdvance(outcome)} disabled={saving}>
                     {label}
                   </button>
                 ))}
               </div>
               <div className="dialer-actions">
-                <button className="dialer-skip-btn" onClick={() => setShowLog(true)}>📝 Gespräch protokollieren</button>
+                <button className="dialer-skip-btn" onClick={() => setShowLog(true)}><IconEdit size={13} /> Gespräch protokollieren</button>
                 <button className="dialer-skip-btn" onClick={advance}>Überspringen →</button>
               </div>
             </div>

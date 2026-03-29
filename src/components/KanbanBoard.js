@@ -5,6 +5,7 @@ import { formatDate } from "../utils/dates";
 import { formatEuro } from "../utils/format";
 import { calculateUmsatzPotential, getEnergyMeterCount, getTotalDeliveryPoints } from "../utils/energy";
 import { calculatePriority, hasSupplyConfirmation } from "../utils/leads";
+import { IconCalendar, IconZap, IconFlame, IconMapPin, IconBell, IconClock, IconRefresh } from "./Icons";
 
 function KanbanBoard({ leads, onSelectLead }) {
   return (
@@ -36,20 +37,20 @@ function KanbanBoard({ leads, onSelectLead }) {
                     </div>
                     <div className="kanban-person">{lead.person}</div>
                     {lead.appointmentDate && (
-                      <div className="kanban-appointment">📅 {formatDate(lead.appointmentDate)}</div>
+                      <div className="kanban-appointment"><IconCalendar size={13} /> {formatDate(lead.appointmentDate)}</div>
                     )}
                     <div className="kanban-energy">
-                      {stromCount > 0 && <span className="energy-badge strom">🔌 x{stromCount}</span>}
-                      {gasCount > 0 && <span className="energy-badge gas">🔥 x{gasCount}</span>}
-                      {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints}</span>)}
+                      {stromCount > 0 && <span className="energy-badge strom"><IconZap size={12} /> x{stromCount}</span>}
+                      {gasCount > 0 && <span className="energy-badge gas"><IconFlame size={12} /> x{gasCount}</span>}
+                      {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}><IconMapPin size={12} /> {deliveryPoints}</span>)}
                     </div>
                     <div className="kanban-card-footer">
                       <span className="kanban-umsatz-chip">{formatEuro(calculateUmsatzPotential(lead.consumption))}</span>
                       <div className="kanban-flags">
-                        {isOpenCancellationWindow(lead.contractEnd) && <span title="Kündigungsfenster">🔔</span>}
-                        {isOverdue(lead.followUp) && <span title="Überfällig">⏰</span>}
-                        {hasSupplyConfirmation(lead) && <span title="Belieferungsbestätigung">⚡</span>}
-                        {lead.renewalResurfacedAt && <span title="Automatische Wiedervorlage">🔁</span>}
+                        {isOpenCancellationWindow(lead.contractEnd) && <span title="Kündigungsfenster"><IconBell size={13} /></span>}
+                        {isOverdue(lead.followUp) && <span title="Überfällig"><IconClock size={13} /></span>}
+                        {hasSupplyConfirmation(lead) && <span title="Belieferungsbestätigung"><IconZap size={13} /></span>}
+                        {lead.renewalResurfacedAt && <span title="Automatische Wiedervorlage"><IconRefresh size={13} /></span>}
                       </div>
                     </div>
                   </div>

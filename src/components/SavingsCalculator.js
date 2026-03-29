@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { normalizeText, formatEuro } from "../utils/format";
+import { IconZap, IconFlame, IconRefresh, IconClipboard, IconDollar, IconStar, IconTrophy, IconAlertTriangle, IconInfo, IconLoader } from "./Icons";
 
 function SavingsCalculator({ lead }) {
   const parseKwh = (value) => {
@@ -95,20 +96,20 @@ function SavingsCalculator({ lead }) {
   const missingGpCount = (stromKwh > 0 && stromOfferCt > 0 && stromOfferGp <= 0 ? 1 : 0) + (gasKwh > 0 && gasOfferCt > 0 && gasOfferGp <= 0 ? 1 : 0);
 
   const buildCopyText = () => {
-    let text = "⚡ Energyo Einspar-Kalkulation\n";
+    let text = "ENERGYO Einspar-Kalkulation\n";
     if (stromKwh > 0) text += `\nStrom Verbrauch: ${stromKwh.toLocaleString("de-DE")} kWh`;
     if (gasKwh > 0) text += `\nGas Verbrauch: ${gasKwh.toLocaleString("de-DE")} kWh`;
     if (stromAnnualCosts > 0) text += `\nJahreskosten Strom: ${formatEuro(stromAnnualCosts)}`;
     if (gasAnnualCosts > 0) text += `\nJahreskosten Gas: ${formatEuro(gasAnnualCosts)}`;
     if (stromKwh > 0) {
-      text += `\n\n📌 STROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nENERGYO AP: ${stromOfferCt > 0 ? `${stromOfferCt.toFixed(2)} ct/kWh` : "offen"}`;
+      text += `\n\nSTROM\nVerbrauch: ${stromKwh.toLocaleString("de-DE")} kWh\nENERGYO AP: ${stromOfferCt > 0 ? `${stromOfferCt.toFixed(2)} ct/kWh` : "offen"}`;
       if (stromOfferGp > 0) text += `\nENERGYO GP: ${formatEuro(stromOfferGp)}/Jahr`;
       if (stromCurrentCt > 0) text += `\nAktueller AP Kunde: ${stromCurrentCt.toFixed(2)} ct/kWh`;
       if (stromOfferVariableAnnual > 0) text += `\nENERGYO AP-Anteil/Jahr: ${formatEuro(stromOfferVariableAnnual)}`;
       if (stromOfferCt > 0) text += `\nENERGYO gesamt/Jahr: ${formatEuro(stromOfferAnnual)}`;
     }
     if (gasKwh > 0) {
-      text += `\n\n📌 GAS\nVerbrauch: ${gasKwh.toLocaleString("de-DE")} kWh\nENERGYO AP: ${gasOfferCt > 0 ? `${gasOfferCt.toFixed(2)} ct/kWh` : "offen"}`;
+      text += `\n\nGAS\nVerbrauch: ${gasKwh.toLocaleString("de-DE")} kWh\nENERGYO AP: ${gasOfferCt > 0 ? `${gasOfferCt.toFixed(2)} ct/kWh` : "offen"}`;
       if (gasOfferGp > 0) text += `\nENERGYO GP: ${formatEuro(gasOfferGp)}/Jahr`;
       if (gasCurrentCt > 0) text += `\nAktueller AP Kunde: ${gasCurrentCt.toFixed(2)} ct/kWh`;
       if (gasOfferVariableAnnual > 0) text += `\nENERGYO AP-Anteil/Jahr: ${formatEuro(gasOfferVariableAnnual)}`;
@@ -116,7 +117,7 @@ function SavingsCalculator({ lead }) {
     }
     if (canEstimateTotal) {
       text += `\n\nENERGYO Jahreskosten: ${formatEuro(estimatedOfferAnnual)}`;
-      text += `\n🎯 GESAMT ERSPARNIS\nJährlich: ${formatEuro(totalAnnualSavings)}\nMonatlich: ${formatEuro(totalMonthlySavings)}`;
+      text += `\nGESAMT ERSPARNIS\nJährlich: ${formatEuro(totalAnnualSavings)}\nMonatlich: ${formatEuro(totalMonthlySavings)}`;
     }
     return text;
   };
@@ -341,7 +342,7 @@ function SavingsCalculator({ lead }) {
   return (
     <div className="savings-calc">
       <div className="savings-header">
-        <span>⚡</span>
+        <span><IconZap size={16} /></span>
         <div>
           <p className="savings-title">Einspar-Kalkulator</p>
           <p className="savings-sub">Live am Telefon ausrechnen — Abschluss sichern</p>
@@ -361,24 +362,24 @@ function SavingsCalculator({ lead }) {
 
       <div className="savings-actions">
         <button type="button" className="savings-copy-btn" onClick={loadReferenceTariffs} disabled={referenceLoading}>
-          {referenceLoading ? "⏳ Tarife werden geladen..." : "🔄 Tarife laden"}
+          {referenceLoading ? <><IconLoader size={13} /> Tarife werden geladen...</> : <><IconRefresh size={13} /> Tarife laden</>}
         </button>
       </div>
 
-      {referenceError && <div className="savings-warning neutral">ℹ️ {referenceError}</div>}
+      {referenceError && <div className="savings-warning neutral"><IconInfo size={13} /> {referenceError}</div>}
 
       {["strom", "gas"].map(sector => {
         const recs = recommendations[sector];
         const sectorKwh = sector === "strom" ? stromKwh : gasKwh;
         if (!recs || sectorKwh <= 0) return null;
         const tiles = [
-          { key: "cheapest", label: "Günstigster Preis", icon: "💰", desc: "Maximale Ersparnis" },
-          { key: "sweetspot", label: "Empfehlung", icon: "⭐", desc: "Bestes Verhältnis" },
-          { key: "highestProvision", label: "Höchste Provision", icon: "🏆", desc: "Top-Provision" },
+          { key: "cheapest", label: "Günstigster Preis", icon: <IconDollar size={15} />, desc: "Maximale Ersparnis" },
+          { key: "sweetspot", label: "Empfehlung", icon: <IconStar size={15} />, desc: "Bestes Verhältnis" },
+          { key: "highestProvision", label: "Höchste Provision", icon: <IconTrophy size={15} />, desc: "Top-Provision" },
         ];
         return (
           <div key={sector} className="tariff-tiles-section">
-            <p className="savings-section-title">{sector === "strom" ? "⚡ Strom-Tarife" : "🔥 Gas-Tarife"}</p>
+            <p className="savings-section-title">{sector === "strom" ? <><IconZap size={14} /> Strom-Tarife</> : <><IconFlame size={14} /> Gas-Tarife</>}</p>
             <div className="tariff-tiles-row">
               {tiles.map(({ key, label, icon, desc }) => {
                 const tile = recs[key];
@@ -418,7 +419,7 @@ function SavingsCalculator({ lead }) {
 
       {stromKwh > 0 && (
         <div className="savings-section">
-          <p className="savings-section-title">📌 Strom</p>
+          <p className="savings-section-title">Strom</p>
           <div className="savings-inputs">
             <div className="savings-field">
               <label>ENERGYO AP (ct/kWh)</label>
@@ -443,7 +444,7 @@ function SavingsCalculator({ lead }) {
 
       {gasKwh > 0 && (
         <div className="savings-section">
-          <p className="savings-section-title">📌 Gas</p>
+          <p className="savings-section-title">Gas</p>
           <div className="savings-inputs">
             <div className="savings-field">
               <label>ENERGYO AP (ct/kWh)</label>
@@ -468,7 +469,7 @@ function SavingsCalculator({ lead }) {
 
       {stromKwh === 0 && gasKwh === 0 && (
         <div style={{ color: "#6b7280", fontSize: "0.82rem", padding: "12px 0", textAlign: "center" }}>
-          ℹ️ Keine Verbrauchsdaten erfasst — Lead-Daten ergänzen
+          <IconInfo size={13} /> Keine Verbrauchsdaten erfasst — Lead-Daten ergänzen
         </div>
       )}
 
@@ -489,7 +490,7 @@ function SavingsCalculator({ lead }) {
           </div>
           <div className="savings-actions">
             <button className="savings-copy-btn" onClick={() => navigator.clipboard.writeText(buildCopyText())}>
-              📋 Kalkulation kopieren
+              <IconClipboard size={13} /> Kalkulation kopieren
             </button>
           </div>
         </div>
@@ -497,31 +498,31 @@ function SavingsCalculator({ lead }) {
 
       {hasNoAdvantage && (
         <div className="savings-warning">
-          ⚠️ Kein Vorteil: Die AP-Differenz fuehrt nicht zu niedrigeren geschaetzten Jahreskosten.
+          <IconAlertTriangle size={13} /> Kein Vorteil: Die AP-Differenz fuehrt nicht zu niedrigeren geschaetzten Jahreskosten.
         </div>
       )}
 
       {annualCosts <= 0 && hasAnyOffer && (
         <div className="savings-warning neutral">
-          ℹ️ Angebot erfasst, aber ohne dokumentierte Jahreskosten kann noch keine belastbare Ersparnis ausgewiesen werden.
+          <IconInfo size={13} /> Angebot erfasst, aber ohne dokumentierte Jahreskosten kann noch keine belastbare Ersparnis ausgewiesen werden.
         </div>
       )}
 
       {annualCosts > 0 && hasAnyOffer && !hasCompleteOffer && (
         <div className="savings-warning neutral">
-          ℹ️ Fuer die Euro-Ersparnis wird pro vorhandenem Energieträger ein ENERGYO AP benötigt.
+          <IconInfo size={13} /> Fuer die Euro-Ersparnis wird pro vorhandenem Energieträger ein ENERGYO AP benötigt.
         </div>
       )}
 
       {hasAnyCurrentAp && (
         <div className="savings-warning neutral">
-          ℹ️ AP-Vergleich Kunde vs. ENERGYO: {formatEuro(apOnlyAnnualSavings)} pro Jahr (nur Arbeitspreis-Anteil, ohne Grundpreis).
+          <IconInfo size={13} /> AP-Vergleich Kunde vs. ENERGYO: {formatEuro(apOnlyAnnualSavings)} pro Jahr (nur Arbeitspreis-Anteil, ohne Grundpreis).
         </div>
       )}
 
       {missingGpCount > 0 && hasAnyOffer && (
         <div className="savings-warning neutral">
-          ℹ️ Hinweis: Bei {missingGpCount} Energieträger(n) fehlt ENERGYO GP. Die Jahreskosten basieren dort nur auf AP-Anteil.
+          <IconInfo size={13} /> Hinweis: Bei {missingGpCount} Energieträger(n) fehlt ENERGYO GP. Die Jahreskosten basieren dort nur auf AP-Anteil.
         </div>
       )}
     </div>

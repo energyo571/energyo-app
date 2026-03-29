@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { WECHSEL_STEPS } from "../constants";
 import { formatDate } from "../utils/dates";
+import { IconRefresh, IconCheck, IconTrophy } from "./Icons";
 
 function WechselprozessTracker({ lead, user, onUpdateField }) {
   const [editingStep, setEditingStep] = useState(null);
@@ -34,10 +35,10 @@ function WechselprozessTracker({ lead, user, onUpdateField }) {
     <div className="wechsel-tracker">
       <div className="wechsel-header">
         <div>
-          <p className="wechsel-title">🔄 Wechselprozess</p>
+          <p className="wechsel-title"><IconRefresh size={16} /> Wechselprozess</p>
           <p className="wechsel-sub">{completedCount} von {WECHSEL_STEPS.length} Schritten abgeschlossen</p>
         </div>
-        {allDone && <span className="wechsel-done-badge">✅</span>}
+        {allDone && <span className="wechsel-done-badge"><IconCheck size={14} /></span>}
       </div>
       <div className="wechsel-progress-track">
         <div className="wechsel-progress-fill" style={{ width: `${progress}%` }} />
@@ -87,7 +88,7 @@ function WechselprozessTracker({ lead, user, onUpdateField }) {
       </div>
       {allDone && (
         <div style={{ padding: "12px 16px", background: "#f0fdf4", color: "#16a34a", fontSize: "0.82rem", fontWeight: 700, borderTop: "1px solid #dcfce7" }}>
-          🏆 Wechsel abgeschlossen! Jetzt Empfehlung anfragen.
+          <IconTrophy size={14} /> Wechsel abgeschlossen! Jetzt Empfehlung anfragen.
         </div>
       )}
     </div>

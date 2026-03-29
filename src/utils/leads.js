@@ -105,19 +105,19 @@ export const getLeadScoreTone = (probability) => {
 export const getLeadTemperature = (lead) => {
   if (lead.status === "Abschluss") return { label: "Won", tone: "won", step: 3 };
   if (lead.status === "Verloren") return { label: "Lost", tone: "lost", step: 0 };
-  if (isOverdue(lead.followUp)) return { label: "🚨 Kritisch", tone: "critical", step: 2 };
+  if (isOverdue(lead.followUp)) return { label: "Kritisch", tone: "critical", step: 2 };
   const inactivityHours = getHoursSince(getLastActivityTimestamp(lead));
-  if (inactivityHours < 24) return { label: "🔥 HOT", tone: "hot", step: 3 };
-  if (inactivityHours < 72) return { label: "🌤 Warm", tone: "warm", step: 2 };
-  return { label: "❄️ Cold", tone: "cold", step: 1 };
+  if (inactivityHours < 24) return { label: "HOT", tone: "hot", step: 3 };
+  if (inactivityHours < 72) return { label: "Warm", tone: "warm", step: 2 };
+  return { label: "Cold", tone: "cold", step: 1 };
 };
 
 export const getLeadReadiness = (lead) => {
   if (lead.status === "Abschluss") {
-    return { label: "🚦 Angebotsfaehig", tone: "green", reason: "Abschluss bereits erfolgt.", missing: [] };
+    return { label: "Angebotsfähig", tone: "green", reason: "Abschluss bereits erfolgt.", missing: [] };
   }
   if (lead.status === "Verloren") {
-    return { label: "🚦 Daten fehlen", tone: "red", reason: "Lead ist als verloren markiert.", missing: [] };
+    return { label: "Daten fehlen", tone: "red", reason: "Lead ist als verloren markiert.", missing: [] };
   }
 
   const missing = [];
@@ -137,11 +137,11 @@ export const getLeadReadiness = (lead) => {
 
   if (missing.length > 0) {
     return {
-      label: "🚦 Daten fehlen", tone: "red",
-      reason: `Nicht angebotsfaehig: ${missing.slice(0, 2).join(", ")}`, missing,
+      label: "Daten fehlen", tone: "red",
+      reason: `Nicht angebotsfähig: ${missing.slice(0, 2).join(", ")}`, missing,
     };
   }
-  return { label: "🚦 Angebotsfaehig", tone: "green", reason: "Angebotsfaehig und bereit fuer Abschlussarbeit.", missing: [] };
+  return { label: "Angebotsfähig", tone: "green", reason: "Angebotsfähig und bereit für Abschlussarbeit.", missing: [] };
 };
 
 export const getNextActionPlan = (lead) => {

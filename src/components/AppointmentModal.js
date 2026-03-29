@@ -69,12 +69,12 @@ function AppointmentModal({ lead, currentUserEmail, onClose, onSave }) {
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal appointment-modal">
         <div className="modal-header">
-          <h2>📅 Termin planen</h2>
+          <h2>Termin planen</h2>
           <button className="drawer-close-btn" onClick={onClose}>✕</button>
         </div>
         {saved ? (
           <div className="appointment-saved">
-            <div className="appointment-confirm">✅ Termin gespeichert!</div>
+            <div className="appointment-confirm">Termin gespeichert!</div>
             <p className="appointment-detail">
               <strong>{title}</strong><br />
               {formatDate(date)}{time ? ` um ${time} Uhr` : ""}
@@ -83,15 +83,15 @@ function AppointmentModal({ lead, currentUserEmail, onClose, onSave }) {
               <p className="calendar-export-label">Termin exportieren:</p>
               <div className="calendar-export-buttons">
                 <button className="calendar-export-btn google" onClick={() => executeCalendarExport("google")}>
-                  📅 Google Calendar
+                  Google Calendar
                   {calendarExported === "google" && <span className="export-check">✓</span>}
                 </button>
                 <button className="calendar-export-btn ical" onClick={() => executeCalendarExport("ical")}>
-                  📥 iCal / Outlook
+                  iCal / Outlook
                   {calendarExported === "ical" && <span className="export-check">✓</span>}
                 </button>
                 <button className="calendar-export-btn calendly" onClick={() => executeCalendarExport("calendly")} disabled={!buildCalendlyUrl()}>
-                  🔗 Calendly
+                  Calendly
                   {calendarExported === "calendly" && <span className="export-check">✓</span>}
                 </button>
               </div>
@@ -125,7 +125,7 @@ function AppointmentModal({ lead, currentUserEmail, onClose, onSave }) {
             </div>
             {lead.appointmentDate && (
               <div className="existing-appointment">
-                <span>📅 Bestehender Termin: {formatDate(lead.appointmentDate)} {lead.appointmentTime && `um ${lead.appointmentTime} Uhr`}</span>
+                <span>Bestehender Termin: {formatDate(lead.appointmentDate)} {lead.appointmentTime && `um ${lead.appointmentTime} Uhr`}</span>
               </div>
             )}
             <div className="modal-footer">

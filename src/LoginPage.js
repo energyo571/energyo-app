@@ -68,7 +68,7 @@ export default function LoginPage({ onLogin, user }) {
     return (
       <div className="login-container logged-in">
         <div className="logged-in-content">
-          <h2>Willkommen zurück! 👋</h2>
+          <h2>Willkommen zurück!</h2>
           <p className="user-email">{user.email}</p>
           <button className="logout-btn" onClick={handleLogout}>
             Abmelden
@@ -89,7 +89,7 @@ export default function LoginPage({ onLogin, user }) {
           </p>
         </div>
 
-        {error && <div className="error-message">⚠️ {error}</div>}
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleAuth} className="login-form">
           <input

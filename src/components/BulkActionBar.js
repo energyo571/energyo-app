@@ -13,13 +13,13 @@ function BulkActionBar({ selectedCount, onDelete, onCancel, onSelectAll, totalCo
       <div className="bulk-action-right">
         {confirmDelete ? (
           <div className="bulk-confirm-row">
-            <span className="bulk-confirm-text">⚠️ {selectedCount} Leads wirklich löschen?</span>
+            <span className="bulk-confirm-text">{selectedCount} Leads wirklich löschen?</span>
             <button className="danger-btn" onClick={() => { onDelete(); setConfirmDelete(false); }}>Ja, löschen</button>
             <button className="ghost-btn" onClick={() => setConfirmDelete(false)}>Abbrechen</button>
           </div>
         ) : (
           <button className="danger-btn" onClick={() => setConfirmDelete(true)}>
-            🗑 {selectedCount} Leads löschen
+            {selectedCount} Leads löschen
           </button>
         )}
         <button className="ghost-btn" onClick={onCancel}>Abbrechen</button>

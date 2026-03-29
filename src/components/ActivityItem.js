@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { formatDateTime } from "../utils/dates";
+import { IconComment, IconPhone, IconRefresh, IconEdit } from "./Icons";
 
 function ActivityItem({ item, onEdit, onDelete, canEdit, stack, linkedStatus }) {
   const [editing, setEditing] = useState(false);
@@ -13,7 +14,7 @@ function ActivityItem({ item, onEdit, onDelete, canEdit, stack, linkedStatus }) 
     const rest = stack.slice(1);
     return (
       <div className="activity-item act-status act-stack">
-        <div className="activity-icon-wrap"><span>🔄</span></div>
+        <div className="activity-icon-wrap"><IconRefresh size={15} /></div>
         <div className="activity-body">
           <div className="activity-meta">
             <span className="activity-author">{latest.author || "System"}</span>
@@ -46,10 +47,10 @@ function ActivityItem({ item, onEdit, onDelete, canEdit, stack, linkedStatus }) 
 
   // ─── Normal / Linked mode ───
   const cfg = {
-    comment: { icon: "💬", cls: "act-comment" },
-    call:    { icon: "📞", cls: "act-call" },
-    status:  { icon: "🔄", cls: "act-status" },
-  }[item.type] || { icon: "📝", cls: "act-comment" };
+    comment: { icon: <IconComment size={15} />, cls: "act-comment" },
+    call:    { icon: <IconPhone size={15} />, cls: "act-call" },
+    status:  { icon: <IconRefresh size={15} />, cls: "act-status" },
+  }[item.type] || { icon: <IconEdit size={15} />, cls: "act-comment" };
 
   const saveEdit = () => {
     if (editText.trim() && onEdit) onEdit(editText.trim());
@@ -60,12 +61,12 @@ function ActivityItem({ item, onEdit, onDelete, canEdit, stack, linkedStatus }) 
     <div className={`activity-item ${cfg.cls}${linkedStatus ? " act-linked" : ""}`}>
       {linkedStatus && (
         <div className="linked-status-bar">
-          <span className="linked-status-icon">🔄</span>
+          <span className="linked-status-icon"><IconRefresh size={13} /></span>
           <span>{linkedStatus.from} → <strong>{linkedStatus.to}</strong></span>
           <span className="activity-time">{formatDateTime(linkedStatus.timestamp)}</span>
         </div>
       )}
-      <div className="activity-icon-wrap"><span>{cfg.icon}</span></div>
+      <div className="activity-icon-wrap">{cfg.icon}</div>
       <div className="activity-body">
         <div className="activity-meta">
           <span className="activity-author">{item.author || "System"}</span>

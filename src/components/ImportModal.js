@@ -72,12 +72,12 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
   return (
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal import-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header"><h2>📥 Lead-Import</h2><button className="drawer-close-btn" onClick={onClose}>✕</button></div>
+        <div className="modal-header"><h2>Lead-Import</h2><button className="drawer-close-btn" onClick={onClose}>✕</button></div>
         {step === 1 && (
           <div className="import-step">
             <p className="step-desc">CSV- oder Excel-Datei hochladen</p>
             <div className="import-upload-zone" onClick={() => fileInputRef.current?.click()}>
-              <span className="upload-icon">📄</span>
+              <span className="upload-icon">↑</span>
               <span className="upload-label">{file ? file.name : 'Datei auswählen'}</span>
               <span className="upload-hint">CSV oder Excel (.xlsx/.xls)</span>
             </div>
@@ -90,7 +90,7 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
             <p className="step-desc">{parsedLeads.length} neue Leads, {duplicates.length} Duplikate</p>
             {duplicates.length > 0 && (
               <div className="import-warning">
-                ⚠️ {duplicates.length} Duplikat(e):
+                                {duplicates.length} Duplikat(e):
                 <div className="dup-list">{duplicates.slice(0, 3).map((d, i) => (<div key={i} className="dup-item">Zeile {d.row}: {d.lead.person} ({d.lead.phone})</div>))}{duplicates.length > 3 && <div className="dup-item">+{duplicates.length - 3} weitere</div>}</div>
               </div>
             )}
@@ -102,11 +102,11 @@ function ImportModal({ isOpen, onClose, leads, users, currentUser, onImport }) {
           </div>
         )}
         {step === 3 && (
-          <div className="import-step"><div className="import-success"><span className="success-icon">✅</span><h3>{parsedLeads.length} Leads importiert!</h3></div></div>
+          <div className="import-step"><div className="import-success"><span className="success-icon">✓</span><h3>{parsedLeads.length} Leads importiert!</h3></div></div>
         )}
         <div className="modal-footer">
           {step === 1 && <button className="ghost-btn" onClick={onClose}>Abbrechen</button>}
-          {step === 2 && (<><button className="ghost-btn" onClick={() => setStep(1)}>Zurück</button><button className="primary-btn" onClick={handleImport} disabled={loading || parsedLeads.length === 0}>{loading ? '⏳' : `✅ ${parsedLeads.length} Leads importieren`}</button></>)}
+          {step === 2 && (<><button className="ghost-btn" onClick={() => setStep(1)}>Zurück</button><button className="primary-btn" onClick={handleImport} disabled={loading || parsedLeads.length === 0}>{loading ? 'Importiere...' : `${parsedLeads.length} Leads importieren`}</button></>)}
           {step === 3 && <button className="primary-btn" onClick={onClose}>Schließen</button>}
         </div>
       </div>

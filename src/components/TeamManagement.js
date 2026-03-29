@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { formatDate } from "../utils/dates";
+import { IconUsers, IconMail, IconPlus, IconLink, IconCrown } from "./Icons";
 
 function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole, canAssignAdmins }) {
   const [activeSection, setActiveSection] = useState("members");
@@ -127,10 +128,10 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
   };
 
   const SECTIONS = [
-    { id: "members", label: "Mitglieder", icon: "👥" },
-    { id: "invite-email", label: "Per E-Mail", icon: "✉️" },
-    { id: "add-manual", label: "Manuell anlegen", icon: "➕" },
-    { id: "invite-link", label: "Einladungslink", icon: "🔗" },
+    { id: "members", label: "Mitglieder", icon: <IconUsers size={15} /> },
+    { id: "invite-email", label: "Per E-Mail", icon: <IconMail size={15} /> },
+    { id: "add-manual", label: "Manuell anlegen", icon: <IconPlus size={15} /> },
+    { id: "invite-link", label: "Einladungslink", icon: <IconLink size={15} /> },
   ];
 
   return (
@@ -160,7 +161,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
                 {teamMembers.map(m => (
                   <tr key={m.email} className={m.email === currentUser.email ? "members-table-self" : ""}>
                     <td><div className="member-email-cell"><div className="member-avatar-sm">{m.email[0].toUpperCase()}</div><span>{m.email}</span>{m.email === currentUser.email && <span className="you-chip">Du</span>}</div></td>
-                    <td><span className={`member-role-badge ${m.role}`}>{m.role === "admin" ? "👑 Admin" : "🧑 Agent"}</span></td>
+                    <td><span className={`member-role-badge ${m.role}`}>{m.role === "admin" ? <><IconCrown size={12} /> Admin</> : "Agent"}</span></td>
                     <td className="member-date">{m.createdAt ? formatDate(m.createdAt) : "—"}</td>
                     {isAdmin && (<td>{m.email !== currentUser.email ? (<div className="member-actions">{canAssignAdmins && <button className="small-btn" onClick={() => toggleRole(m.email, m.role)}>{m.role === "admin" ? "→ Agent" : "→ Admin"}</button>}<button className="small-btn danger" onClick={() => removeMember(m.email)}>Entfernen</button></div>) : <span className="muted-text">—</span>}</td>)}
                   </tr>
@@ -175,7 +176,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
           <h3>Mitglied per E-Mail einladen</h3>
           <div className="action-form">
             <div className="form-row"><label>E-Mail-Adresse</label><input type="email" placeholder="kollege@beispiel.de" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && inviteByEmail()} disabled={loading} /></div>
-            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${inviteRole === "agent" ? "active" : ""}`} onClick={() => setInviteRole("agent")}>🧑 Agent<span className="role-desc">Leads anlegen &amp; bearbeiten</span></button><button className={`role-pick-btn ${inviteRole === "admin" ? "active" : ""}`} onClick={() => setInviteRole("admin")}>👑 Admin<span className="role-desc">Team verwalten</span></button></div></div>)}
+            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${inviteRole === "agent" ? "active" : ""}`} onClick={() => setInviteRole("agent")}>Agent<span className="role-desc">Leads anlegen &amp; bearbeiten</span></button><button className={`role-pick-btn ${inviteRole === "admin" ? "active" : ""}`} onClick={() => setInviteRole("admin")}><IconCrown size={12} /> Admin<span className="role-desc">Team verwalten</span></button></div></div>)}
             <button className="primary-btn" onClick={inviteByEmail} disabled={loading || !inviteEmail.trim()}>{loading ? "..." : "Einladung senden"}</button>
           </div>
         </div>
@@ -185,7 +186,7 @@ function TeamManagement({ currentUser, teamId, teamMembers, onRefresh, userRole,
           <h3>Mitglied manuell hinzufügen</h3>
           <div className="action-form">
             <div className="form-row"><label>E-Mail-Adresse</label><input type="email" placeholder="kollege@beispiel.de" value={manualEmail} onChange={e => setManualEmail(e.target.value)} disabled={loading} /></div>
-            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${manualRole === "agent" ? "active" : ""}`} onClick={() => setManualRole("agent")}>🧑 Agent</button><button className={`role-pick-btn ${manualRole === "admin" ? "active" : ""}`} onClick={() => setManualRole("admin")}>👑 Admin</button></div></div>)}
+            {canAssignAdmins && (<div className="form-row"><label>Rolle</label><div className="role-picker"><button className={`role-pick-btn ${manualRole === "agent" ? "active" : ""}`} onClick={() => setManualRole("agent")}>Agent</button><button className={`role-pick-btn ${manualRole === "admin" ? "active" : ""}`} onClick={() => setManualRole("admin")}><IconCrown size={12} /> Admin</button></div></div>)}
             <button className="primary-btn" onClick={addManually} disabled={loading || !manualEmail.trim()}>{loading ? "..." : "Hinzufügen"}</button>
           </div>
         </div>

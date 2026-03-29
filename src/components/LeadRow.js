@@ -7,6 +7,7 @@ import {
   getLeadActivityCount, getLeadReadiness, getLeadTemperature,
   getNextAction, getLeadWinProbability, getLeadScoreTone, getLeadOwnerEmail, getLastActivityTimestamp
 } from "../utils/leads";
+import { IconCheck, IconX, IconSearch, IconRefresh, IconZap, IconFlame, IconMapPin } from "./Icons";
 
 function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggleCheck }) {
   const hasCancellationWindow = isOpenCancellationWindow(lead.contractEnd);
@@ -48,7 +49,7 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
           title={readiness.tone === "green" ? "Alle Daten vollständig" : "Daten unvollständig"}
           aria-label={readiness.tone === "green" ? "Alle Daten vollständig" : "Daten unvollständig"}
         >
-          {readiness.tone === "green" ? "🟢" : "🛑"}
+          {readiness.tone === "green" ? <IconCheck size={12} /> : <IconX size={12} />}
         </span>
         <span
           className={`health-pill ${temperature.tone}`}
@@ -58,10 +59,10 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
           {temperature.label}
         </span>
         {lead.energyAuditEligible && (
-          <span className="audit-pill" title="Energieaudit berechtigt">🔍 Audit</span>
+          <span className="audit-pill" title="Energieaudit berechtigt"><IconSearch size={12} /> Audit</span>
         )}
         {lead.renewalResurfacedAt && (
-          <span className="resurface-pill" title="Automatisch wiedervorgelegt">🔁 Renewal</span>
+          <span className="resurface-pill" title="Automatisch wiedervorgelegt"><IconRefresh size={12} /> Renewal</span>
         )}
       </div>
       <div className="lead-row-main">
@@ -75,9 +76,9 @@ function LeadRow({ lead, onSelect, isSelected, selectionMode, isChecked, onToggl
         <div className="lead-row-owner">Owner: {owner}</div>
       </div>
       <div className="lead-row-energy">
-        {stromCount > 0 && <span className="energy-badge strom">🔌 Strom x{stromCount}</span>}
-        {gasCount > 0 && <span className="energy-badge gas">🔥 Gas x{gasCount}</span>}
-        {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}>📍 {deliveryPoints} Lieferstellen</span>)}
+        {stromCount > 0 && <span className="energy-badge strom"><IconZap size={12} /> Strom x{stromCount}</span>}
+        {gasCount > 0 && <span className="energy-badge gas"><IconFlame size={12} /> Gas x{gasCount}</span>}
+        {deliveryPoints > 0 && (<span className={`energy-badge total ${deliveryPoints >= 3 ? "high" : ""}`}><IconMapPin size={12} /> {deliveryPoints} Lieferstellen</span>)}
       </div>
       <div className="lead-row-health">
         <span className={`lead-score-pill ${scoreTone}`}>Deal {closeProbability}%</span>

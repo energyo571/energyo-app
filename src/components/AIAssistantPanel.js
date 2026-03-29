@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { IconTarget, IconSearch, IconClipboard, IconMail } from "./Icons";
 
 function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus }) {
   const [mode, setMode] = useState(null);
@@ -103,10 +104,10 @@ function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus 
   };
 
   const MODES = [
-    { id: "prepare", icon: "🎯", label: "Gesprächsvorbereitung" },
-    { id: "analyze", icon: "🔍", label: "Lead analysieren" },
-    { id: "nextSteps", icon: "📋", label: "Nächste Schritte" },
-    { id: "email", icon: "✉️", label: "E-Mail generieren" },
+    { id: "prepare", icon: <IconTarget size={16} />, label: "Gesprächsvorbereitung" },
+    { id: "analyze", icon: <IconSearch size={16} />, label: "Lead analysieren" },
+    { id: "nextSteps", icon: <IconClipboard size={16} />, label: "Nächste Schritte" },
+    { id: "email", icon: <IconMail size={16} />, label: "E-Mail generieren" },
   ];
 
   return (
@@ -143,7 +144,7 @@ function AIAssistantPanel({ lead, user, userRole, onUpdateField, onUpdateStatus 
           ))}
           {mode === "email" && (
             <button className="ai-copy-btn" onClick={() => navigator.clipboard.writeText(result.content)}>
-              📋 E-Mail kopieren
+              <IconClipboard size={14} /> E-Mail kopieren
             </button>
           )}
         </div>
