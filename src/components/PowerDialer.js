@@ -11,8 +11,8 @@ function PowerDialer({ leads, user, onLogCall, onUpdateField, onClose, onSelectL
     return leads
       .filter(l => l.phone && l.status !== "Verloren")
       .sort((a, b) => {
-        const s = l => (isOverdue(l.followUp) ? 100 : 0) + (isTodayDue(l.followUp) ? 50 : 0) + calculateLeadScore(l);
-        return s(b) - s(a);
+        const score = (lead) => (isOverdue(lead.followUp) ? 100 : 0) + (isTodayDue(lead.followUp) ? 50 : 0) + calculateLeadScore(lead);
+        return score(b) - score(a);
       });
   }, [leads]);
 

@@ -580,7 +580,7 @@ function App() {
     inactive48: leads.filter(l => isLeadInactiveForHours(l, 48)).length,
     priorityA: leads.filter(l => calculatePriority(l) === "A").length,
     openCancellation: leads.filter(l => isOpenCancellationWindow(l.contractEnd)).length,
-    movedEnergyKwh: leads.reduce((sum, lead) => sum + (Number.parseInt(lead.consumption || 0, 10) || 0), 0),
+    movedEnergyKwh: leads.filter(l => l.status !== "Verloren").reduce((sum, lead) => sum + (Number.parseInt(lead.consumption || 0, 10) || 0), 0),
     totalUmsatzPotential: leads.reduce((s, l) => s + calculateUmsatzPotential(l.consumption), 0),
     closingRate: leads.length > 0 ? Math.round((leads.filter(l => l.status === "Abschluss").length / leads.length) * 100) : 0,
   }), [leads]);

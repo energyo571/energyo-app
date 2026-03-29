@@ -49,7 +49,7 @@ function DialerEinwandPanel({ lead, user }) {
         })
       });
       const data = await res.json();
-      setResponse(data.choices?.[0]?.message?.content || data.result || "Keine Antwort erhalten.");
+      setResponse(data.content?.[0]?.text || data.choices?.[0]?.message?.content || "Keine Antwort erhalten.");
     } catch {
       setError("KI-Antwort fehlgeschlagen.");
     } finally {
