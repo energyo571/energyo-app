@@ -1,5 +1,5 @@
-:root {
-  /* â”€â”€ Colors (Apple SF Pro palette) â”€â”€ */
+﻿:root {
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Colors (Apple SF Pro palette) Ã¢â€â‚¬Ã¢â€â‚¬ */
   --bg: #f5f5f7;
   --surface: #ffffff;
   --surface-muted: #fafafa;
@@ -17,17 +17,17 @@
   --warning: #ff9500;
   --today: #af52de;
 
-  /* â”€â”€ Shadows â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Shadows Ã¢â€â‚¬Ã¢â€â‚¬ */
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-soft: none;
   --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.14);
 
-  /* â”€â”€ Radius â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Radius Ã¢â€â‚¬Ã¢â€â‚¬ */
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;
 
-  /* â”€â”€ Spacing (4px grid) â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Spacing (4px grid) Ã¢â€â‚¬Ã¢â€â‚¬ */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -37,7 +37,7 @@
   --space-7: 32px;
   --space-8: 48px;
 
-  /* â”€â”€ Type scale â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Type scale Ã¢â€â‚¬Ã¢â€â‚¬ */
   --text-xs: 11px;
   --text-sm: 12px;
   --text-base: 13px;
@@ -47,17 +47,17 @@
   --text-2xl: 24px;
   --text-3xl: 28px;
 
-  /* â”€â”€ Close button â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Close button Ã¢â€â‚¬Ã¢â€â‚¬ */
   --close-size: 32px;
   --close-icon: 16px;
   --close-radius: 50%;
 
-  /* â”€â”€ Button heights â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Button heights Ã¢â€â‚¬Ã¢â€â‚¬ */
   --btn-sm: 30px;
   --btn-md: 36px;
   --btn-lg: 40px;
 
-  /* â”€â”€ Transition â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Transition Ã¢â€â‚¬Ã¢â€â‚¬ */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --duration: 200ms;
 }
@@ -168,10 +168,6 @@ button {
 .confirm-modal,
 .lead-loading-content {
   box-shadow: none !important;
-}
-
-.sidebar-group-label {
-  display: none;
 }
 
 .sidebar-nav {
@@ -657,7 +653,7 @@ button {
   text-overflow: ellipsis;
 }
 
-/* ── Calendar: Day Add Button ─────────────────────────────────────────────── */
+/* â”€â”€ Calendar: Day Add Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cal-day-add-btn {
   display: none;
   background: none;
@@ -677,7 +673,7 @@ button {
   color: var(--primary);
 }
 
-/* ── Calendar: External Event Chip ────────────────────────────────────────── */
+/* â”€â”€ Calendar: External Event Chip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .calendar-event-chip.external {
   background: rgba(0, 113, 227, 0.10);
   border-left: 2px solid var(--primary);
@@ -703,7 +699,7 @@ button {
   color: var(--danger);
 }
 
-/* ── Calendar: Upcoming External Items ────────────────────────────────────── */
+/* â”€â”€ Calendar: Upcoming External Items â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .calendar-upcoming-item.external {
   border-left: 2px solid var(--primary);
   position: relative;
@@ -729,7 +725,7 @@ button {
   color: var(--danger);
 }
 
-/* ── Calendar: Add Event Modal ────────────────────────────────────────────── */
+/* â”€â”€ Calendar: Add Event Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cal-add-overlay {
   position: fixed;
   inset: 0;
@@ -803,7 +799,7 @@ button {
 .primary-btn-sm:hover { opacity: 0.88; }
 .primary-btn-sm:disabled { opacity: 0.4; cursor: default; }
 
-/* ── Desktop FAB: Neuer Lead ──────────────────────────────────────────────── */
+/* â”€â”€ Desktop FAB: Neuer Lead â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .desktop-fab {
   position: fixed;
   bottom: 28px;
@@ -843,16 +839,6 @@ button {
   .calendar-month-label {
     min-width: 130px;
   }
-}
-
-.team-role-hint {
-  margin: 2px 0 8px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #eaf2ff;
-  border: 1px solid #bfd5ff;
-  color: #2457a6;
-  font-size: 13px;
 }
 
 .main-toolbar {
@@ -1033,7 +1019,7 @@ button {
   background: #0077ed;
 }
 
-/* â”€â”€ SVG icon inline alignment â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ SVG icon inline alignment Ã¢â€â‚¬Ã¢â€â‚¬ */
 .icon {
   display: inline-block;
   vertical-align: -2px;
@@ -1153,7 +1139,7 @@ textarea:focus {
   border-color: var(--text-soft);
 }
 
-/* â”€â”€â”€ Import Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Import Modal Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .import-modal {
   min-width: 480px;
   max-height: 80vh;
@@ -1867,7 +1853,7 @@ textarea:focus {
   outline-offset: 1px;
 }
 
-/* â”€â”€ Drawer meta strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Drawer meta strip Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .drawer-meta-strip {
   display: flex;
   flex-wrap: wrap;
@@ -1926,107 +1912,7 @@ textarea:focus {
   background: #ffebeb;
   color: var(--danger);
 }
-.drawer-meta-chip.overdue {
-  background: #ffebeb;
-  color: var(--danger);
-}
 
-/* â”€â”€ Text overflow fixes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.drawer-company {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.drawer-person {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.drawer-signal-card strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.contact-btn-sub {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 120px;
-}
-.inline-value {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.drawer-tabs {
-  flex-wrap: wrap;
-}
-
-.cockpit-action-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.cockpit-action-head span {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-soft);
-}
-
-.cockpit-action-list {
-  margin: 0;
-  padding-left: 18px;
-  color: #334155;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.cockpit-action-queue {
-  border-top: 1px dashed #d6deea;
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cockpit-action-queue-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.cockpit-action-queue-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.cockpit-action-queue-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 8px;
-}
-
-.cockpit-action-lead {
-  border: 1px solid #dbe3ef;
-  border-radius: 12px;
-  background: #f8fbff;
-  padding: 10px 12px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.cockpit-action-lead small {
-  font-size: 11px;
-  color: #64748b;
-}
 
 .selection-mode-btn {
   display: inline-flex;
@@ -2786,7 +2672,7 @@ textarea:focus {
   gap: 18px;
 }
 
-/* â”€â”€ New Dashboard Layout â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ New Dashboard Layout Ã¢â€â‚¬Ã¢â€â‚¬ */
 .dashboard-layout {
   display: flex;
   flex-direction: column;
@@ -2850,7 +2736,7 @@ textarea:focus {
   border-style: solid;
 }
 
-/* â”€â”€ Focus Shortcuts â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Focus Shortcuts Ã¢â€â‚¬Ã¢â€â‚¬ */
 .dash-shortcuts {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -2896,7 +2782,7 @@ textarea:focus {
   color: var(--text-soft);
 }
 
-/* â”€â”€ Pipeline bar clickable â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Pipeline bar clickable Ã¢â€â‚¬Ã¢â€â‚¬ */
 .bar-row-clickable {
   background: none;
   border: none;
@@ -2910,7 +2796,7 @@ textarea:focus {
   background: var(--surface-muted);
 }
 
-/* â”€â”€ Ranking Table â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Ranking Table Ã¢â€â‚¬Ã¢â€â‚¬ */
 .ranking-table {
   display: flex;
   flex-direction: column;
@@ -2980,7 +2866,7 @@ textarea:focus {
   font-variant-numeric: tabular-nums;
 }
 
-/* â”€â”€ KI Actions â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ KI Actions Ã¢â€â‚¬Ã¢â€â‚¬ */
 .dash-actions-card {
   border-left: 3px solid var(--primary);
 }
@@ -3076,17 +2962,6 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 18px;
-}
-
-.dash-card {
-  padding: 18px;
-}
-
-.dash-card-title {
-  margin: 0 0 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
 }
 
 .dash-energy-card {
@@ -3462,26 +3337,6 @@ textarea:focus {
   flex: 1;
 }
 
-.invite-status {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.invite-status.success {
-  background: #e8faf1;
-  color: #087f5b;
-}
-.invite-status.info {
-  background: #eef5ff;
-  color: #0b5ed7;
-}
-.invite-status.error {
-  background: #fff1f0;
-  color: #c92a2a;
-}
 
 .kanban-board {
   display: grid;
@@ -3638,7 +3493,7 @@ textarea:focus {
   }
 }
 
-/* Drawer in dialer mode â€” no backdrop, fixed position on the right */
+/* Drawer in dialer mode Ã¢â‚¬â€ no backdrop, fixed position on the right */
 .drawer.drawer--dialer {
   position: fixed;
   top: 0;
@@ -3686,6 +3541,9 @@ textarea:focus {
 .drawer-person {
   margin: 0;
   color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drawer-address {
@@ -3778,7 +3636,7 @@ textarea:focus {
   white-space: nowrap;
 }
 
-/* â”€â”€â”€ Audit pill in lead row signals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Audit pill in lead row signals Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .audit-pill {
   font-size: 10px;
   font-weight: 500;
@@ -3799,7 +3657,7 @@ textarea:focus {
   white-space: nowrap;
 }
 
-/* â”€â”€â”€ Deal progress bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Deal progress bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .deal-progress-bar {
   display: flex;
   align-items: stretch;
@@ -3938,7 +3796,7 @@ textarea:focus {
   font-size: 13px;
 }
 
-/* â”€â”€â”€ Contact Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Contact Bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .contact-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -4021,7 +3879,7 @@ textarea:focus {
   background: #e8f4fd;
 }
 
-/* â”€â”€â”€ Clickable phone in lead row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Clickable phone in lead row Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .lead-phone-link {
   color: var(--primary);
   text-decoration: none;
@@ -4067,6 +3925,9 @@ textarea:focus {
 .drawer-signal-card strong {
   font-size: 14px;
   line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drawer-signal-card small {
@@ -4326,6 +4187,7 @@ textarea:focus {
   margin-bottom: 18px;
   border-bottom: 1px solid var(--line-soft);
   padding-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .drawer-tab-btn {
@@ -4462,7 +4324,7 @@ select {
   border: 1px solid var(--line-soft);
 }
 
-/* â”€â”€â”€ Linked status+comment card â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Linked status+comment card Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .activity-item.act-linked {
   grid-template-columns: 1fr;
   border-left: 3px solid #3b82f6;
@@ -4491,7 +4353,7 @@ select {
   grid-column: 1;
 }
 
-/* â”€â”€â”€ Status stack â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Status stack Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .act-stack {
   background: #f8fafc;
 }
@@ -5157,16 +5019,15 @@ select {
 .inline-value {
   font-size: 13px;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .inline-empty {
   color: var(--text-soft);
   font-style: normal;
   font-weight: 500;
-}
-
-.inline-edit-icon {
-  color: var(--text-soft);
 }
 
 .details-energy-section {
@@ -5338,7 +5199,7 @@ select {
   word-break: break-word;
 }
 
-/* .preview-close â€” unified above with .drawer-close-btn */
+/* .preview-close Ã¢â‚¬â€ unified above with .drawer-close-btn */
 
 .preview-content {
   padding: 24px;
@@ -5563,7 +5424,7 @@ select {
   color: #64748b;
 }
 
-/* â”€â”€â”€ Address Sections â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Address Sections Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .address-section {
   border: 1px solid var(--line);
   background: var(--surface-muted);
@@ -6124,7 +5985,7 @@ select {
 }
 
 /* ---------------------------------------------------------------------------
-   TEAM MANAGEMENT ï¿½ NEW UI
+   TEAM MANAGEMENT Ã¯Â¿Â½ NEW UI
    --------------------------------------------------------------------------- */
 
 /* Team page wrapper */
@@ -6531,6 +6392,7 @@ select {
 
 /* Invite status message */
 .invite-status {
+  margin-top: 10px;
   padding: 11px 16px;
   border-radius: 8px;
   font-size: 13.5px;
@@ -6576,18 +6438,18 @@ select {
   }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ENERGYO â€” NEUE CSS KLASSEN
-   Diese BlÃ¶cke ans Ende deiner App.css hÃ¤ngen.
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+   ENERGYO Ã¢â‚¬â€ NEUE CSS KLASSEN
+   Diese BlÃƒÂ¶cke ans Ende deiner App.css hÃƒÂ¤ngen.
    Alle bestehenden CSS-Klassen bleiben erhalten.
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 
-/* â”€â”€â”€ fmtEnergy kWh counter in Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ fmtEnergy kWh counter in Sidebar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .sidebar-kpi-value[style] {
   font-size: 0.78rem !important;
 }
 
-/* â”€â”€â”€ DECAY BADGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ DECAY BADGE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .decay-badge {
   display: inline-flex;
   align-items: center;
@@ -6611,7 +6473,7 @@ select {
   animation: decay-pulse 1.6s ease-in-out infinite;
 }
 
-/* â”€â”€â”€ ACTION COCKPIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ ACTION COCKPIT Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .cockpit {
   display: flex;
   flex-direction: column;
@@ -6778,7 +6640,7 @@ select {
   font-style: italic;
 }
 
-/* â”€â”€â”€ DRAWER NEXT ACTION BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ DRAWER NEXT ACTION BANNER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .drawer-next-action {
   display: flex;
   align-items: center;
@@ -6824,7 +6686,7 @@ select {
   padding: 2px 9px;
 }
 
-/* â”€â”€â”€ DRAWER DECAY BADGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ DRAWER DECAY BADGE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .drawer-decay-badge {
   display: inline-flex;
   align-items: center;
@@ -6835,7 +6697,7 @@ select {
   font-weight: 700;
 }
 
-/* â”€â”€â”€ LEAD ROW NEGLECTED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEAD ROW NEGLECTED Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .lead-row.neglected {
   border-left: 3px solid #fca5a5;
 }
@@ -6848,7 +6710,7 @@ select {
   font-weight: 700;
 }
 
-/* â”€â”€â”€ KANBAN KWH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ KANBAN KWH Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .kanban-col-kwh {
   font-size: 0.7rem;
   color: #2563eb;
@@ -6859,7 +6721,7 @@ select {
   color: #2563eb;
 }
 
-/* â”€â”€â”€ DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ DASHBOARD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .dash-root {
   display: flex;
   flex-direction: column;
@@ -6968,6 +6830,7 @@ select {
   margin-bottom: 14px;
 }
 .dash-card-title {
+  margin: 0 0 14px;
   font-weight: 700;
   font-size: 0.9rem;
   color: #1e293b;
@@ -7049,7 +6912,7 @@ select {
   padding: 12px 0;
 }
 
-/* â”€â”€â”€ POWER DIALER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ POWER DIALER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .power-dialer {
   display: flex;
   flex-direction: column;
@@ -7237,7 +7100,7 @@ select {
   cursor: pointer;
 }
 
-/* â”€â”€â”€ SAVINGS CALCULATOR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ SAVINGS CALCULATOR Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .savings-calc {
   background: linear-gradient(135deg, #0f172a, #1e3a5f);
   border-radius: 14px;
@@ -7445,7 +7308,7 @@ select {
   justify-content: flex-end;
 }
 
-/* â”€â”€ Tariff recommendation tiles â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Tariff recommendation tiles Ã¢â€â‚¬Ã¢â€â‚¬ */
 .tariff-tiles-section {
   margin: 6px 0 2px;
 }
@@ -7595,7 +7458,7 @@ select {
   }
 }
 
-/* â”€â”€â”€ WECHSEL TRACKER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ WECHSEL TRACKER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .wechsel-locked {
   display: flex;
   align-items: center;
@@ -7770,7 +7633,7 @@ select {
   margin-top: 3px;
 }
 
-/* â”€â”€â”€ AI MORGEN-BRIEFING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ AI MORGEN-BRIEFING Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .briefing-widget {
   background: linear-gradient(135deg, #0f172a, #1e1b4b);
   border-radius: 14px;
@@ -7884,7 +7747,7 @@ select {
   align-self: flex-end;
 }
 
-/* â”€â”€â”€ OBJECTION HANDLER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ OBJECTION HANDLER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .objection-handler {
   background: #0f172a;
   border-radius: 14px;
@@ -8020,7 +7883,7 @@ select {
   font-weight: 500;
 }
 
-/* â”€â”€â”€ POWER DIALER BUTTON IN KPI STRIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ POWER DIALER BUTTON IN KPI STRIP Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .kpi-strip-right {
   display: flex;
   gap: 7px;
@@ -8040,7 +7903,7 @@ select {
   background: #15803d;
 }
 
-/* â”€â”€â”€ ENERGY BADGE KWH in lead row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ ENERGY BADGE KWH in lead row Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .energy-badge.kwh {
   background: #eff6ff;
   color: #2563eb;
@@ -8319,605 +8182,4 @@ select {
   .dashboard-summary {
     grid-template-columns: 1fr;
   }
-}
-
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   DESIGN SYSTEM â€” CONSISTENCY LAYER
-   Apple / Close.com visual language enforcement
-   All overrides use specificity to normalize without touching originals
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
-/* â”€â”€ 1. Border Radius: 3-tier system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-/* Tier 1: Small (8px) â€” buttons, inputs, pills, badges, chips */
-.toolbar-action-btn,
-.toolbar-icon-btn,
-.view-toggle-group,
-.view-toggle-btn,
-.density-toggle-group,
-.density-toggle-btn,
-.smart-view-chip,
-.add-meter-btn,
-.wechsel-complete-btn,
-.wechsel-confirm-btn,
-.wechsel-cancel-btn,
-.remove-meter-btn,
-.bulk-action-bar,
-.bulk-select-all-btn,
-.selection-mode-btn,
-.delete-mode-info,
-.filter-select-inline,
-.toolbar-search,
-.command-insights-toggle,
-.kpi-reset-btn,
-.quick-action-btn,
-.compose-action-btn,
-.danger-btn,
-.danger-btn-xs,
-.ghost-btn-xs,
-.status-step-btn,
-.small-btn,
-.ghost-btn,
-.ghost-btn-sm,
-.danger-btn-sm,
-.sequence-btn,
-.cal-btn,
-.team-role-hint,
-.invite-status,
-.import-error,
-.import-warning,
-.provision-status-btn,
-.ai-mode-btn,
-.ai-error,
-.ai-apply-message,
-.ai-copy-btn,
-.objection-chip,
-.briefing-regenerate,
-.breadcrumb-btn {
-  border-radius: var(--radius-sm);
-}
-
-/* Tier 2: Medium (12px) â€” cards, panels, sections */
-.card,
-.summary-metric-card,
-.command-card,
-.kpi-item,
-.kpi-action-btn,
-.kanban-card,
-.lead-row-checkbox input[type="checkbox"],
-.activity-item,
-.activity-icon-wrap,
-.drawer-signal-card,
-.drawer-core-item,
-.inline-field,
-.attachment-row,
-.won-bundle-card,
-.lost-card,
-.cockpit-action-lead,
-.cockpit-cta-card,
-.cockpit-action-card,
-.cockpit-trend-inline,
-.delivery-location-card,
-.meter-card,
-.preview-item,
-.next-action-playbook,
-.next-action-playbook-grid div,
-.sequence-step-card,
-.planung-calc-wrap,
-.dash-kpi,
-.dash-shortcut,
-.dash-action,
-.dash-action-icon,
-.ai-result,
-.ai-loading,
-.ranking-row,
-.performer-item,
-.team-member-item,
-.performer-rank,
-.calendar-event-chip,
-.calendar-upcoming-item,
-.dialer-card,
-.objection-response,
-.briefing-content,
-.wechsel-tracker,
-.provisions-tracker,
-.address-section,
-.energy-detail-card,
-.energy-section,
-.meter-card-header,
-.audit-gate,
-.activity-compose-bar,
-.note-compose,
-.call-form,
-.attachments-upload-zone,
-.drawer-created-by,
-.team-inline-hint,
-.file-upload-zone,
-.bulk-hint-bar,
-.won-bundle-section,
-.empty-timeline,
-.market-trend-sparkline-wrap,
-.market-trend-error,
-.existing-appointment,
-.cal-confirm-box,
-.activity-edit-area textarea,
-.wechsel-locked {
-  border-radius: var(--radius);
-}
-
-/* Tier 3: Large (16px) â€” drawers, modals, big panels */
-.modal,
-.new-lead-modal,
-.preview-modal,
-.confirm-modal,
-.appointment-modal,
-.import-modal,
-.modal-backdrop + .modal,
-.leads-table-wrap,
-.kanban-col,
-.calendar-month-board,
-.calendar-upcoming-panel,
-.drawer,
-.lead-loading-content,
-.command-hero,
-.command-summary-bar,
-.power-dialer-modal,
-.sticky-smart-view,
-.savings-calc,
-.briefing-widget,
-.objection-handler,
-.contact-btn,
-.dialer-einwand-panel {
-  border-radius: var(--radius-lg);
-}
-
-/* â”€â”€ 2. Font Weight: 3-tier system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-/* Tier 1: Regular (500) â€” body text, descriptions */
-.drawer-person,
-.step-desc,
-.upload-hint,
-.activity-text,
-.ai-result-text,
-.briefing-line,
-.objection-line,
-.cockpit-action-list,
-.calendar-event-title,
-.command-card p,
-.bar-label {
-  font-weight: 500;
-}
-
-/* Tier 2: Medium (600) â€” labels, secondary headings, buttons */
-.sidebar-item-label,
-.sidebar-footer-name,
-.page-title,
-.inline-label,
-.form-group label,
-.energy-section-header label,
-.kpi-label,
-.dash-kpi-label,
-.dash-shortcut-label,
-.summary-metric-card span,
-.hero-metric-card span,
-.lth-checkbox,
-.leads-table-header,
-.drawer-signal-card span,
-.drawer-core-item span,
-.energy-detail-key,
-.new-lead-btn,
-.primary-btn-modal,
-.primary-btn-sm,
-.primary-btn,
-.import-btn,
-.toolbar-action-btn,
-.small-btn,
-.ghost-btn,
-.ghost-btn-sm,
-.danger-btn-sm,
-.confirm-actions button,
-.radio-label,
-.checkbox-label,
-.att-name,
-.bulk-count,
-.bulk-confirm-text,
-.filter-result-count,
-.lead-pagination-inline,
-.ranking-name,
-.invite-status,
-.status-action-head span,
-.cockpit-action-head span,
-.quick-nav-title,
-.ai-panel-title,
-.savings-title,
-.wechsel-title,
-.briefing-greeting,
-.objection-title,
-.user-email-short,
-.drawer-umsatz-label {
-  font-weight: 600;
-}
-
-/* Tier 3: Bold (700) â€” emphasis, KPIs, section titles */
-.drawer-company,
-.modal h2,
-.lead-row-company,
-.kanban-company,
-.kpi-val,
-.dash-kpi-val,
-.dash-shortcut-count,
-.summary-metric-card strong,
-.hero-metric-card strong,
-.market-trend-value,
-.drawer-umsatz-value,
-.ranking-col-stat,
-.dash-action-title,
-.contact-btn-label,
-.quick-action-btn,
-.compose-action-btn,
-.sequence-btn,
-.drawer-prio-badge,
-.drawer-badge,
-.call-outcome-badge,
-.energy-detail-value,
-.energy-detail-label,
-.inline-value,
-.meter-index,
-.drawer-meta-chip,
-.selection-mode-btn,
-.delete-mode-count,
-.command-card-label,
-.command-card-meta,
-.status-action-head strong,
-.ai-result-header,
-.ai-result-title,
-.section-label,
-.won-bundle-title,
-.cockpit-trend-title,
-.table-header,
-.upload-label,
-.location-index,
-.add-meter-btn {
-  font-weight: 700;
-}
-
-/* â”€â”€ 3. Button Height Normalization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-/* Small (32px) â€” toolbar actions, compact */
-.toolbar-action-btn,
-.delete-mode-btn,
-.delete-mode-cancel,
-.bulk-select-all-btn,
-.density-toggle-btn,
-.view-toggle-btn {
-  height: var(--btn-sm);
-  padding-top: 0;
-  padding-bottom: 0;
-  display: inline-flex;
-  align-items: center;
-}
-
-/* Medium (36px) â€” primary actions, toolbar icons */
-.toolbar-icon-btn,
-.new-lead-btn,
-.primary-btn-modal,
-.primary-btn-sm,
-.primary-btn,
-.import-btn,
-.selection-mode-btn,
-.kpi-action-btn,
-.small-btn,
-.ghost-btn,
-.ghost-btn-sm,
-.danger-btn-sm,
-.quick-action-btn,
-.status-step-btn,
-.compose-action-btn,
-.command-insights-toggle,
-.kpi-reset-btn,
-.add-meter-btn {
-  height: var(--btn-md);
-  padding-top: 0;
-  padding-bottom: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Large (40px) â€” attachment actions */
-.att-btn {
-  width: var(--btn-lg);
-  height: var(--btn-lg);
-  border-radius: var(--radius-sm);
-}
-
-/* â”€â”€ 4. Input/Select/Textarea Normalization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-textarea,
-input,
-select {
-  border-radius: var(--radius-sm);
-  border-color: var(--line);
-  transition:
-    border-color var(--duration) var(--ease),
-    box-shadow var(--duration) var(--ease);
-}
-
-textarea:focus,
-input:focus,
-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
-  outline: none;
-}
-
-/* â”€â”€ 5. Transition Normalization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-button,
-a,
-.kanban-card,
-.lead-row,
-.kpi-item.clickable,
-.dash-shortcut,
-.dash-action,
-.contact-btn,
-.toolbar-icon-btn,
-.toolbar-action-btn,
-.sidebar-nav-item {
-  transition: all var(--duration) var(--ease);
-}
-
-/* â”€â”€ 6. Consistent Card Padding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.card,
-.dash-card,
-.dashboard-card {
-  padding: var(--space-5);
-}
-
-.kpi-item,
-.dash-kpi,
-.summary-metric-card,
-.cockpit-cta-card {
-  padding: var(--space-3) var(--space-3);
-}
-
-.drawer-signal-card,
-.drawer-core-item,
-.inline-field,
-.activity-item,
-.attachment-row,
-.cockpit-action-card,
-.won-bundle-card,
-.cockpit-action-lead,
-.delivery-location-card,
-.meter-card,
-.next-action-playbook,
-.sequence-step-card {
-  padding: var(--space-3) var(--space-4);
-}
-
-.drawer {
-  padding: 24px 28px;
-}
-
-.modal,
-.new-lead-modal {
-  padding: 28px;
-}
-
-.confirm-modal {
-  padding: var(--space-7) var(--space-6);
-}
-
-/* â”€â”€ 7. Consistent Gap System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.drawer-tabs,
-.quick-action-row,
-.drawer-status-stepper,
-.smart-view-bar,
-.filter-bar,
-.toolbar-actions {
-  gap: var(--space-2);
-}
-
-.sidebar-nav,
-.drawer-tab-content,
-.activity-timeline,
-.modal-form,
-.tab-page,
-.dashboard-layout {
-  gap: var(--space-4);
-}
-
-/* â”€â”€ 8. Consistent Modal Widths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.preview-modal {
-  width: min(800px, 92vw);
-  box-shadow: var(--shadow-modal);
-}
-
-.confirm-modal {
-  width: min(420px, 88vw);
-  box-shadow: var(--shadow-modal);
-}
-
-.modal,
-.new-lead-modal {
-  box-shadow: var(--shadow-modal);
-}
-
-/* â”€â”€ 9. Typography Consistency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.page-title {
-  font-size: var(--text-xl);
-  letter-spacing: -0.025em;
-}
-
-.drawer-company,
-.modal h2 {
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  font-weight: 700;
-}
-
-.confirm-modal h3 {
-  font-size: var(--text-lg);
-}
-
-/* Label tier: all uppercase labels use same size */
-.inline-label,
-.form-group label,
-.energy-section-header label,
-.kpi-label,
-.dash-kpi-label,
-.dash-shortcut-label,
-.leads-table-header,
-.drawer-signal-card span,
-.drawer-core-item span,
-.energy-detail-key,
-.command-card-label,
-.command-card-meta,
-.next-action-playbook-head span,
-.next-action-playbook-grid span,
-.sequence-playbook-head span {
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Body text tier */
-.toolbar-action-btn,
-.new-lead-btn,
-.primary-btn-modal,
-.primary-btn,
-.import-btn,
-.drawer-tab-btn,
-.filter-select-inline,
-.toolbar-search,
-.status-step-btn,
-.quick-action-btn,
-.compose-action-btn,
-.small-btn,
-.ghost-btn,
-.ghost-btn-sm,
-.danger-btn-sm,
-.kpi-action-btn,
-.selection-mode-btn,
-.command-insights-toggle,
-.kpi-reset-btn,
-.ai-mode-btn span:last-child {
-  font-size: var(--text-base);
-}
-
-/* Meta/secondary text tier */
-.lead-row-sub,
-.lead-row-owner,
-.att-meta,
-.activity-time,
-.drawer-address,
-.calendar-event-time,
-.calendar-more-events,
-.kanban-person,
-.last-activity-label,
-.no-company,
-.ranking-role,
-.member-role-badge,
-.performer-role {
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-}
-
-/* KPI value tier: consistent large numbers */
-.kpi-val,
-.summary-metric-card strong,
-.command-card strong {
-  font-size: var(--text-xl);
-}
-
-.dash-kpi-val,
-.dash-shortcut-count {
-  font-size: var(--text-xl);
-}
-
-.hero-metric-card strong {
-  font-size: var(--text-2xl);
-}
-
-.drawer-umsatz-value {
-  font-size: var(--text-2xl);
-}
-
-/* â”€â”€ 10. Pill/Badge Consistency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.status-chip,
-.energy-badge,
-.health-pill,
-.lead-score-pill,
-.next-action-pill,
-.ampel-pill,
-.followup-chip,
-.audit-pill,
-.resurface-pill {
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 2px 8px;
-  line-height: 1.4;
-}
-
-.drawer-prio-badge,
-.drawer-badge {
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
-
-.drawer-meta-chip {
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  border: none;
-}
-
-.user-role-chip {
-  border-radius: 4px;
-  padding: 3px 8px;
-  font-size: var(--text-xs);
-}
-
-.call-outcome-badge {
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-size: var(--text-sm);
-}
-
-/* â”€â”€ 11. Sidebar Consistency (Dark Theme) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.sidebar-nav-item {
-  font-size: var(--text-base);
-  padding: 9px 14px;
-  border-radius: var(--radius-sm);
-}
-
-.sidebar-nav-item svg {
-  width: 18px;
-  height: 18px;
-}
-
-.sidebar-kpi-item {
-  border-radius: var(--radius-sm);
-}
-
-/* â”€â”€ 12. Hover State Consistency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.kanban-card:hover,
-.won-bundle-card:hover,
-.dash-shortcut:hover,
-.dash-action:hover,
-.cockpit-action-lead:hover,
-.quick-action-btn:hover,
-.compose-action-btn:hover {
-  background: var(--surface-muted);
-}
-
-/* â”€â”€ 13. Focus ring consistency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
 }
