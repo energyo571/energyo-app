@@ -74,7 +74,7 @@ function Sidebar({ activeTab, setActiveTab, user, userRole, userProfile, avatarU
           <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarChange} />
           <span className="sidebar-footer-name">{displayName}</span>
           <span className="sidebar-footer-spacer" />
-          <a href={`mailto:info@energyo.de?subject=${encodeURIComponent('Fehlermeldung – ENERGYO SalesEngine')}&body=${encodeURIComponent(`Fehler gemeldet von: ${user.email}\n\nBeschreibung:\n\n`)}`} className="sidebar-footer-icon" title="Fehler melden"><IconHelp /></a>
+          <a href={`mailto:y.oezdemir@energyo.de?subject=${encodeURIComponent('Fehlermeldung – ENERGYO SalesEngine')}&body=${encodeURIComponent(`Fehler gemeldet von: ${user.email}\n\nBeschreibung:\n\n`)}`} className="sidebar-footer-icon" title="Fehler melden"><IconHelp /></a>
           <button type="button" className="sidebar-footer-icon" title="Abmelden" onClick={onSignOut}><IconLogout /></button>
         </div>
       </div>

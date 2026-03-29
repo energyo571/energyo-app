@@ -96,17 +96,22 @@ function MailboxPanel() {
 
   // Check if IMAP is configured for this user
   useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     (async () => {
       try {
-        const res = await authFetch(`${API}/api/email-settings`);
+        const res = await authFetch(`${API}/api/email-settings`, { signal: controller.signal });
         if (!res.ok) throw new Error();
         const data = await res.json();
         setImapConfigured(data.configured);
         setImapUser(data.imapUser || "");
       } catch {
         setImapConfigured(false);
+      } finally {
+        clearTimeout(timeout);
       }
     })();
+    return () => { controller.abort(); clearTimeout(timeout); };
   }, []);
 
   const fetchEmails = useCallback(async (pg = 1) => {
