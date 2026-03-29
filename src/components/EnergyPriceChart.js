@@ -2,11 +2,17 @@ import React, { useState, useEffect, useMemo } from "react";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || "";
 
+const MODES = [
+  { key: "strom", label: "⚡ Strom", color: "#2563eb", gradId: "epcGradStrom" },
+  { key: "gas",   label: "🔥 Gas",   color: "#ea580c", gradId: "epcGradGas"   },
+];
+
 function EnergyPriceChart() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [range, setRange] = useState(6); // months
+  const [mode, setMode] = useState("strom"); // "strom" | "gas"
 
   useEffect(() => {
     let cancelled = false;
@@ -32,29 +38,29 @@ function EnergyPriceChart() {
     return () => { cancelled = true; };
   }, [range]);
 
-  // Downsample to ~1 point per week for readability
+  const modeConfig = MODES.find((m) => m.key === mode);
+  const rawPoints = data?.[mode] || [];
+
+  // Downsample to ~60 points for readability
   const chartPoints = useMemo(() => {
-    if (!data?.strom) return [];
-    const pts = data.strom;
-    if (pts.length <= 60) return pts;
-    const step = Math.max(1, Math.floor(pts.length / 60));
+    if (rawPoints.length <= 60) return rawPoints;
+    const step = Math.max(1, Math.floor(rawPoints.length / 60));
     const sampled = [];
-    for (let i = 0; i < pts.length; i += step) sampled.push(pts[i]);
-    if (sampled[sampled.length - 1] !== pts[pts.length - 1]) sampled.push(pts[pts.length - 1]);
+    for (let i = 0; i < rawPoints.length; i += step) sampled.push(rawPoints[i]);
+    if (sampled[sampled.length - 1] !== rawPoints[rawPoints.length - 1]) sampled.push(rawPoints[rawPoints.length - 1]);
     return sampled;
-  }, [data]);
+  }, [rawPoints]);
 
   const stats = useMemo(() => {
-    if (!data?.strom || data.strom.length < 2) return null;
-    const pts = data.strom;
-    const latest = pts[pts.length - 1].ctKwh;
-    const oldest = pts[0].ctKwh;
-    const max = Math.max(...pts.map((p) => p.ctKwh));
-    const min = Math.min(...pts.map((p) => p.ctKwh));
-    const avg = pts.reduce((s, p) => s + p.ctKwh, 0) / pts.length;
+    if (rawPoints.length < 2) return null;
+    const latest = rawPoints[rawPoints.length - 1].ctKwh;
+    const oldest = rawPoints[0].ctKwh;
+    const max = Math.max(...rawPoints.map((p) => p.ctKwh));
+    const min = Math.min(...rawPoints.map((p) => p.ctKwh));
+    const avg = rawPoints.reduce((s, p) => s + p.ctKwh, 0) / rawPoints.length;
     const changePct = oldest !== 0 ? ((latest - oldest) / oldest) * 100 : 0;
     return { latest, oldest, max, min, avg: Math.round(avg * 100) / 100, changePct: Math.round(changePct * 10) / 10 };
-  }, [data]);
+  }, [rawPoints]);
 
   // SVG chart dimensions
   const W = 600;
@@ -97,7 +103,13 @@ function EnergyPriceChart() {
   return (
     <div className="energy-price-chart">
       <div className="epc-header">
-        <h3 className="epc-title">⚡ Strompreis-Entwicklung (Großhandel)</h3>
+        <div className="epc-mode-btns">
+          {MODES.map((m) => (
+            <button key={m.key} type="button" className={`epc-mode-btn epc-mode-${m.key}${mode === m.key ? " active" : ""}`} onClick={() => setMode(m.key)}>
+              {m.label}
+            </button>
+          ))}
+        </div>
         <div className="epc-range-btns">
           {[3, 6, 12].map((m) => (
             <button key={m} type="button" className={`epc-range-btn${range === m ? " active" : ""}`} onClick={() => setRange(m)}>
@@ -110,7 +122,11 @@ function EnergyPriceChart() {
       {loading && <div className="epc-loading">Lade Preisdaten…</div>}
       {error && <div className="epc-error">{error}</div>}
 
-      {!loading && !error && svgData && (
+      {!loading && !error && rawPoints.length < 2 && (
+        <div className="epc-error">Keine {mode === "gas" ? "Gas" : "Strom"}-Daten verfügbar</div>
+      )}
+
+      {!loading && !error && svgData && stats && (
         <>
           <div className="epc-stats">
             <div className="epc-stat">
@@ -132,7 +148,7 @@ function EnergyPriceChart() {
               </strong>
             </div>
           </div>
-          <svg className="epc-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Strompreis-Entwicklung">
+          <svg className="epc-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${mode === "gas" ? "Gas" : "Strom"}preis-Entwicklung`}>
             {/* Grid lines */}
             {svgData.yTicks.map((t) => (
               <g key={t.val}>
@@ -147,21 +163,27 @@ function EnergyPriceChart() {
             {/* Area fill */}
             <path
               d={`${svgData.path} L${(W - PAD.right).toFixed(1)},${(PAD.top + ch).toFixed(1)} L${PAD.left},${(PAD.top + ch).toFixed(1)} Z`}
-              fill="url(#epcGrad)" opacity="0.3"
+              fill={`url(#${modeConfig.gradId})`} opacity="0.3"
             />
             {/* Line */}
-            <path d={svgData.path} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            {/* Hover dots — show last point */}
-            <circle cx={svgData.points[svgData.points.length - 1].x} cy={svgData.points[svgData.points.length - 1].y} r="3.5" fill="#1d4ed8" />
+            <path d={svgData.path} fill="none" stroke={modeConfig.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Last-point dot */}
+            <circle cx={svgData.points[svgData.points.length - 1].x} cy={svgData.points[svgData.points.length - 1].y} r="3.5" fill={modeConfig.color} />
             <defs>
-              <linearGradient id="epcGrad" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="epcGradStrom" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#3b82f6" />
                 <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="epcGradGas" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ea580c" />
+                <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>
           <div className="epc-source">
-            Quelle: Energy-Charts.info (SMARD / BNetzA) · CC BY 4.0 · ct/kWh netto (Großhandel Day-Ahead)
+            {mode === "strom"
+              ? "Quelle: Energy-Charts.info (SMARD / BNetzA) · CC BY 4.0 · ct/kWh netto (Großhandel Day-Ahead)"
+              : "Quelle: TTF Front-Month (ICE Endex) · ct/kWh netto (Großhandel)"}
           </div>
         </>
       )}
