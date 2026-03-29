@@ -1,12 +1,12 @@
 // ─── Konstanten ───────────────────────────────────────────────────────────────
 export const STATUS_OPTIONS = ["Neu", "Kontaktiert", "Angebot", "Follow-up", "Abschluss", "Verloren"];
 export const STATUS_META = {
-  Neu:           { color: "#6b7280", bg: "#f3f4f6" },
-  Kontaktiert:   { color: "#1d4ed8", bg: "#dbeafe" },
-  Angebot:       { color: "#c2410c", bg: "#ffedd5" },
-  "Follow-up":   { color: "#b45309", bg: "#fef3c7" },
-  Abschluss:     { color: "#065f46", bg: "#d1fae5" },
-  Verloren:      { color: "#991b1b", bg: "#fee2e2" },
+  Neu:           { color: "#86868b", bg: "#f5f5f7" },
+  Kontaktiert:   { color: "#0071e3", bg: "#e8f4fd" },
+  Angebot:       { color: "#ff9500", bg: "#fff4e5" },
+  "Follow-up":   { color: "#af52de", bg: "#f3eaff" },
+  Abschluss:     { color: "#34c759", bg: "#e8f8ef" },
+  Verloren:      { color: "#86868b", bg: "#f5f5f7" },
 };
 export const CALL_OUTCOMES = [
   "Nicht erreicht", "Mailbox", "Kurzer Kontakt",

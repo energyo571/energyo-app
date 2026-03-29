@@ -7,15 +7,15 @@ import { isOverdue, isTodayDue, isOpenCancellationWindow } from "../utils/dates"
 import EnergyPriceChart from "./EnergyPriceChart";
 import { RankBadge, IconClipboard, IconCheck, IconArrowRight, IconZap, IconAlertTriangle, IconTarget, IconClock, IconStar, IconFlame, IconCalendar, IconPhone } from "./Icons";
 
-const STATUS_COLORS = { Neu: "#6c757d", Kontaktiert: "#0d6efd", Angebot: "#fd7e14", "Follow-up": "#ffc107", Abschluss: "#198754", Verloren: "#dc3545" };
+const STATUS_COLORS = { Neu: "#86868b", Kontaktiert: "#0071e3", Angebot: "#ff9500", "Follow-up": "#af52de", Abschluss: "#34c759", Verloren: "#86868b" };
 
 const FOCUS_SHORTCUTS = [
-  { id: "hot",           label: "Hot Leads",       color: "#f59e0b", key: "priorityA" },
-  { id: "overdue",       label: "Überfällig",      color: "#dc2626", key: "overdue" },
-  { id: "today",         label: "Heute fällig",    color: "#7c3aed", key: "dueToday" },
-  { id: "inactive48",    label: ">48h inaktiv",    color: "#6b7280", key: "inactive48" },
-  { id: "cancellation",  label: "Kündigungsfenster",color: "#ea580c", key: "openCancellation" },
-  { id: "won",           label: "Abschlüsse",      color: "#059669", key: "wonLeads" },
+  { id: "hot",           label: "Hot Leads",       color: "#ff9500", key: "priorityA" },
+  { id: "overdue",       label: "Überfällig",      color: "#ff3b30", key: "overdue" },
+  { id: "today",         label: "Heute fällig",    color: "#af52de", key: "dueToday" },
+  { id: "inactive48",    label: ">48h inaktiv",    color: "#86868b", key: "inactive48" },
+  { id: "cancellation",  label: "Kündigungsfenster",color: "#ff9500", key: "openCancellation" },
+  { id: "won",           label: "Abschlüsse",      color: "#34c759", key: "wonLeads" },
 ];
 
 function getClosingColor(rate) {
