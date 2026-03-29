@@ -183,7 +183,7 @@ function EnergyPriceChart() {
           <div className="epc-source">
             {mode === "strom"
               ? "Quelle: Energy-Charts.info (SMARD / BNetzA) · CC BY 4.0 · ct/kWh netto (Großhandel Day-Ahead)"
-              : "Quelle: TTF Front-Month (ICE Endex) · ct/kWh netto (Großhandel)"}
+              : "Quelle: TTF Front-Month (ICE Endex) · ct/kWh netto (Großhandel) · EU-Referenzpreis"}
           </div>
         </>
       )}
