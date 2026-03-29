@@ -7,7 +7,7 @@ const ALLOWED_LEAD_FIELDS = new Set([
   "person", "company", "phone", "email", "postalCode", "address",
   "city", "notes", "status", "followUp", "contractEnd", "provider",
   "consumption", "monthlyPayment", "meterNumber", "contractNumber",
-  "commentDraft", "attachments", "callLogs", "comments",
+  "commentDraft", "attachments", "callLogs", "comments", "energy",
   "statusHistory", "renewalResurfacedAt", "renewalResurfaceReason",
   "ownerUserId", "ownerEmail",
 ]);

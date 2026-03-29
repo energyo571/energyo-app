@@ -132,6 +132,15 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                     {form.energy.strom.length > 1 && (<button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.filter((_, i) => i !== idx) } }))} disabled={loading}>✕ Entfernen</button>)}
                   </div>
                   <div className="meter-grid">
+                    <div className="form-group"><label>Zählertyp</label><select value={meter.zählertyp || "SLP"} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählertyp: e.target.value, spannungsebene: e.target.value === "SLP" ? "" : m.spannungsebene, spannungsebeneWert: e.target.value === "SLP" ? "" : m.spannungsebeneWert } : m) } }))} disabled={loading}><option value="SLP">SLP</option><option value="RLM">RLM</option></select></div>
+                    {meter.zählertyp === "RLM" && (
+                      <>
+                        <div className="form-group"><label>Spannungsebene</label><select value={meter.spannungsebene || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, spannungsebene: e.target.value, spannungsebeneWert: e.target.value !== "bekannt" ? "" : m.spannungsebeneWert } : m) } }))} disabled={loading}><option value="">– Auswählen –</option><option value="bekannt">Bekannt</option><option value="unbekannt">Unbekannt</option></select></div>
+                        {meter.spannungsebene === "bekannt" && (
+                          <div className="form-group"><label>Spannungsebene (Wert)</label><input type="text" placeholder="z.B. Mittelspannung" value={meter.spannungsebeneWert || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, spannungsebeneWert: e.target.value } : m) } }))} disabled={loading} /></div>
+                        )}
+                      </>
+                    )}
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 123456789" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>Verbrauch (kWh) *</label><input type="number" placeholder="z.B. 25000" value={meter.verbrauchKwh} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, strom: p.energy.strom.map((m, i) => i === idx ? { ...m, verbrauchKwh: e.target.value } : m) } }))} disabled={loading} /></div>
@@ -164,6 +173,15 @@ function NewLeadModal({ onClose, onSubmit, loading }) {
                     {form.energy.gas.length > 1 && (<button type="button" className="remove-meter-btn" onClick={() => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.filter((_, i) => i !== idx) } }))} disabled={loading}>✕ Entfernen</button>)}
                   </div>
                   <div className="meter-grid">
+                    <div className="form-group"><label>Zählertyp</label><select value={meter.zählertyp || "SLP"} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählertyp: e.target.value, spannungsebene: e.target.value === "SLP" ? "" : m.spannungsebene, spannungsebeneWert: e.target.value === "SLP" ? "" : m.spannungsebeneWert } : m) } }))} disabled={loading}><option value="SLP">SLP</option><option value="RLM">RLM</option></select></div>
+                    {meter.zählertyp === "RLM" && (
+                      <>
+                        <div className="form-group"><label>Spannungsebene</label><select value={meter.spannungsebene || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, spannungsebene: e.target.value, spannungsebeneWert: e.target.value !== "bekannt" ? "" : m.spannungsebeneWert } : m) } }))} disabled={loading}><option value="">– Auswählen –</option><option value="bekannt">Bekannt</option><option value="unbekannt">Unbekannt</option></select></div>
+                        {meter.spannungsebene === "bekannt" && (
+                          <div className="form-group"><label>Spannungsebene (Wert)</label><input type="text" placeholder="z.B. Mitteldruck" value={meter.spannungsebeneWert || ""} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, spannungsebeneWert: e.target.value } : m) } }))} disabled={loading} /></div>
+                        )}
+                      </>
+                    )}
                     <div className="form-group"><label>Zählernummer</label><input type="text" placeholder="z.B. 987654321" value={meter.zählernummer} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, zählernummer: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>MALO-ID</label><input type="text" placeholder="Marktlokations-ID" value={meter.maloId} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, maloId: e.target.value } : m) } }))} disabled={loading} /></div>
                     <div className="form-group"><label>Verbrauch (kWh) *</label><input type="number" placeholder="z.B. 15000" value={meter.verbrauchKwh} onChange={(e) => setForm(p => ({ ...p, energy: { ...p.energy, gas: p.energy.gas.map((m, i) => i === idx ? { ...m, verbrauchKwh: e.target.value } : m) } }))} disabled={loading} /></div>

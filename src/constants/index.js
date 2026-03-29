@@ -16,7 +16,7 @@ export const MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024;
 export const RENEWAL_RESURFACE_MONTHS = 6;
 export const buildAttachmentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 export const getAttachmentHref = (attachment) => attachment?.url || attachment?.data || "";
-export const EMPTY_METER = { zählernummer: "", maloId: "", verbrauchKwh: "", jahreskosten: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" };
+export const EMPTY_METER = { zählernummer: "", maloId: "", verbrauchKwh: "", jahreskosten: "", zählertyp: "SLP", spannungsebene: "", spannungsebeneWert: "", lieferStrasse: "", lieferHausnummer: "", lieferPlz: "", lieferStadt: "" };
 export const initialForm = {
   company: "", person: "", anrede: "", titel: "", geburtsdatum: "", phone: "", email: "",
   consumption: "", annualCosts: "", contractEnd: "unknown",
