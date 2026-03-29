@@ -245,7 +245,7 @@ export const sortLeads = (items, sortMode) => {
   });
 };
 
-export const rankCockpitCtas = ({ leads, marketTrendPct = null }) => {
+export const rankCockpitCtas = ({ leads }) => {
   const workingLeads = leads.filter((lead) => lead.status !== "Abschluss" && lead.status !== "Verloren");
   const inactiveLeads = workingLeads.filter((lead) => isLeadInactiveForHours(lead, 48));
   const uncontactedLeads = workingLeads.filter((lead) => getContactTouchCount(lead) === 0);
@@ -272,19 +272,8 @@ export const rankCockpitCtas = ({ leads, marketTrendPct = null }) => {
     cards.push({ id: "cta-perfect-price-no-answer", tone: "warning", score: stalledOfferLeads.length * 10, title: "Perfekter Preis, aber keine Antwort", message: `${stalledOfferLeads.length} Angebots-Leads warten >72h ohne Reaktion.`, actionLabel: "Angebots-Stau öffnen", action: "stalledOffers", leadId: stalledOfferLeads[0]?.id });
   }
 
-  if (marketTrendPct !== null) {
-    const trendLeads = hotLeads.length > 0 ? hotLeads : workingLeads.slice(0, 1);
-    if (trendLeads.length > 0) {
-      cards.push({
-        id: "cta-price-trend", tone: marketTrendPct >= 0 ? "alert" : "success",
-        score: Math.round(Math.abs(marketTrendPct) * 8) + (hotLeads.length * 3),
-        title: marketTrendPct >= 0 ? "Preise steigen: schnell sichern" : "Preise entspannt: Vergleich offensiv spielen",
-        message: `Markttrend ${marketTrendPct >= 0 ? "+" : ""}${marketTrendPct.toFixed(1)}% (30 Tage). ${marketTrendPct >= 0 ? "Jetzt Entscheidung beschleunigen." : "Preisvorteil aktiv kommunizieren."}`,
-        actionLabel: "Preis-Argument nutzen", action: "hot", leadId: trendLeads[0]?.id,
-      });
-    }
-  } else {
-    cards.push({ id: "cta-price-source-missing", tone: "muted", score: 1, title: "Preis-CTA Quelle fehlt", message: "Für Preisargumente bitte Marktquelle anbinden (API/Feed).", actionLabel: "Hot Leads öffnen", action: "hot", leadId: hotLeads[0]?.id });
+  if (hotLeads.length > 0) {
+    cards.push({ id: "cta-hot", tone: "success", score: hotLeads.length * 9, title: `${hotLeads.length} Hot Leads`, message: "Heiße Leads jetzt mit kurzen Zyklen bearbeiten.", actionLabel: "Hot Leads öffnen", action: "hot", leadId: hotLeads[0]?.id });
   }
 
   return cards.sort((a, b) => b.score - a.score).slice(0, 6);
