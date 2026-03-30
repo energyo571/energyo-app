@@ -7,7 +7,7 @@
  *   const user = await verifyAuth(req, res);
  *   if (!user) return; // 401 already sent
  */
-const { admin } = require("./firebaseAdmin");
+const { admin, getApp } = require("./firebaseAdmin");
 
 async function verifyAuth(req, res) {
   const header = req.headers.authorization || "";
@@ -18,6 +18,7 @@ async function verifyAuth(req, res) {
   }
 
   try {
+    getApp(); // ensure Firebase Admin is initialized
     const decoded = await admin.auth().verifyIdToken(match[1]);
     return decoded;
   } catch (e) {
