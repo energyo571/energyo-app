@@ -1,5 +1,11 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "framework": "create-react-app"
+  "framework": "create-react-app",
+  "functions": {
+    "api/*.js": {
+      "memory": 256,
+      "maxDuration": 10
+    }
+  }
 }
